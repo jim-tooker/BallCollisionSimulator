@@ -1,0 +1,429 @@
+import unittest
+import math
+import vpython as vp
+from BallCollisionSimulator import BallCollisionSimulator
+
+class TestBallCollisionSimulator(unittest.TestCase):
+    def setUp(self):
+        self.sim = None
+        self.degrees_to_radians = math.pi/180.0
+
+    def tearDown(self):
+        if self.sim:
+            self.sim.remove_scene()
+
+    def test01_x_axis_only(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-1.5, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            (1.0,  (1.5, 0.0), (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            5.0                               # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 3.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 2.0)
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 180.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 1.0)
+        self.assertAlmostEqual(self.sim.ball1.angle, 180.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(-0.5, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(0.5, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test02_converging_lines(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
+            (1.0,  (1.5, 0.0), (-1.0, 1.0)),  # Ball 2: mass, position, velocity
+            5.0                               # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 3.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 2.0)
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 45.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 135.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(-1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 2.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 1.0)
+        self.assertAlmostEqual(self.sim.ball1.angle, 135.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 45.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(-1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(-0.5, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(0.5, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(-1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test03_diverging_lines(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-1.0, 0.0),  (-1.0, 1.0)),  # Ball 1: mass, position, velocity
+            (1.0,  (1.0, 0.0),   (1.0, 1.0)),  # Ball 2: mass, position, velocity
+            5.0                                # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 2.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 2.0)
+        self.assertGreater(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 135.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 45.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(-1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 2.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.collision_info, None)
+        self.assertAlmostEqual(self.sim.ball1.angle, 135.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 45.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(-1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test04_from_sw_and_ne(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-1.5, -1.5),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
+            (1.0,  (1.5,  1.5), (-1.0,-1.0)),  # Ball 2: mass, position, velocity
+            5.0                                # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 2*math.sqrt(2*1.5**2))
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 2*math.sqrt(2))
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 45.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, -135.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(-1.0, -1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 1.15)
+        self.assertAlmostEqual(self.sim.ball1.angle, -135.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 45.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(-1.0, -1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(-0.35, -0.35, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(0.35, 0.35, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(-1.0, -1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test05_right_triangle_no_collision(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
+            (1.0,  (1.5, 0.0),   (0.0, 2.0)),  # Ball 2: mass, position, velocity
+            5.0                                # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 3.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, math.sqrt(2))
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 45.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 90.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(0.0, 2.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(1.0, 3.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.collision_info, None)
+        self.assertAlmostEqual(self.sim.ball1.angle, 45.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 90.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(0.0, 2.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.intersection_info.position - vp.vector(1.5, 3.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.intersection_info.ball1_time, 3.0)
+        self.assertAlmostEqual(self.sim.intersection_info.ball2_time, 1.5)
+
+
+    def test06_right_triangle_collision(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
+            (1.0,  (1.5, 0.0),   (0.0, 1.0)),  # Ball 2: mass, position, velocity
+            5.0                                # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 3.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 1.0)
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 45.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 90.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(0.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(1.0, 2.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 2.0)
+        self.assertAlmostEqual(self.sim.ball1.angle, 90.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 45.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(0.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(0.5, 2.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(1.5, 2.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(0.0, 1.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(1.0, 1.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test07_small_angle_converging(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (0.01, (-1.0, 0.0),  (math.cos(45*self.degrees_to_radians),
+                                  math.sin(45*self.degrees_to_radians))),  # Ball 1: mass, position, velocity
+            (0.01,  (0.0, 0.0),  (math.cos(46*self.degrees_to_radians),
+                                  math.sin(46*self.degrees_to_radians))),  # Ball 2: mass, position, velocity
+            45.0                                # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 1.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 0.215, places=3)
+        self.assertAlmostEqual(self.sim.relative_speed, 0.017, places=3)
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 45.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 46.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(0.00707, 0.00707, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(0.00695, 0.00719, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.01402, 0.01426, 0.0)).mag, 0.0, places=3)
+        self.assertEqual(self.sim.collision_info, None)
+        self.assertAlmostEqual(self.sim.ball1.angle, 45.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 46.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(0.00707, 0.00707, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(0.00695, 0.00719, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.intersection_info.position - vp.vector(28.145, 29.145, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual(self.sim.intersection_info.ball1_time, 41.217, places=3)
+        self.assertAlmostEqual(self.sim.intersection_info.ball2_time, 40.516, places=3)
+
+
+    def test08_parallel_lines_same_direction(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            (1.0, (0.0, 2.0),  (1.0, 0.0)),  # Ball 2: mass, position, velocity
+            5.0                                # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 2.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 0.0)
+        self.assertEqual(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(2.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.collision_info, None)
+        self.assertAlmostEqual(self.sim.ball1.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test09_parallel_lines_diff_direction(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (0.0, -2.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            (1.0, (0.0, 2.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            5.0                                # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 4.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 2.0)
+        self.assertEqual(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 180.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.collision_info, None)
+        self.assertAlmostEqual(self.sim.ball1.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 180.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test10_parallel_lines_same_direction_one_faster(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            (1.0, (0.0, 2.0),  (2.0, 0.0)),  # Ball 2: mass, position, velocity
+            5.0                                # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 2.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 1.0)
+        self.assertEqual(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(2.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(3.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.collision_info, None)
+        self.assertAlmostEqual(self.sim.ball1.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(2.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test11_overtaking_parallel_lines(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            (1.0, (-2.5, 0.0), (2.0, 0.0)),  # Ball 2: mass, position, velocity
+            5.0                              # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 2.5)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 1.0)
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(2.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(3.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 1.5)
+        self.assertAlmostEqual(self.sim.ball1.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(2.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(1.5, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(0.5, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(2.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test12_different_masses_colliding(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-5.0, 0.0), (2.0, 0.0)),  # Ball 1: mass, position, velocity
+            (4.0, (5.0, 0.0), (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            10.0                             # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 10.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.294, places=3)
+        self.assertAlmostEqual(self.sim.relative_speed, 3.0)
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 180.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(2.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(-4.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(-2.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 2.91)
+        self.assertAlmostEqual(self.sim.ball1.angle, 180.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(-2.8, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(0.8, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(0.82, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(2.09, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(-2.8, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(0.2, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+            
+        
+    def test13_one_object_not_moving(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            (1.0, (1.5, 0.0),  (0.0, 0.0)),  # Ball 2: mass, position, velocity
+            5.0                              # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 3.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 1.0)
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 2.0)
+        self.assertAlmostEqual(self.sim.ball1.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(0.5, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(1.5, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+            
+        
+    def test14_both_objects_not_moving(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (-1.5, 0.0), (0.0, 0.0)),  # Ball 1: mass, position, velocity
+            (1.0, (1.5, 0.0),  (0.0, 0.0)),  # Ball 2: mass, position, velocity
+            5.0                              # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 3.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 0.0)
+        self.assertEqual(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.collision_info, None)
+        self.assertAlmostEqual(self.sim.ball1.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+    def test15_same_initial_position(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            (1.0, (1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            (1.0, (1.5, 0.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            5.0                               # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 0.0)
+        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertAlmostEqual(self.sim.relative_speed, 2.0)
+        self.assertEqual(self.sim.dot_product, 0.0)
+        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 180.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 0.0)
+        self.assertAlmostEqual(self.sim.ball1.angle, 180.0)
+        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(1.5, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(1.5, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
+        self.assertEqual(self.sim.intersection_info, None)
+
+
+if __name__ == '__main__':
+    unittest.main()
