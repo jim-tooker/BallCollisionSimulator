@@ -323,8 +323,8 @@ if __name__ == '__main__':
     degrees_to_radians = math.pi/180.0
 
     ball_collision_sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-5.0, 0.0), (2.0, 0.0)),  # Ball 1: mass, position, velocity
-            (4.0, (5.0, 0.0), (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            (1.0, (3.0, 4.0),     (-1.0, -0.5)),  # Ball 1: mass, position, velocity
+            (1.0, (-3.3, -4.0),  (0.0, 1.0)),  # Ball 2: mass, position, velocity
         SIMULATION_TIME                     # Simulation time
     )
 
