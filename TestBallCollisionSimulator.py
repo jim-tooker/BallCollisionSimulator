@@ -454,7 +454,7 @@ class TestBallCollisionSimulator(unittest.TestCase):
         self.assertEqual(self.sim.intersection_info, None)
 
 
-    def test00_a_glancing_blow(self):
+    def test16_a_glancing_blow(self):
         self.sim = BallCollisionSimulator.create_simulator(
             (1.0,  (3.0, 4.0),  (-1.0, -0.5)),  # Ball 1: mass, position, velocity
             (1.0, (-3.3, -4.0),  (0.0, 1.0)),   # Ball 2: mass, position, velocity
