@@ -1,9 +1,9 @@
 import math
 import readchar
+import argparse
 from dataclasses import dataclass
 from copy import copy
 import vpython as vp
-import vpython.no_notebook as vp_services
 
 
 class PhysicsParameters:
@@ -111,6 +111,10 @@ class BallCollisionSimulator:
         self.scene = None
 
     def quit_simulation(self):
+        # We don't import vp_services until needed, because importing it will start
+        # the server, if not started already.
+        import vpython.no_notebook as vp_services
+
         vp_services.stop_server()
 
     def __init_simulation(self):
@@ -318,14 +322,55 @@ class BallCollisionSimulator:
         self.__verify_conservation_of_momentum()
 
 
+def get_user_input():
+    def get_float(prompt):
+        while True:
+            try:
+                return float(input(prompt))
+            except ValueError:
+                print("Please enter a valid number.")
+
+    def get_vector(prompt):
+        while True:
+            try:
+                x, y = map(float, input(prompt).split(','))
+                return (x, y)
+            except ValueError:
+                print("Please enter two numbers separated by a comma.")
+
+    print("Enter parameters for Ball 1:")
+    mass1 = get_float("Mass (kg): ")
+    position1 = get_vector("Position (x,y) in meters: ")
+    velocity1 = get_vector("Velocity (x,y) in m/s: ")
+
+    print("\nEnter parameters for Ball 2:")
+    mass2 = get_float("Mass (kg): ")
+    position2 = get_vector("Position (x,y) in meters: ")
+    velocity2 = get_vector("Velocity (x,y) in m/s: ")
+
+    simulation_time = get_float("\nEnter simulation time (seconds): ")
+
+    return (mass1, position1, velocity1), (mass2, position2, velocity2), simulation_time
+
+
 if __name__ == '__main__':
-    SIMULATION_TIME = 10.0  # How long to run the simulation (secs)
-    degrees_to_radians = math.pi/180.0
+    parser = argparse.ArgumentParser(description='Ball Collision Simulator')
+    parser.add_argument('--test', action='store_true', help='Run with pre-defined test case')
+    args = parser.parse_args()
+
+    if args.test:
+        # Pre-defined test case
+        ball1_specs = (1.0, (3.0, 4.0), (-1.0, -0.5))
+        ball2_specs = (1.0, (-3.3, -4.0), (0.0, 1.0))
+        simulation_time = 10.0
+    else:
+        # Get user input
+        ball1_specs, ball2_specs, simulation_time = get_user_input()
 
     ball_collision_sim = BallCollisionSimulator.create_simulator(
-            (1.0, (3.0, 4.0),     (-1.0, -0.5)),  # Ball 1: mass, position, velocity
-            (1.0, (-3.3, -4.0),  (0.0, 1.0)),  # Ball 2: mass, position, velocity
-        SIMULATION_TIME                     # Simulation time
+        ball1_specs,
+        ball2_specs,
+        simulation_time
     )
 
     ball_collision_sim.run()
