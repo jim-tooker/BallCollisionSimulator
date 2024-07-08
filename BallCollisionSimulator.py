@@ -5,25 +5,53 @@ from copy import copy
 import vpython as vp
 from typing import Tuple, Optional
 
-
 class PhysicsParameters:
+    """
+    Class to store the physical parameters of a ball.
+    """
     def __init__(self, mass: float, position: Tuple[float, float], velocity: Tuple[float, float]):
+        """
+        Initialize the PhysicsParameters object.
+
+        Args:
+            mass (float): Mass of the ball in kg.
+            position (Tuple[float, float]): Initial position of the ball (x, y) in meters.
+            velocity (Tuple[float, float]): Initial velocity of the ball (vx, vy) in m/s.
+        """
         self.mass: float = mass
         self.position: vp.vector = vp.vector(*position, 0)
         self.velocity: vp.vector = vp.vector(*velocity, 0)
 
-
 class BallParameters:
-    def __init__(self, physics: PhysicsParameters, color: vp.vector = vp.color.red, name: str = ''):
+    """
+    Class to store all parameters of a ball, including physics and visual properties.
+    """
+    def __init__(self, physics: PhysicsParameters, color: vp.color = vp.color.red, name: str = ''):
+        """
+        Initialize the BallParameters object.
+
+        Args:
+            physics (PhysicsParameters): Physical parameters of the ball.
+            color (vp.color, optional): Color of the ball. Defaults to red.
+            name (str, optional): Name or identifier for the ball. Defaults to ''.
+        """
         self.mass: float = physics.mass
         self.position: vp.vector = physics.position
         self.velocity: vp.vector = physics.velocity
-        self.color: vp.vector = color
+        self.color: vp.color = color
         self.name: str = name
 
-
 class Ball:
+    """
+    Class representing a ball in the simulation.
+    """
     def __init__(self, params: BallParameters):
+        """
+        Initialize the Ball object.
+
+        Args:
+            params (BallParameters): Parameters for the ball.
+        """
         self.mass: float = params.mass
         self.position: vp.vector = params.position
         self.velocity: vp.vector = params.velocity
@@ -45,44 +73,64 @@ class Ball:
 
     @property
     def angle(self) -> float:
+        """Calculate and return the angle of the ball's velocity vector."""
         return vp.degrees(vp.atan2(self.velocity.y, self.velocity.x))
 
     @property
     def speed(self) -> float:
+        """Calculate and return the speed of the ball."""
         return vp.mag(self.velocity)
 
     @property
     def momentum(self) -> vp.vector:
+        """Calculate and return the momentum vector of the ball."""
         return self.velocity * self.mass
 
     @property
     def momentum_mag(self) -> float:
+        """Calculate and return the magnitude of the ball's momentum."""
         return vp.mag(self.momentum)
 
     def update_position(self, dt: float) -> None:
+        """
+        Update the position of the ball based on its velocity and time step.
+
+        Args:
+            dt (float): Time step for the update.
+        """
         self.position += self.velocity * dt
         self.sphere.pos = self.position
         self.label.pos = self.position
 
-
 @dataclass
 class CollisionInfo:
+    """Data class to store information about a collision."""
     time: float
     ball1: Ball
     ball2: Ball
 
-
 @dataclass
 class IntersectionInfo:
+    """Data class to store information about an intersection of ball paths."""
     position: vp.vector
     ball1_time: float
     ball2_time: float
 
-
 class BallCollisionSimulator:
+    """
+    Class to simulate the collision between two balls.
+    """
     def __init__(self, ball1_params: BallParameters,
                  ball2_params: BallParameters,
                  simulation_time: float):
+        """
+        Initialize the BallCollisionSimulator.
+
+        Args:
+            ball1_params (BallParameters): Parameters for the first ball.
+            ball2_params (BallParameters): Parameters for the second ball.
+            simulation_time (float): Total time to simulate.
+        """
         self.ball1_params: BallParameters = ball1_params
         self.ball2_params: BallParameters = ball2_params
         self.simulation_time: float = simulation_time
@@ -102,17 +150,30 @@ class BallCollisionSimulator:
     def create_simulator(phys1_params: PhysicsParameters,
                          phys2_params: PhysicsParameters,
                          simulation_time: float) -> 'BallCollisionSimulator':
+        """
+        Create a BallCollisionSimulator instance with given parameters.
+
+        Args:
+            phys1_params (PhysicsParameters): Physics parameters for the first ball.
+            phys2_params (PhysicsParameters): Physics parameters for the second ball.
+            simulation_time (float): Total time to simulate.
+
+        Returns:
+            BallCollisionSimulator: An instance of the simulator.
+        """
         ball1_params : BallParameters = BallParameters(phys1_params, color=vp.color.blue, name='1')
         ball2_params : BallParameters = BallParameters(phys2_params, color=vp.color.red, name='2')
 
         return BallCollisionSimulator(ball1_params, ball2_params, simulation_time)
 
     def remove_scene(self) -> None:
+        """Remove the VPython scene if it exists."""
         if self.scene:
             self.scene.delete()
             self.scene = None
 
     def quit_simulation(self) -> None:
+        """Stop the VPython server."""
         # We don't import vp_services until needed, because importing it will start
         # the server, if not started already.
         import vpython.no_notebook as vp_services
@@ -120,6 +181,7 @@ class BallCollisionSimulator:
         vp_services.stop_server()
 
     def __init_simulation(self) -> None:
+        """Initialize the simulation by setting up the scene and balls."""
         self.scene = vp.canvas(title='Elastic Collision Simulation',
                                width=800,
                                height=800,
@@ -150,6 +212,7 @@ class BallCollisionSimulator:
         self.relative_speed = (self.ball1.velocity - self.ball2.velocity).mag
 
     def __create_grid_and_axes(self) -> None:
+        """Create a grid and axes for the simulation scene."""
         GRID_RANGE : int = 10
         step : int = 1
 
@@ -170,6 +233,13 @@ class BallCollisionSimulator:
 
     @staticmethod
     def __print_velocity_details(ball1: Ball, ball2: Ball) -> None:
+        """
+        Print detailed information about the velocities of two balls.
+
+        Args:
+            ball1 (Ball): First ball object.
+            ball2 (Ball): Second ball object.
+        """
         print()
         for ball in ball1, ball2:
             print(f'Ball {ball.name}:')
@@ -184,6 +254,7 @@ class BallCollisionSimulator:
         print()
 
     def __calculate_intersection(self) -> None:
+        """Calculate the intersection point of the paths of the two balls."""
         assert self.ball1_state_t0
         assert self.ball2_state_t0
 
@@ -228,6 +299,7 @@ class BallCollisionSimulator:
                                                     ball2_time=u * self.simulation_time)
 
     def __process_post_collision_physics(self) -> None:
+        """Calculate and update the velocities of the balls after collision."""
         assert self.ball1
         assert self.ball2
 
@@ -241,6 +313,7 @@ class BallCollisionSimulator:
                             2 * m1 * v1_initial) / (m1 + m2)
 
     def __verify_conservation_of_momentum(self) -> None:
+        """Verify that momentum is conserved after the collision."""
         assert self.ball1
         assert self.ball2
         assert self.total_momentum
@@ -254,6 +327,7 @@ class BallCollisionSimulator:
             f'Initial total: {self.total_momentum.mag}, Final total: {final_total_momentum.mag}'
 
     def __run_simulation(self) -> None:
+        """Run the main simulation loop."""
         assert self.ball1
         assert self.ball2
 
@@ -290,6 +364,7 @@ class BallCollisionSimulator:
             time_elapsed += dt
 
     def run(self) -> None:
+        """Run the entire simulation process."""
         self.__init_simulation()
 
         assert self.ball1
@@ -347,6 +422,12 @@ class BallCollisionSimulator:
 
 if __name__ == '__main__':
     def get_user_input() -> Tuple[PhysicsParameters, PhysicsParameters, float]:
+        """
+        Get user input for ball parameters and simulation time.
+
+        Returns:
+            Tuple[PhysicsParameters, PhysicsParameters, float]: Parameters for both balls and simulation time.
+        """
         def get_float(prompt: str) -> float:
             while True:
                 try:
