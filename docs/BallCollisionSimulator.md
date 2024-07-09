@@ -1,5 +1,29 @@
 Module BallCollisionSimulator
 =============================
+Ball Collision Simulator
+
+This module simulates the elastic collision between two balls using the VPython library. It
+contains classes to define the physical and visual properties of the balls, perform the 
+simulation, and visualize the collision in a 3D space.
+
+Classes:
+    - PhysicsParameters: Stores the physical parameters of a ball.
+    - BallParameters: Combines physical and visual properties of a ball.
+    - Ball: Represents a ball in the simulation, managing its state and visualization.
+    - CollisionInfo: Data class for storing collision information.
+    - IntersectionInfo: Data class for storing intersection information of ball paths.
+    - BallCollisionSimulator: Manages the entire simulation process, including initialization, 
+      running the simulation, and handling collisions.
+
+Functions:
+    - get_user_input: Prompts the user to input parameters for the balls and the simulation time.
+    - main: The main entry point of the program, running the simulation with either predefined 
+      test parameters or user input.
+
+Usage:
+    Run this module as a script to start the simulation. The user can choose to input custom
+    parameters for the balls and the simulation time or use predefined test parameters with 
+    the --test argument.
 
 Classes
 -------
@@ -17,7 +41,7 @@ Classes
     `angle: float`
     :   Calculate and return the angle of the ball's velocity vector.
 
-    `momentum: vpython.vector`
+    `momentum: vp.vector`
     :   Calculate and return the momentum vector of the ball.
 
     `momentum_mag: float`
@@ -46,7 +70,7 @@ Classes
 
     ### Static methods
 
-    `create_simulator(phys1_params: BallCollisionSimulator.PhysicsParameters, phys2_params: BallCollisionSimulator.PhysicsParameters, simulation_time: float) ‑> BallCollisionSimulator.BallCollisionSimulator`
+    `create_simulator(phys1_params: PhysicsParameters, phys2_params: PhysicsParameters, simulation_time: float) ‑> BallCollisionSimulator.BallCollisionSimulator`
     :   Create a BallCollisionSimulator instance with given parameters.
         
         Args:
@@ -57,10 +81,10 @@ Classes
         Returns:
             BallCollisionSimulator: An instance of the simulator.
 
-    ### Methods
-
-    `quit_simulation(self) ‑> None`
+    `quit_simulation() ‑> None`
     :   Stop the VPython server.
+
+    ### Methods
 
     `remove_scene(self) ‑> None`
     :   Remove the VPython scene if it exists.
@@ -68,7 +92,7 @@ Classes
     `run(self) ‑> None`
     :   Run the entire simulation process.
 
-`BallParameters(physics: PhysicsParameters, color: vpython.color = vp.color.red name: str = '')`
+`BallParameters(physics: PhysicsParameters, color: vp.color = vp.color.red, name: str = '')`
 :   Class to store all parameters of a ball, including physics and visual properties.
     
     Initialize the BallParameters object.
@@ -92,7 +116,7 @@ Classes
     `time: float`
     :
 
-`IntersectionInfo(position: vpython.vector, ball1_time: float, ball2_time: float)`
+`IntersectionInfo(position: vp.vector, ball1_time: float, ball2_time: float)`
 :   Data class to store information about an intersection of ball paths.
 
     ### Class variables
@@ -103,7 +127,7 @@ Classes
     `ball2_time: float`
     :
 
-    `position: vpython.vector`
+    `position: vp.vector`
     :
 
 `PhysicsParameters(mass: float, position: Tuple[float, float], velocity: Tuple[float, float])`

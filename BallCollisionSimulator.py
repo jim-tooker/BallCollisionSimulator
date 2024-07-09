@@ -1,10 +1,36 @@
+"""
+Ball Collision Simulator
+
+This module simulates the elastic collision between two balls using the VPython library. It
+contains classes to define the physical and visual properties of the balls, perform the 
+simulation, and visualize the collision in a 3D space.
+
+Classes:
+    - PhysicsParameters: Stores the physical parameters of a ball.
+    - BallParameters: Combines physical and visual properties of a ball.
+    - Ball: Represents a ball in the simulation, managing its state and visualization.
+    - CollisionInfo: Data class for storing collision information.
+    - IntersectionInfo: Data class for storing intersection information of ball paths.
+    - BallCollisionSimulator: Manages the entire simulation process, including initialization, 
+      running the simulation, and handling collisions.
+
+Functions:
+    - get_user_input: Prompts the user to input parameters for the balls and the simulation time.
+    - main: The main entry point of the program, running the simulation with either predefined 
+      test parameters or user input.
+
+Usage:
+    Run this module as a script to start the simulation. The user can choose to input custom
+    parameters for the balls and the simulation time or use predefined test parameters with 
+    the --test argument.
+"""
 from __future__ import annotations
-import readchar
+from typing import Tuple, Optional
 import argparse
 from dataclasses import dataclass
 from copy import copy
 import vpython as vp
-from typing import Tuple, Optional
+import readchar
 
 class PhysicsParameters:
     """
@@ -173,7 +199,8 @@ class BallCollisionSimulator:
             self.scene.delete()
             self.scene = None
 
-    def quit_simulation(self) -> None:
+    @staticmethod
+    def quit_simulation() -> None:
         """Stop the VPython server."""
         # We don't import vp_services until needed, because importing it will start
         # the server, if not started already.
@@ -375,7 +402,7 @@ class BallCollisionSimulator:
         assert self.dot_product is not None
         assert self.total_momentum
 
-        print('***************************************************')
+        print('\n***************************************************')
         print('Initial Conditions:')
         self.__print_velocity_details(self.ball1_state_t0, self.ball2_state_t0)
         print(f'Initial Distance from each other: {self.initial_distance:.2f} m')
@@ -427,7 +454,8 @@ if __name__ == '__main__':
         Get user input for ball parameters and simulation time.
 
         Returns:
-            Tuple[PhysicsParameters, PhysicsParameters, float]: Parameters for both balls and simulation time.
+            Tuple[PhysicsParameters, PhysicsParameters, float]: Parameters for both balls
+            and simulation time.
         """
         def get_float(prompt: str) -> float:
             while True:
@@ -485,4 +513,4 @@ if __name__ == '__main__':
     print("Press any key to exit...")
     readchar.readkey()
     ball_collision_sim.remove_scene()
-    ball_collision_sim.quit_simulation()
+    BallCollisionSimulator.quit_simulation()
