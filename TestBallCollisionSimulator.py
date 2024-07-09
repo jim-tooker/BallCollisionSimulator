@@ -3,6 +3,7 @@ import math
 import vpython as vp
 from BallCollisionSimulator import PhysicsParameters, BallCollisionSimulator
 
+
 class TestBallCollisionSimulator(unittest.TestCase):
     def setUp(self):
         self.sim = None
@@ -425,35 +426,6 @@ class TestBallCollisionSimulator(unittest.TestCase):
         self.assertEqual(self.sim.intersection_info, None)
 
 
-    def test15_same_initial_position(self):
-        self.sim = BallCollisionSimulator.create_simulator(
-            PhysicsParameters(1.0, (1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            PhysicsParameters(1.0, (1.5, 0.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
-            5.0                               # Simulation time
-        )
-        self.sim.run()
-
-        self.assertAlmostEqual(self.sim.initial_distance, 0.0)
-        self.assertAlmostEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
-        self.assertAlmostEqual(self.sim.relative_speed, 2.0)
-        self.assertEqual(self.sim.dot_product, 0.0)
-        self.assertAlmostEqual(self.sim.ball1_state_t0.angle, 0.0)
-        self.assertAlmostEqual(self.sim.ball2_state_t0.angle, 180.0)
-        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
-        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
-        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
-        self.assertAlmostEqual(self.sim.collision_info.time, 0.0)
-        self.assertAlmostEqual(self.sim.ball1.angle, 180.0)
-        self.assertAlmostEqual(self.sim.ball2.angle, 0.0)
-        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
-        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
-        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(1.5, 0.0, 0.0)).mag, 0.0)
-        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(1.5, 0.0, 0.0)).mag, 0.0)
-        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(-1.0, 0.0, 0.0)).mag, 0.0)
-        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(1.0, 0.0, 0.0)).mag, 0.0)
-        self.assertEqual(self.sim.intersection_info, None)
-
-
     def test16_a_glancing_blow(self):
         self.sim = BallCollisionSimulator.create_simulator(
             PhysicsParameters(1.0,  (3.0, 4.0),  (-1.0, -0.5)),  # Ball 1: mass, position, velocity
@@ -509,5 +481,28 @@ class TestBallCollisionSimulator(unittest.TestCase):
         self.assertAlmostEqual(self.sim.intersection_info.ball2_time, 1.7)
 
 
+def suite():
+    my_suite = unittest.TestSuite()
+    my_suite.addTest(TestBallCollisionSimulator('test01_x_axis_only'))
+    my_suite.addTest(TestBallCollisionSimulator('test02_converging_lines'))
+    my_suite.addTest(TestBallCollisionSimulator('test03_diverging_lines'))
+    my_suite.addTest(TestBallCollisionSimulator('test04_from_sw_and_ne'))
+    my_suite.addTest(TestBallCollisionSimulator('test05_right_triangle_no_collision'))
+    my_suite.addTest(TestBallCollisionSimulator('test06_right_triangle_collision'))
+    my_suite.addTest(TestBallCollisionSimulator('test07_small_angle_converging'))
+    my_suite.addTest(TestBallCollisionSimulator('test08_parallel_lines_same_direction'))
+    my_suite.addTest(TestBallCollisionSimulator('test09_parallel_lines_diff_direction'))
+    my_suite.addTest(TestBallCollisionSimulator('test10_parallel_lines_same_direction_one_faster'))
+    my_suite.addTest(TestBallCollisionSimulator('test11_overtaking_parallel_lines'))
+    my_suite.addTest(TestBallCollisionSimulator('test12_different_masses_colliding'))
+    my_suite.addTest(TestBallCollisionSimulator('test13_one_object_not_moving'))
+    my_suite.addTest(TestBallCollisionSimulator('test14_both_objects_not_moving'))
+    my_suite.addTest(TestBallCollisionSimulator('test15_same_initial_position'))
+    my_suite.addTest(TestBallCollisionSimulator('test16_a_glancing_blow'))
+    my_suite.addTest(TestBallCollisionSimulator('test17_easy_intersection'))
+    return my_suite
+
 if __name__ == '__main__':
-    unittest.main()
+    runner = unittest.TextTestRunner(verbosity=2, failfast=True, durations=0)
+    result = runner.run (suite())
+    BallCollisionSimulator.quit_simulation()
