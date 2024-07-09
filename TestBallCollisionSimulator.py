@@ -1,17 +1,19 @@
 import unittest
+import sys
+import argparse
 import math
 import vpython as vp
 from BallCollisionSimulator import PhysicsParameters, BallCollisionSimulator
 
+DEGREES_TO_RADIANS = math.pi/180.0
 
 class TestBallCollisionSimulator(unittest.TestCase):
     def setUp(self):
         self.sim = None
-        self.degrees_to_radians = math.pi/180.0
 
     def tearDown(self):
         if self.sim:
-            self.sim.remove_scene()
+            self.sim = None
 
     def test01_x_axis_only(self):
         self.sim = BallCollisionSimulator.create_simulator(
@@ -183,10 +185,10 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test07_small_angle_converging(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            PhysicsParameters(0.01, (-1.0, 0.0),  (math.cos(45*self.degrees_to_radians),
-                                                   math.sin(45*self.degrees_to_radians))),  # Ball 1: mass, position, velocity
-            PhysicsParameters(0.01,  (0.0, 0.0),  (math.cos(46*self.degrees_to_radians),
-                                                   math.sin(46*self.degrees_to_radians))),  # Ball 2: mass, position, velocity
+            PhysicsParameters(0.01, (-1.0, 0.0),  (math.cos(45*DEGREES_TO_RADIANS),
+                                                   math.sin(45*DEGREES_TO_RADIANS))),  # Ball 1: mass, position, velocity
+            PhysicsParameters(0.01,  (0.0, 0.0),  (math.cos(46*DEGREES_TO_RADIANS),
+                                                   math.sin(46*DEGREES_TO_RADIANS))),  # Ball 2: mass, position, velocity
             45.0                                # Simulation time
         )
         self.sim.run()
@@ -503,6 +505,19 @@ def suite():
     return my_suite
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Ball Collision Simulator')
+    parser.add_argument('--no_gui', action='store_true', help='Run without GUI')
+    args = parser.parse_args()
+
+    if args.no_gui:
+        BallCollisionSimulator.disable_gui(True)
+
+    # Create runner and run test suite
     runner = unittest.TextTestRunner(verbosity=2, failfast=True, durations=0)
     result = runner.run (suite())
+
+    # Quit Simulation
     BallCollisionSimulator.quit_simulation()
+
+    # exit with "not" return code from test
+    sys.exit(not result.wasSuccessful())
