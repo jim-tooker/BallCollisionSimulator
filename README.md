@@ -10,4 +10,3 @@
 
 ## Documentation
 For detailed API documentation, see [API Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/BallCollisionSimulator.html).
-

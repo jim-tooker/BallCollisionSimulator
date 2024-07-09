@@ -1,3 +1,4 @@
+from __future__ import annotations
 import readchar
 import argparse
 from dataclasses import dataclass
@@ -149,7 +150,7 @@ class BallCollisionSimulator:
     @staticmethod
     def create_simulator(phys1_params: PhysicsParameters,
                          phys2_params: PhysicsParameters,
-                         simulation_time: float) -> 'BallCollisionSimulator':
+                         simulation_time: float) -> BallCollisionSimulator:
         """
         Create a BallCollisionSimulator instance with given parameters.
 
@@ -323,8 +324,8 @@ class BallCollisionSimulator:
 
         # Verify momentum has been conserved
         assert round(self.total_momentum.mag, ndigits=3) == \
-            round(final_total_momentum.mag, ndigits=3), \
-            f'Initial total: {self.total_momentum.mag}, Final total: {final_total_momentum.mag}'
+               round(final_total_momentum.mag, ndigits=3), \
+               f'Initial total: {self.total_momentum.mag}, Final total: {final_total_momentum.mag}'
 
     def __run_simulation(self) -> None:
         """Run the main simulation loop."""
@@ -371,7 +372,7 @@ class BallCollisionSimulator:
         assert self.ball2
         assert self.ball1_state_t0
         assert self.ball2_state_t0
-        assert self.dot_product
+        assert self.dot_product is not None
         assert self.total_momentum
 
         print('***************************************************')

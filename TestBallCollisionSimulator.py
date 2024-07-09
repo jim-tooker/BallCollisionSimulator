@@ -1,7 +1,7 @@
 import unittest
 import math
 import vpython as vp
-from BallCollisionSimulator import BallCollisionSimulator
+from BallCollisionSimulator import PhysicsParameters, BallCollisionSimulator
 
 class TestBallCollisionSimulator(unittest.TestCase):
     def setUp(self):
@@ -14,8 +14,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test01_x_axis_only(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-1.5, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0,  (1.5, 0.0), (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-1.5, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0,  (1.5, 0.0), (-1.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                               # Simulation time
         )
         self.sim.run()
@@ -43,8 +43,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test02_converging_lines(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
-            (1.0,  (1.5, 0.0), (-1.0, 1.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0,  (1.5, 0.0), (-1.0, 1.0)),  # Ball 2: mass, position, velocity
             5.0                               # Simulation time
         )
         self.sim.run()
@@ -72,8 +72,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test03_diverging_lines(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-1.0, 0.0),  (-1.0, 1.0)),  # Ball 1: mass, position, velocity
-            (1.0,  (1.0, 0.0),   (1.0, 1.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-1.0, 0.0),  (-1.0, 1.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0,  (1.0, 0.0),   (1.0, 1.0)),  # Ball 2: mass, position, velocity
             5.0                                # Simulation time
         )
         self.sim.run()
@@ -97,8 +97,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test04_from_sw_and_ne(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-1.5, -1.5),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
-            (1.0,  (1.5,  1.5), (-1.0,-1.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-1.5, -1.5),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0,  (1.5,  1.5), (-1.0,-1.0)),  # Ball 2: mass, position, velocity
             5.0                                # Simulation time
         )
         self.sim.run()
@@ -126,8 +126,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test05_right_triangle_no_collision(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
-            (1.0,  (1.5, 0.0),   (0.0, 2.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0,  (1.5, 0.0),   (0.0, 2.0)),  # Ball 2: mass, position, velocity
             5.0                                # Simulation time
         )
         self.sim.run()
@@ -153,8 +153,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test06_right_triangle_collision(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
-            (1.0,  (1.5, 0.0),   (0.0, 1.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-1.5, 0.0),  (1.0, 1.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0,  (1.5, 0.0),   (0.0, 1.0)),  # Ball 2: mass, position, velocity
             5.0                                # Simulation time
         )
         self.sim.run()
@@ -182,10 +182,10 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test07_small_angle_converging(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (0.01, (-1.0, 0.0),  (math.cos(45*self.degrees_to_radians),
-                                  math.sin(45*self.degrees_to_radians))),  # Ball 1: mass, position, velocity
-            (0.01,  (0.0, 0.0),  (math.cos(46*self.degrees_to_radians),
-                                  math.sin(46*self.degrees_to_radians))),  # Ball 2: mass, position, velocity
+            PhysicsParameters(0.01, (-1.0, 0.0),  (math.cos(45*self.degrees_to_radians),
+                                                   math.sin(45*self.degrees_to_radians))),  # Ball 1: mass, position, velocity
+            PhysicsParameters(0.01,  (0.0, 0.0),  (math.cos(46*self.degrees_to_radians),
+                                                   math.sin(46*self.degrees_to_radians))),  # Ball 2: mass, position, velocity
             45.0                                # Simulation time
         )
         self.sim.run()
@@ -211,8 +211,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test08_parallel_lines_same_direction(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0, (0.0, 2.0),  (1.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (0.0, 2.0),  (1.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                                # Simulation time
         )
         self.sim.run()
@@ -236,8 +236,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test09_parallel_lines_diff_direction(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (0.0, -2.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0, (0.0, 2.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (0.0, -2.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (0.0, 2.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                                # Simulation time
         )
         self.sim.run()
@@ -261,8 +261,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test10_parallel_lines_same_direction_one_faster(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0, (0.0, 2.0),  (2.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (0.0, 2.0),  (2.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                                # Simulation time
         )
         self.sim.run()
@@ -286,8 +286,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test11_overtaking_parallel_lines(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0, (-2.5, 0.0), (2.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (0.0, 0.0),  (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (-2.5, 0.0), (2.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                              # Simulation time
         )
         self.sim.run()
@@ -315,8 +315,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test12_different_masses_colliding(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-5.0, 0.0), (2.0, 0.0)),  # Ball 1: mass, position, velocity
-            (4.0, (5.0, 0.0), (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-5.0, 0.0), (2.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(4.0, (5.0, 0.0), (-1.0, 0.0)),  # Ball 2: mass, position, velocity
             10.0                             # Simulation time
         )
         self.sim.run()
@@ -344,8 +344,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
         
     def test13_one_object_not_moving(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0, (1.5, 0.0),  (0.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (1.5, 0.0),  (0.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                              # Simulation time
         )
         self.sim.run()
@@ -373,8 +373,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
         
     def test14_both_objects_not_moving(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (-1.5, 0.0), (0.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0, (1.5, 0.0),  (0.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (-1.5, 0.0), (0.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (1.5, 0.0),  (0.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                              # Simulation time
         )
         self.sim.run()
@@ -398,8 +398,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test15_same_initial_position(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0, (1.5, 0.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (1.5, 0.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                               # Simulation time
         )
         self.sim.run()
@@ -427,8 +427,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test15_same_initial_position(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
-            (1.0, (1.5, 0.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (1.5, 0.0), (1.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (1.5, 0.0),  (-1.0, 0.0)),  # Ball 2: mass, position, velocity
             5.0                               # Simulation time
         )
         self.sim.run()
@@ -456,8 +456,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test16_a_glancing_blow(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0,  (3.0, 4.0),  (-1.0, -0.5)),  # Ball 1: mass, position, velocity
-            (1.0, (-3.3, -4.0),  (0.0, 1.0)),   # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0,  (3.0, 4.0),  (-1.0, -0.5)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (-3.3, -4.0),  (0.0, 1.0)),   # Ball 2: mass, position, velocity
             10.0                                 # Simulation time
         )
         self.sim.run()
@@ -484,8 +484,8 @@ class TestBallCollisionSimulator(unittest.TestCase):
 
     def test17_easy_intersection(self):
         self.sim = BallCollisionSimulator.create_simulator(
-            (1.0, (3.0, 4.0),   (-1.0, -1.0)),  # Ball 1: mass, position, velocity
-            (1.0, (-3.3, -4.0),  (0.0, 1.0)),  # Ball 2: mass, position, velocity
+            PhysicsParameters(1.0, (3.0, 4.0),   (-1.0, -1.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (-3.3, -4.0),  (0.0, 1.0)),  # Ball 2: mass, position, velocity
             10.0                               # Simulation time
         )
         self.sim.run()
