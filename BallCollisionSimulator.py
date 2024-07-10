@@ -597,8 +597,8 @@ def main():
     if args.test:
         # Pre-defined test case
         #                               Mass, ( Position ) ( Velocity )
-        ball1_params = PhysicsParameters(1.0,  (0.4, 3.0),  (0.0, -2.0))  # Ball 1: mass, position, velocity
-        ball2_params = PhysicsParameters(2.0, (-0.5, -3.0),  (0.0, 1.0))  # Ball 2: mass, position, velocity
+        ball1_params = PhysicsParameters(1.0,  (0.495, 0.0),  (0.0, 0.0))  # Ball 1: mass, position, velocity
+        ball2_params = PhysicsParameters(1.0, (-0.495, -10.0),  (0.0, 5.0))  # Ball 2: mass, position, velocity
         simulation_time: float = 10.0  # secs
     else:
         # Get user input

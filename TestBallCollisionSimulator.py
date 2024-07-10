@@ -510,6 +510,33 @@ class TestBallCollisionSimulator(unittest.TestCase):
         self.assertAlmostEqual(self.sim.intersection_info.ball1_time, 6.3)
         self.assertAlmostEqual(self.sim.intersection_info.ball2_time, 1.7)
 
+    def test19_corner_pocket_pool_shot(self):
+        self.sim = BallCollisionSimulator.create_simulator(
+            PhysicsParameters(1.0,  (0.495, 0.0),    (0.0, 0.0)),  # Ball 1: mass, position, velocity
+            PhysicsParameters(1.0, (-0.495, -10.0),  (0.0, 5.0)),  # Ball 2: mass, position, velocity
+            10.0                                 # Simulation time
+        )
+        self.sim.run()
+
+        self.assertAlmostEqual(self.sim.initial_distance, 10.049, places=3)
+        self.assertEqual(self.sim.ball1.radius + self.sim.ball2.radius, 1.0)
+        self.assertEqual(self.sim.relative_speed, 5.0)
+        self.assertLess(self.sim.dot_product, 0.0)
+        self.assertEqual(self.sim.ball1_state_t0.angle, 0.0)
+        self.assertEqual(self.sim.ball2_state_t0.angle, 90.0)
+        self.assertAlmostEqual((self.sim.ball1_state_t0.momentum - vp.vector(0.0, 0.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.ball2_state_t0.momentum - vp.vector(0.0, 5.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual((self.sim.total_momentum - vp.vector(0.0, 5.0, 0.0)).mag, 0.0)
+        self.assertAlmostEqual(self.sim.collision_info.time, 1.98)
+        self.assertAlmostEqual(self.sim.ball1.angle, 5.768, places=3)
+        self.assertAlmostEqual(self.sim.ball2.angle, 95.768, places=3)
+        self.assertAlmostEqual((self.sim.ball1.momentum - vp.vector(0.5, 0.0505, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.ball2.momentum - vp.vector(-0.5, 4.9495, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.position - vp.vector(0.495, 0.0, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.position - vp.vector(-0.495, -0.1, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.collision_info.ball1.velocity - vp.vector(0.5, 0.0505, 0.0)).mag, 0.0, places=3)
+        self.assertAlmostEqual((self.sim.collision_info.ball2.velocity - vp.vector(-0.5, 4.9495, 0.0)).mag, 0.0, places=3)
+        self.assertEqual(self.sim.intersection_info, None)
 
 def suite():
     my_suite = unittest.TestSuite()
@@ -531,6 +558,7 @@ def suite():
     my_suite.addTest(TestBallCollisionSimulator('test16_a_glancing_blow'))
     my_suite.addTest(TestBallCollisionSimulator('test17_another_glancing_blow'))
     my_suite.addTest(TestBallCollisionSimulator('test18_easy_intersection'))
+    my_suite.addTest(TestBallCollisionSimulator('test19_corner_pocket_pool_shot'))
     return my_suite
 
 if __name__ == '__main__':
