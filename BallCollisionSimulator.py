@@ -369,14 +369,47 @@ class BallCollisionSimulator:
         assert self.ball1
         assert self.ball2
 
+        def __check_for_neg_zero():
+            """If any of the x,y components have -0 in them, change them to 0"""
+            self.ball1.velocity.x = 0.0 if self.ball1.velocity.x == -0 else self.ball1.velocity.x
+            self.ball1.velocity.y = 0.0 if self.ball1.velocity.y == -0 else self.ball1.velocity.y
+            self.ball2.velocity.x = 0.0 if self.ball2.velocity.x == -0 else self.ball2.velocity.x
+            self.ball2.velocity.y = 0.0 if self.ball2.velocity.y == -0 else self.ball2.velocity.y
+
         m1: float = self.ball1.mass
         m2: float = self.ball2.mass
-        v1_initial: vp.vector = self.ball1.velocity
-        v2_initial: vp.vector = self.ball2.velocity
-        self.ball1.velocity = (v1_initial * (m1 - m2) +
-                               2 * m2 * v2_initial) / (m1 + m2)
-        self.ball2.velocity = (v2_initial * (m2 - m1) +
-                               2 * m1 * v1_initial) / (m1 + m2)
+        v1: vp.vector = self.ball1.velocity
+        v2: vp.vector = self.ball2.velocity
+        x1: vp.vector = self.ball1.position
+        x2: vp.vector = self.ball2.position
+
+        # Calculate the normal vector of collision
+        diff: vp.vector = x1 - x2
+        if diff.mag == 0:  # Balls are in the same position
+            normal: vp.vector = (v1 - v2).norm()
+        else:
+            normal: vp.vector = diff.norm()
+
+        # Calculate the tangential vector
+        tangent: vp.vector = vp.vector(-normal.y, normal.x, 0)
+
+        # Project velocities onto normal and tangential vectors
+        v1n: float = v1.dot(normal)
+        v1t: float = v1.dot(tangent)
+        v2n: float = v2.dot(normal)
+        v2t: float = v2.dot(tangent)
+
+        # Calculate new normal velocities
+        v1n_new: float = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2)
+        v2n_new: float = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2)
+
+        # Convert scalar normal and tangential velocities back to vectors
+        # and store into ball velocities
+        self.ball1.velocity = v1n_new * normal + v1t * tangent
+        self.ball2.velocity = v2n_new * normal + v2t * tangent
+
+        # Check if any of the velocities have any -0's to get rid of
+        __check_for_neg_zero()
 
     def __verify_conservation_of_momentum(self) -> None:
         """Verify that momentum is conserved after the collision."""
@@ -564,8 +597,8 @@ def main():
     if args.test:
         # Pre-defined test case
         #                               Mass, ( Position ) ( Velocity )
-        ball1_params = PhysicsParameters(1.0, (3.0,  4.0), (-3.0, -0.1))
-        ball2_params = PhysicsParameters(4.0, (-3.3, -4.0), (0.0,  4.0))
+        ball1_params = PhysicsParameters(1.0,  (0.4, 3.0),  (0.0, -2.0))  # Ball 1: mass, position, velocity
+        ball2_params = PhysicsParameters(2.0, (-0.5, -3.0),  (0.0, 1.0))  # Ball 2: mass, position, velocity
         simulation_time: float = 10.0  # secs
     else:
         # Get user input
