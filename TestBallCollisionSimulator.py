@@ -510,7 +510,7 @@ class TestBallCollisionSimulator(unittest.TestCase):
         self.assertAlmostEqual(self.sim.intersection_info.ball1_time, 6.3)
         self.assertAlmostEqual(self.sim.intersection_info.ball2_time, 1.7)
 
-    def test19_corner_pocket_pool_shot(self):
+    def test19_side_pocket_pool_shot(self):
         self.sim = BallCollisionSimulator.create_simulator(
             PhysicsParameters(1.0,  (0.495, 0.0),    (0.0, 0.0)),  # Ball 1: mass, position, velocity
             PhysicsParameters(1.0, (-0.495, -10.0),  (0.0, 5.0)),  # Ball 2: mass, position, velocity
@@ -558,7 +558,7 @@ def suite():
     my_suite.addTest(TestBallCollisionSimulator('test16_a_glancing_blow'))
     my_suite.addTest(TestBallCollisionSimulator('test17_another_glancing_blow'))
     my_suite.addTest(TestBallCollisionSimulator('test18_easy_intersection'))
-    my_suite.addTest(TestBallCollisionSimulator('test19_corner_pocket_pool_shot'))
+    my_suite.addTest(TestBallCollisionSimulator('test19_side_pocket_pool_shot'))
     return my_suite
 
 if __name__ == '__main__':
