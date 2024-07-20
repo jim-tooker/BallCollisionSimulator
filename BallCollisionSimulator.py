@@ -123,7 +123,7 @@ class Ball:
                                              opacity=0)
 
     @classmethod
-    def disable_gui(cls, no_gui):
+    def disable_gui(cls, no_gui: bool) -> None:
         """
         Enables or disables the GUI.
 
@@ -253,7 +253,7 @@ class BallCollisionSimulator:
             self._scene = None
 
     @classmethod
-    def disable_gui(cls, no_gui):
+    def disable_gui(cls, no_gui: bool) -> None:
         """
         Enables or disables the GUI.
 
@@ -416,8 +416,10 @@ class BallCollisionSimulator:
         assert self.ball1
         assert self.ball2
 
-        def _check_for_neg_zero():
+        def _check_for_neg_zero() -> None:
             """If any of the x,y components have -0 in them, change them to 0"""
+            assert self.ball1
+            assert self.ball2
             self.ball1.velocity.x = 0.0 if self.ball1.velocity.x == -0 else self.ball1.velocity.x
             self.ball1.velocity.y = 0.0 if self.ball1.velocity.y == -0 else self.ball1.velocity.y
             self.ball2.velocity.x = 0.0 if self.ball2.velocity.x == -0 else self.ball2.velocity.x
@@ -432,10 +434,11 @@ class BallCollisionSimulator:
 
         # Calculate the normal vector of collision
         diff: vp.vector = x1 - x2
+        normal: vp.vector = None
         if diff.mag == 0:  # Balls are in the same position
-            normal: vp.vector = (v1 - v2).norm()
+            normal = (v1 - v2).norm()
         else:
-            normal: vp.vector = diff.norm()
+            normal = diff.norm()
 
         # Calculate the tangential vector
         tangent: vp.vector = vp.vector(-normal.y, normal.x, 0)
@@ -568,7 +571,7 @@ class BallCollisionSimulator:
         self._verify_conservation_of_momentum()
 
 
-def main():
+def main() -> None:
     """
     Main entry point for the Ball Collision Simulator.
 
