@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
-<title>BallCollisionSimulator API documentation</title>
+<title>ball_collision_sim API documentation</title>
 <meta name="description" content="Ball Collision Simulator …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
@@ -22,7 +22,7 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>BallCollisionSimulator</code></h1>
+<h1 class="title">Module <code>ball_collision_sim</code></h1>
 </header>
 <section id="section-intro">
 <p>Ball Collision Simulator</p>
@@ -62,7 +62,7 @@ without the GUI.</p>
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="BallCollisionSimulator.main"><code class="name flex">
+<dt id="ball_collision_sim.main"><code class="name flex">
 <span>def <span class="ident">main</span></span>(<span>) ‑> None</span>
 </code></dt>
 <dd>
@@ -116,9 +116,9 @@ simulation runs without a graphical user interface (GUI).</p>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="BallCollisionSimulator.Ball"><code class="flex name class">
+<dt id="ball_collision_sim.Ball"><code class="flex name class">
 <span>class <span class="ident">Ball</span></span>
-<span>(</span><span>params: <a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a>)</span>
+<span>(</span><span>params: <a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class representing a ball in the simulation.</p>
@@ -150,7 +150,7 @@ simulation runs without a graphical user interface (GUI).</p>
 </dl>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>params</code></strong> :&ensp;<code><a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a></code></dt>
+<dt><strong><code>params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
 <dd>Parameters for the ball.</dd>
 </dl></div>
 <details class="source">
@@ -269,7 +269,7 @@ simulation runs without a graphical user interface (GUI).</p>
 </details>
 <h3>Static methods</h3>
 <dl>
-<dt id="BallCollisionSimulator.Ball.disable_gui"><code class="name flex">
+<dt id="ball_collision_sim.Ball.disable_gui"><code class="name flex">
 <span>def <span class="ident">disable_gui</span></span>(<span>no_gui: bool) ‑> None</span>
 </code></dt>
 <dd>
@@ -283,7 +283,7 @@ simulation runs without a graphical user interface (GUI).</p>
 </dl>
 <h3>Instance variables</h3>
 <dl>
-<dt id="BallCollisionSimulator.Ball.angle"><code class="name">prop <span class="ident">angle</span> : float</code></dt>
+<dt id="ball_collision_sim.Ball.angle"><code class="name">prop <span class="ident">angle</span> : float</code></dt>
 <dd>
 <div class="desc"><p>Calculate and return the angle of the ball's velocity vector.</p></div>
 <details class="source">
@@ -296,7 +296,7 @@ def angle(self) -&gt; float:
     return vp.degrees(vp.atan2(self.velocity.y, self.velocity.x))</code></pre>
 </details>
 </dd>
-<dt id="BallCollisionSimulator.Ball.kinetic_energy"><code class="name">prop <span class="ident">kinetic_energy</span> : float</code></dt>
+<dt id="ball_collision_sim.Ball.kinetic_energy"><code class="name">prop <span class="ident">kinetic_energy</span> : float</code></dt>
 <dd>
 <div class="desc"><p>Calculate and return the kinetic energy of the ball.</p></div>
 <details class="source">
@@ -309,7 +309,7 @@ def kinetic_energy(self) -&gt; float:
     return 0.5 * self.mass * (self.speed**2)</code></pre>
 </details>
 </dd>
-<dt id="BallCollisionSimulator.Ball.momentum"><code class="name">prop <span class="ident">momentum</span> : vp.vector</code></dt>
+<dt id="ball_collision_sim.Ball.momentum"><code class="name">prop <span class="ident">momentum</span> : vp.vector</code></dt>
 <dd>
 <div class="desc"><p>Calculate and return the momentum vector of the ball.</p></div>
 <details class="source">
@@ -322,7 +322,7 @@ def momentum(self) -&gt; vp.vector:
     return self.velocity * self.mass</code></pre>
 </details>
 </dd>
-<dt id="BallCollisionSimulator.Ball.momentum_mag"><code class="name">prop <span class="ident">momentum_mag</span> : float</code></dt>
+<dt id="ball_collision_sim.Ball.momentum_mag"><code class="name">prop <span class="ident">momentum_mag</span> : float</code></dt>
 <dd>
 <div class="desc"><p>Calculate and return the magnitude of the ball's momentum.</p></div>
 <details class="source">
@@ -335,7 +335,7 @@ def momentum_mag(self) -&gt; float:
     return vp.mag(self.momentum)</code></pre>
 </details>
 </dd>
-<dt id="BallCollisionSimulator.Ball.speed"><code class="name">prop <span class="ident">speed</span> : float</code></dt>
+<dt id="ball_collision_sim.Ball.speed"><code class="name">prop <span class="ident">speed</span> : float</code></dt>
 <dd>
 <div class="desc"><p>Calculate and return the speed of the ball.</p></div>
 <details class="source">
@@ -351,7 +351,7 @@ def speed(self) -&gt; float:
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="BallCollisionSimulator.Ball.set_visibility"><code class="name flex">
+<dt id="ball_collision_sim.Ball.set_visibility"><code class="name flex">
 <span>def <span class="ident">set_visibility</span></span>(<span>self, is_visible: bool) ‑> None</span>
 </code></dt>
 <dd>
@@ -362,7 +362,7 @@ def speed(self) -&gt; float:
 <dd>True=Ball is visible, False=Ball is hidden</dd>
 </dl></div>
 </dd>
-<dt id="BallCollisionSimulator.Ball.update_position"><code class="name flex">
+<dt id="ball_collision_sim.Ball.update_position"><code class="name flex">
 <span>def <span class="ident">update_position</span></span>(<span>self, dt: float) ‑> None</span>
 </code></dt>
 <dd>
@@ -375,29 +375,29 @@ def speed(self) -&gt; float:
 </dd>
 </dl>
 </dd>
-<dt id="BallCollisionSimulator.BallCollisionSimulator"><code class="flex name class">
+<dt id="ball_collision_sim.BallCollisionSimulator"><code class="flex name class">
 <span>class <span class="ident">BallCollisionSimulator</span></span>
-<span>(</span><span>ball1_params: <a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a>, ball2_params: <a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a>, simulation_time: float, collision_type: <a title="BallCollisionSimulator.CollisionType" href="#BallCollisionSimulator.CollisionType">CollisionType</a> = CollisionType.ELASTIC)</span>
+<span>(</span><span>ball1_params: <a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a>, ball2_params: <a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a>, simulation_time: float, collision_type: <a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a> = CollisionType.ELASTIC)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class to simulate the collision between two balls.</p>
 <h2 id="attributes">Attributes</h2>
 <dl>
-<dt><strong><code>ball1_params</code></strong> :&ensp;<code><a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a></code></dt>
+<dt><strong><code>ball1_params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
 <dd>Parameters for Ball 1.</dd>
-<dt><strong><code>ball2_params</code></strong> :&ensp;<code><a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a></code></dt>
+<dt><strong><code>ball2_params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
 <dd>Parameters for Ball 2.</dd>
 <dt><strong><code>simulation_time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Amount of time to run the simulation (s).</dd>
-<dt><strong><code>ball1</code></strong> :&ensp;<code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt><strong><code>ball1</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Ball 1 object.</dd>
-<dt><strong><code>ball2</code></strong> :&ensp;<code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt><strong><code>ball2</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Ball 2 object.</dd>
-<dt><strong><code>ball1_state_t0</code></strong> :&ensp;<code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt><strong><code>ball1_state_t0</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Ball 1 initial state.</dd>
-<dt><strong><code>ball2_state_t0</code></strong> :&ensp;<code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt><strong><code>ball2_state_t0</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Ball 2 initial state.</dd>
-<dt><strong><code>merged_ball</code></strong> :&ensp;<code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt><strong><code>merged_ball</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>For inelastic collisions, this is the merged ball after collision.</dd>
 <dt><strong><code>initial_distance</code></strong> :&ensp;<code>float</code></dt>
 <dd>Initial distance of the two balls (m).</dd>
@@ -413,20 +413,20 @@ def speed(self) -&gt; float:
 <dd>Dot product of the two balls.</dd>
 <dt><strong><code>relative_speed</code></strong> :&ensp;<code>float</code></dt>
 <dd>Relative speed of the two balls with respect to each other (m/s).</dd>
-<dt><strong><code>collision_info</code></strong> :&ensp;<code><a title="BallCollisionSimulator.CollisionInfo" href="#BallCollisionSimulator.CollisionInfo">CollisionInfo</a></code></dt>
+<dt><strong><code>collision_info</code></strong> :&ensp;<code><a title="ball_collision_sim.CollisionInfo" href="#ball_collision_sim.CollisionInfo">CollisionInfo</a></code></dt>
 <dd>Information about the collision.</dd>
-<dt><strong><code>intersection_info</code></strong> :&ensp;<code><a title="BallCollisionSimulator.IntersectionInfo" href="#BallCollisionSimulator.IntersectionInfo">IntersectionInfo</a></code></dt>
+<dt><strong><code>intersection_info</code></strong> :&ensp;<code><a title="ball_collision_sim.IntersectionInfo" href="#ball_collision_sim.IntersectionInfo">IntersectionInfo</a></code></dt>
 <dd>Information about the intersection.</dd>
 </dl>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>ball1_params</code></strong> :&ensp;<code><a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a></code></dt>
+<dt><strong><code>ball1_params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
 <dd>Parameters for the first ball.</dd>
-<dt><strong><code>ball2_params</code></strong> :&ensp;<code><a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a></code></dt>
+<dt><strong><code>ball2_params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
 <dd>Parameters for the second ball.</dd>
 <dt><strong><code>simulation_time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Total time to simulate.</dd>
-<dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="BallCollisionSimulator.CollisionType" href="#BallCollisionSimulator.CollisionType">CollisionType</a></code></dt>
+<dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a></code></dt>
 <dd>Type of collision to simulate (elastic or inelastic).</dd>
 </dl></div>
 <details class="source">
@@ -459,6 +459,13 @@ def speed(self) -&gt; float:
 
     # Flag to indicate whether the GUI should be disabled (True = no GUI)
     _no_gui = False
+
+    SIMULATION_TIME_AFTER_COLLISION: Final[int] = 3  # secs
+    &#34;&#34;&#34;
+    Defines how many seconds the simulation will run after collision.
+    Note, if this time exceeds the total simulation time, the simulation will stop at
+    the simulation time first
+    &#34;&#34;&#34;
 
     def __init__(self, ball1_params: BallParameters,
                  ball2_params: BallParameters,
@@ -579,22 +586,22 @@ def speed(self) -&gt; float:
 
     def _create_grid_and_axes(self) -&gt; None:
         &#34;&#34;&#34;Create a grid and axes for the simulation scene.&#34;&#34;&#34;
-        GRID_RANGE: int = 10
+        grid_range: int = 10
         step: int = 1
 
-        for x in vp.arange(-GRID_RANGE, GRID_RANGE + step, step):
-            vp.curve(pos=[vp.vector(x, -GRID_RANGE, 0),
-                          vp.vector(x, GRID_RANGE, 0)],
+        for x in vp.arange(-grid_range, grid_range + step, step):
+            vp.curve(pos=[vp.vector(x, -grid_range, 0),
+                          vp.vector(x, grid_range, 0)],
                      color=vp.color.gray(0.5) if x != 0 else vp.color.yellow)
-        for y in vp.arange(-GRID_RANGE, GRID_RANGE + step, step):
-            vp.curve(pos=[vp.vector(-GRID_RANGE, y, 0),
-                          vp.vector(GRID_RANGE, y, 0)],
+        for y in vp.arange(-grid_range, grid_range + step, step):
+            vp.curve(pos=[vp.vector(-grid_range, y, 0),
+                          vp.vector(grid_range, y, 0)],
                      color=vp.color.gray(0.5) if y != 0 else vp.color.yellow)
 
         # Create axis labels
-        vp.label(pos=vp.vector(GRID_RANGE + 0.5, 0, 0),
+        vp.label(pos=vp.vector(grid_range + 0.5, 0, 0),
                  text=&#39;X&#39;, height=16, box=False)
-        vp.label(pos=vp.vector(0, GRID_RANGE + 0.5, 0),
+        vp.label(pos=vp.vector(0, grid_range + 0.5, 0),
                  text=&#39;Y&#39;, height=16, box=False)
 
     @staticmethod
@@ -813,8 +820,6 @@ def speed(self) -&gt; float:
         dt: float = 0.01
         time_elapsed: float = 0.0
 
-        SIMULATION_TIME_AFTER_COLLISION: int = 3  # secs
-
         while True:
             vp.rate(100)
 
@@ -835,8 +840,8 @@ def speed(self) -&gt; float:
             # If we&#39;ve had a collision, check if we&#39;ve reached the &#34;run a bit after the collision&#34;
             # time. If we haven&#39;t had a collision, check if simulation duration has past
             if ((self.collision_info is not None) and
-                time_elapsed &gt; (self.collision_info.time + SIMULATION_TIME_AFTER_COLLISION)) or \
-                    (time_elapsed &gt; self.simulation_time):
+                time_elapsed &gt; (self.collision_info.time + self.SIMULATION_TIME_AFTER_COLLISION)) \
+                    or (time_elapsed &gt; self.simulation_time):
                 break
 
             if self.merged_ball:  # If we have a merged ball after collision
@@ -910,31 +915,40 @@ def speed(self) -&gt; float:
 
         print(&#39;###################################################&#39;)</code></pre>
 </details>
+<h3>Class variables</h3>
+<dl>
+<dt id="ball_collision_sim.BallCollisionSimulator.SIMULATION_TIME_AFTER_COLLISION"><code class="name">var <span class="ident">SIMULATION_TIME_AFTER_COLLISION</span> : Final[int]</code></dt>
+<dd>
+<div class="desc"><p>Defines how many seconds the simulation will run after collision.
+Note, if this time exceeds the total simulation time, the simulation will stop at
+the simulation time first</p></div>
+</dd>
+</dl>
 <h3>Static methods</h3>
 <dl>
-<dt id="BallCollisionSimulator.BallCollisionSimulator.create_simulator"><code class="name flex">
-<span>def <span class="ident">create_simulator</span></span>(<span>phys1_params: <a title="BallCollisionSimulator.PhysicsParameters" href="#BallCollisionSimulator.PhysicsParameters">PhysicsParameters</a>, phys2_params: <a title="BallCollisionSimulator.PhysicsParameters" href="#BallCollisionSimulator.PhysicsParameters">PhysicsParameters</a>, simulation_time: float, collision_type: <a title="BallCollisionSimulator.CollisionType" href="#BallCollisionSimulator.CollisionType">CollisionType</a> = CollisionType.ELASTIC) ‑> <a title="BallCollisionSimulator.BallCollisionSimulator" href="#BallCollisionSimulator.BallCollisionSimulator">BallCollisionSimulator</a></span>
+<dt id="ball_collision_sim.BallCollisionSimulator.create_simulator"><code class="name flex">
+<span>def <span class="ident">create_simulator</span></span>(<span>phys1_params: <a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a>, phys2_params: <a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a>, simulation_time: float, collision_type: <a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a> = CollisionType.ELASTIC) ‑> <a title="ball_collision_sim.BallCollisionSimulator" href="#ball_collision_sim.BallCollisionSimulator">BallCollisionSimulator</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Create a BallCollisionSimulator instance with given parameters.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>phys1_params</code></strong> :&ensp;<code><a title="BallCollisionSimulator.PhysicsParameters" href="#BallCollisionSimulator.PhysicsParameters">PhysicsParameters</a></code></dt>
+<dt><strong><code>phys1_params</code></strong> :&ensp;<code><a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a></code></dt>
 <dd>Physics parameters for the first ball.</dd>
-<dt><strong><code>phys2_params</code></strong> :&ensp;<code><a title="BallCollisionSimulator.PhysicsParameters" href="#BallCollisionSimulator.PhysicsParameters">PhysicsParameters</a></code></dt>
+<dt><strong><code>phys2_params</code></strong> :&ensp;<code><a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a></code></dt>
 <dd>Physics parameters for the second ball.</dd>
 <dt><strong><code>simulation_time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Total time to simulate.</dd>
-<dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="BallCollisionSimulator.CollisionType" href="#BallCollisionSimulator.CollisionType">CollisionType</a></code></dt>
+<dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a></code></dt>
 <dd>Type of collision to simulate (elastic or inelastic).</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code><a title="BallCollisionSimulator.BallCollisionSimulator" href="#BallCollisionSimulator.BallCollisionSimulator">BallCollisionSimulator</a></code></dt>
+<dt><code><a title="ball_collision_sim.BallCollisionSimulator" href="#ball_collision_sim.BallCollisionSimulator">BallCollisionSimulator</a></code></dt>
 <dd>An instance of the simulator.</dd>
 </dl></div>
 </dd>
-<dt id="BallCollisionSimulator.BallCollisionSimulator.disable_gui"><code class="name flex">
+<dt id="ball_collision_sim.BallCollisionSimulator.disable_gui"><code class="name flex">
 <span>def <span class="ident">disable_gui</span></span>(<span>no_gui: bool) ‑> None</span>
 </code></dt>
 <dd>
@@ -945,7 +959,7 @@ def speed(self) -&gt; float:
 <dd>Flag to indicate where GUI should be disabled (True = disable GUI).</dd>
 </dl></div>
 </dd>
-<dt id="BallCollisionSimulator.BallCollisionSimulator.quit_simulation"><code class="name flex">
+<dt id="ball_collision_sim.BallCollisionSimulator.quit_simulation"><code class="name flex">
 <span>def <span class="ident">quit_simulation</span></span>(<span>) ‑> None</span>
 </code></dt>
 <dd>
@@ -954,7 +968,7 @@ def speed(self) -&gt; float:
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="BallCollisionSimulator.BallCollisionSimulator.run"><code class="name flex">
+<dt id="ball_collision_sim.BallCollisionSimulator.run"><code class="name flex">
 <span>def <span class="ident">run</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
@@ -962,9 +976,9 @@ def speed(self) -&gt; float:
 </dd>
 </dl>
 </dd>
-<dt id="BallCollisionSimulator.BallParameters"><code class="flex name class">
+<dt id="ball_collision_sim.BallParameters"><code class="flex name class">
 <span>class <span class="ident">BallParameters</span></span>
-<span>(</span><span>physics: <a title="BallCollisionSimulator.PhysicsParameters" href="#BallCollisionSimulator.PhysicsParameters">PhysicsParameters</a>, color: vp.color = vp.color.red, name: str = '')</span>
+<span>(</span><span>physics: <a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a>, color: vp.color = vp.color.red, name: str = '')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class to store all parameters of a ball, including physics and visual properties.</p>
@@ -983,7 +997,7 @@ def speed(self) -&gt; float:
 </dl>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>physics</code></strong> :&ensp;<code><a title="BallCollisionSimulator.PhysicsParameters" href="#BallCollisionSimulator.PhysicsParameters">PhysicsParameters</a></code></dt>
+<dt><strong><code>physics</code></strong> :&ensp;<code><a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a></code></dt>
 <dd>Physical parameters of the ball.</dd>
 <dt><strong><code>color</code></strong> :&ensp;<code>vp.color</code>, optional</dt>
 <dd>Color of the ball. Defaults to red.</dd>
@@ -1020,9 +1034,9 @@ def speed(self) -&gt; float:
         self.name: str = name</code></pre>
 </details>
 </dd>
-<dt id="BallCollisionSimulator.CollisionInfo"><code class="flex name class">
+<dt id="ball_collision_sim.CollisionInfo"><code class="flex name class">
 <span>class <span class="ident">CollisionInfo</span></span>
-<span>(</span><span>time: float, ball1: <a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a>, ball2: <a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a>, merged_ball: Optional[<a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a>])</span>
+<span>(</span><span>time: float, ball1: <a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>, ball2: <a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>, merged_ball: Optional[<a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Data class to store information about a collision.</p>
@@ -1030,11 +1044,11 @@ def speed(self) -&gt; float:
 <dl>
 <dt><strong><code>time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Time of collision.</dd>
-<dt><strong><code>ball1</code></strong> :&ensp;<code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt><strong><code>ball1</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Ball 1 object (for elastic collision)</dd>
-<dt><strong><code>ball2</code></strong> :&ensp;<code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt><strong><code>ball2</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Ball 2 object (for elastic collision)</dd>
-<dt><strong><code>merged_ball</code></strong> :&ensp;<code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt><strong><code>merged_ball</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Merged ball (for inelastic collision)</dd>
 </dl></div>
 <details class="source">
@@ -1059,25 +1073,25 @@ class CollisionInfo:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="BallCollisionSimulator.CollisionInfo.ball1"><code class="name">var <span class="ident">ball1</span> : <a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt id="ball_collision_sim.CollisionInfo.ball1"><code class="name">var <span class="ident">ball1</span> : <a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="BallCollisionSimulator.CollisionInfo.ball2"><code class="name">var <span class="ident">ball2</span> : <a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></dt>
+<dt id="ball_collision_sim.CollisionInfo.ball2"><code class="name">var <span class="ident">ball2</span> : <a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="BallCollisionSimulator.CollisionInfo.merged_ball"><code class="name">var <span class="ident">merged_ball</span> : Optional[<a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a>]</code></dt>
+<dt id="ball_collision_sim.CollisionInfo.merged_ball"><code class="name">var <span class="ident">merged_ball</span> : Optional[<a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="BallCollisionSimulator.CollisionInfo.time"><code class="name">var <span class="ident">time</span> : float</code></dt>
+<dt id="ball_collision_sim.CollisionInfo.time"><code class="name">var <span class="ident">time</span> : float</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
-<dt id="BallCollisionSimulator.CollisionType"><code class="flex name class">
+<dt id="ball_collision_sim.CollisionType"><code class="flex name class">
 <span>class <span class="ident">CollisionType</span></span>
 <span>(</span><span>*args, **kwds)</span>
 </code></dt>
@@ -1100,17 +1114,17 @@ class CollisionInfo:
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="BallCollisionSimulator.CollisionType.ELASTIC"><code class="name">var <span class="ident">ELASTIC</span></code></dt>
+<dt id="ball_collision_sim.CollisionType.ELASTIC"><code class="name">var <span class="ident">ELASTIC</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="BallCollisionSimulator.CollisionType.INELASTIC"><code class="name">var <span class="ident">INELASTIC</span></code></dt>
+<dt id="ball_collision_sim.CollisionType.INELASTIC"><code class="name">var <span class="ident">INELASTIC</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
-<dt id="BallCollisionSimulator.IntersectionInfo"><code class="flex name class">
+<dt id="ball_collision_sim.IntersectionInfo"><code class="flex name class">
 <span>class <span class="ident">IntersectionInfo</span></span>
 <span>(</span><span>position: vp.vector, ball1_time: float, ball2_time: float)</span>
 </code></dt>
@@ -1145,21 +1159,21 @@ class IntersectionInfo:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="BallCollisionSimulator.IntersectionInfo.ball1_time"><code class="name">var <span class="ident">ball1_time</span> : float</code></dt>
+<dt id="ball_collision_sim.IntersectionInfo.ball1_time"><code class="name">var <span class="ident">ball1_time</span> : float</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="BallCollisionSimulator.IntersectionInfo.ball2_time"><code class="name">var <span class="ident">ball2_time</span> : float</code></dt>
+<dt id="ball_collision_sim.IntersectionInfo.ball2_time"><code class="name">var <span class="ident">ball2_time</span> : float</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="BallCollisionSimulator.IntersectionInfo.position"><code class="name">var <span class="ident">position</span> : vp.vector</code></dt>
+<dt id="ball_collision_sim.IntersectionInfo.position"><code class="name">var <span class="ident">position</span> : vp.vector</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
-<dt id="BallCollisionSimulator.PhysicsParameters"><code class="flex name class">
+<dt id="ball_collision_sim.PhysicsParameters"><code class="flex name class">
 <span>class <span class="ident">PhysicsParameters</span></span>
 <span>(</span><span>mass: float, position: Tuple[float, float], velocity: Tuple[float, float])</span>
 </code></dt>
@@ -1219,62 +1233,63 @@ class IntersectionInfo:
 <ul id="index">
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="BallCollisionSimulator.main" href="#BallCollisionSimulator.main">main</a></code></li>
+<li><code><a title="ball_collision_sim.main" href="#ball_collision_sim.main">main</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="BallCollisionSimulator.Ball" href="#BallCollisionSimulator.Ball">Ball</a></code></h4>
+<h4><code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></h4>
 <ul class="two-column">
-<li><code><a title="BallCollisionSimulator.Ball.angle" href="#BallCollisionSimulator.Ball.angle">angle</a></code></li>
-<li><code><a title="BallCollisionSimulator.Ball.disable_gui" href="#BallCollisionSimulator.Ball.disable_gui">disable_gui</a></code></li>
-<li><code><a title="BallCollisionSimulator.Ball.kinetic_energy" href="#BallCollisionSimulator.Ball.kinetic_energy">kinetic_energy</a></code></li>
-<li><code><a title="BallCollisionSimulator.Ball.momentum" href="#BallCollisionSimulator.Ball.momentum">momentum</a></code></li>
-<li><code><a title="BallCollisionSimulator.Ball.momentum_mag" href="#BallCollisionSimulator.Ball.momentum_mag">momentum_mag</a></code></li>
-<li><code><a title="BallCollisionSimulator.Ball.set_visibility" href="#BallCollisionSimulator.Ball.set_visibility">set_visibility</a></code></li>
-<li><code><a title="BallCollisionSimulator.Ball.speed" href="#BallCollisionSimulator.Ball.speed">speed</a></code></li>
-<li><code><a title="BallCollisionSimulator.Ball.update_position" href="#BallCollisionSimulator.Ball.update_position">update_position</a></code></li>
+<li><code><a title="ball_collision_sim.Ball.angle" href="#ball_collision_sim.Ball.angle">angle</a></code></li>
+<li><code><a title="ball_collision_sim.Ball.disable_gui" href="#ball_collision_sim.Ball.disable_gui">disable_gui</a></code></li>
+<li><code><a title="ball_collision_sim.Ball.kinetic_energy" href="#ball_collision_sim.Ball.kinetic_energy">kinetic_energy</a></code></li>
+<li><code><a title="ball_collision_sim.Ball.momentum" href="#ball_collision_sim.Ball.momentum">momentum</a></code></li>
+<li><code><a title="ball_collision_sim.Ball.momentum_mag" href="#ball_collision_sim.Ball.momentum_mag">momentum_mag</a></code></li>
+<li><code><a title="ball_collision_sim.Ball.set_visibility" href="#ball_collision_sim.Ball.set_visibility">set_visibility</a></code></li>
+<li><code><a title="ball_collision_sim.Ball.speed" href="#ball_collision_sim.Ball.speed">speed</a></code></li>
+<li><code><a title="ball_collision_sim.Ball.update_position" href="#ball_collision_sim.Ball.update_position">update_position</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="BallCollisionSimulator.BallCollisionSimulator" href="#BallCollisionSimulator.BallCollisionSimulator">BallCollisionSimulator</a></code></h4>
+<h4><code><a title="ball_collision_sim.BallCollisionSimulator" href="#ball_collision_sim.BallCollisionSimulator">BallCollisionSimulator</a></code></h4>
 <ul class="">
-<li><code><a title="BallCollisionSimulator.BallCollisionSimulator.create_simulator" href="#BallCollisionSimulator.BallCollisionSimulator.create_simulator">create_simulator</a></code></li>
-<li><code><a title="BallCollisionSimulator.BallCollisionSimulator.disable_gui" href="#BallCollisionSimulator.BallCollisionSimulator.disable_gui">disable_gui</a></code></li>
-<li><code><a title="BallCollisionSimulator.BallCollisionSimulator.quit_simulation" href="#BallCollisionSimulator.BallCollisionSimulator.quit_simulation">quit_simulation</a></code></li>
-<li><code><a title="BallCollisionSimulator.BallCollisionSimulator.run" href="#BallCollisionSimulator.BallCollisionSimulator.run">run</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.SIMULATION_TIME_AFTER_COLLISION" href="#ball_collision_sim.BallCollisionSimulator.SIMULATION_TIME_AFTER_COLLISION">SIMULATION_TIME_AFTER_COLLISION</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.create_simulator" href="#ball_collision_sim.BallCollisionSimulator.create_simulator">create_simulator</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.disable_gui" href="#ball_collision_sim.BallCollisionSimulator.disable_gui">disable_gui</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.quit_simulation" href="#ball_collision_sim.BallCollisionSimulator.quit_simulation">quit_simulation</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.run" href="#ball_collision_sim.BallCollisionSimulator.run">run</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="BallCollisionSimulator.BallParameters" href="#BallCollisionSimulator.BallParameters">BallParameters</a></code></h4>
+<h4><code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></h4>
 </li>
 <li>
-<h4><code><a title="BallCollisionSimulator.CollisionInfo" href="#BallCollisionSimulator.CollisionInfo">CollisionInfo</a></code></h4>
+<h4><code><a title="ball_collision_sim.CollisionInfo" href="#ball_collision_sim.CollisionInfo">CollisionInfo</a></code></h4>
 <ul class="">
-<li><code><a title="BallCollisionSimulator.CollisionInfo.ball1" href="#BallCollisionSimulator.CollisionInfo.ball1">ball1</a></code></li>
-<li><code><a title="BallCollisionSimulator.CollisionInfo.ball2" href="#BallCollisionSimulator.CollisionInfo.ball2">ball2</a></code></li>
-<li><code><a title="BallCollisionSimulator.CollisionInfo.merged_ball" href="#BallCollisionSimulator.CollisionInfo.merged_ball">merged_ball</a></code></li>
-<li><code><a title="BallCollisionSimulator.CollisionInfo.time" href="#BallCollisionSimulator.CollisionInfo.time">time</a></code></li>
+<li><code><a title="ball_collision_sim.CollisionInfo.ball1" href="#ball_collision_sim.CollisionInfo.ball1">ball1</a></code></li>
+<li><code><a title="ball_collision_sim.CollisionInfo.ball2" href="#ball_collision_sim.CollisionInfo.ball2">ball2</a></code></li>
+<li><code><a title="ball_collision_sim.CollisionInfo.merged_ball" href="#ball_collision_sim.CollisionInfo.merged_ball">merged_ball</a></code></li>
+<li><code><a title="ball_collision_sim.CollisionInfo.time" href="#ball_collision_sim.CollisionInfo.time">time</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="BallCollisionSimulator.CollisionType" href="#BallCollisionSimulator.CollisionType">CollisionType</a></code></h4>
+<h4><code><a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a></code></h4>
 <ul class="">
-<li><code><a title="BallCollisionSimulator.CollisionType.ELASTIC" href="#BallCollisionSimulator.CollisionType.ELASTIC">ELASTIC</a></code></li>
-<li><code><a title="BallCollisionSimulator.CollisionType.INELASTIC" href="#BallCollisionSimulator.CollisionType.INELASTIC">INELASTIC</a></code></li>
+<li><code><a title="ball_collision_sim.CollisionType.ELASTIC" href="#ball_collision_sim.CollisionType.ELASTIC">ELASTIC</a></code></li>
+<li><code><a title="ball_collision_sim.CollisionType.INELASTIC" href="#ball_collision_sim.CollisionType.INELASTIC">INELASTIC</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="BallCollisionSimulator.IntersectionInfo" href="#BallCollisionSimulator.IntersectionInfo">IntersectionInfo</a></code></h4>
+<h4><code><a title="ball_collision_sim.IntersectionInfo" href="#ball_collision_sim.IntersectionInfo">IntersectionInfo</a></code></h4>
 <ul class="">
-<li><code><a title="BallCollisionSimulator.IntersectionInfo.ball1_time" href="#BallCollisionSimulator.IntersectionInfo.ball1_time">ball1_time</a></code></li>
-<li><code><a title="BallCollisionSimulator.IntersectionInfo.ball2_time" href="#BallCollisionSimulator.IntersectionInfo.ball2_time">ball2_time</a></code></li>
-<li><code><a title="BallCollisionSimulator.IntersectionInfo.position" href="#BallCollisionSimulator.IntersectionInfo.position">position</a></code></li>
+<li><code><a title="ball_collision_sim.IntersectionInfo.ball1_time" href="#ball_collision_sim.IntersectionInfo.ball1_time">ball1_time</a></code></li>
+<li><code><a title="ball_collision_sim.IntersectionInfo.ball2_time" href="#ball_collision_sim.IntersectionInfo.ball2_time">ball2_time</a></code></li>
+<li><code><a title="ball_collision_sim.IntersectionInfo.position" href="#ball_collision_sim.IntersectionInfo.position">position</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="BallCollisionSimulator.PhysicsParameters" href="#BallCollisionSimulator.PhysicsParameters">PhysicsParameters</a></code></h4>
+<h4><code><a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a></code></h4>
 </li>
 </ul>
 </li>

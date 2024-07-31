@@ -3,7 +3,7 @@ import sys
 import argparse
 import math
 import vpython as vp
-from BallCollisionSimulator import PhysicsParameters, BallCollisionSimulator, CollisionType
+from ball_collision_sim import PhysicsParameters, BallCollisionSimulator, CollisionType
 
 DEGREES_TO_RADIANS = math.pi/180.0
 

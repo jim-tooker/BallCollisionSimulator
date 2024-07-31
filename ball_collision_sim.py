@@ -29,13 +29,13 @@ Usage:
     without the GUI.
 """
 from __future__ import annotations
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Final
 import argparse
 from dataclasses import dataclass
 from copy import copy
+from enum import Enum
 import vpython as vp
 import readchar
-from enum import Enum
 
 
 class CollisionType(Enum):
@@ -264,6 +264,13 @@ class BallCollisionSimulator:
     # Flag to indicate whether the GUI should be disabled (True = no GUI)
     _no_gui = False
 
+    SIMULATION_TIME_AFTER_COLLISION: Final[int] = 3  # secs
+    """
+    Defines how many seconds the simulation will run after collision.
+    Note, if this time exceeds the total simulation time, the simulation will stop at
+    the simulation time first
+    """
+
     def __init__(self, ball1_params: BallParameters,
                  ball2_params: BallParameters,
                  simulation_time: float,
@@ -383,22 +390,22 @@ class BallCollisionSimulator:
 
     def _create_grid_and_axes(self) -> None:
         """Create a grid and axes for the simulation scene."""
-        GRID_RANGE: int = 10
+        grid_range: int = 10
         step: int = 1
 
-        for x in vp.arange(-GRID_RANGE, GRID_RANGE + step, step):
-            vp.curve(pos=[vp.vector(x, -GRID_RANGE, 0),
-                          vp.vector(x, GRID_RANGE, 0)],
+        for x in vp.arange(-grid_range, grid_range + step, step):
+            vp.curve(pos=[vp.vector(x, -grid_range, 0),
+                          vp.vector(x, grid_range, 0)],
                      color=vp.color.gray(0.5) if x != 0 else vp.color.yellow)
-        for y in vp.arange(-GRID_RANGE, GRID_RANGE + step, step):
-            vp.curve(pos=[vp.vector(-GRID_RANGE, y, 0),
-                          vp.vector(GRID_RANGE, y, 0)],
+        for y in vp.arange(-grid_range, grid_range + step, step):
+            vp.curve(pos=[vp.vector(-grid_range, y, 0),
+                          vp.vector(grid_range, y, 0)],
                      color=vp.color.gray(0.5) if y != 0 else vp.color.yellow)
 
         # Create axis labels
-        vp.label(pos=vp.vector(GRID_RANGE + 0.5, 0, 0),
+        vp.label(pos=vp.vector(grid_range + 0.5, 0, 0),
                  text='X', height=16, box=False)
-        vp.label(pos=vp.vector(0, GRID_RANGE + 0.5, 0),
+        vp.label(pos=vp.vector(0, grid_range + 0.5, 0),
                  text='Y', height=16, box=False)
 
     @staticmethod
@@ -617,8 +624,6 @@ class BallCollisionSimulator:
         dt: float = 0.01
         time_elapsed: float = 0.0
 
-        SIMULATION_TIME_AFTER_COLLISION: int = 3  # secs
-
         while True:
             vp.rate(100)
 
@@ -639,8 +644,8 @@ class BallCollisionSimulator:
             # If we've had a collision, check if we've reached the "run a bit after the collision"
             # time. If we haven't had a collision, check if simulation duration has past
             if ((self.collision_info is not None) and
-                time_elapsed > (self.collision_info.time + SIMULATION_TIME_AFTER_COLLISION)) or \
-                    (time_elapsed > self.simulation_time):
+                time_elapsed > (self.collision_info.time + self.SIMULATION_TIME_AFTER_COLLISION)) \
+                    or (time_elapsed > self.simulation_time):
                 break
 
             if self.merged_ball:  # If we have a merged ball after collision
@@ -747,8 +752,8 @@ def main() -> None:
         Get user input for ball parameters, simulation time, and collision type.
 
         Returns:
-            Tuple[PhysicsParameters, PhysicsParameters, float, CollisionType]: Parameters for both balls,
-            simulation time, and collision type (elastic or inelastic).
+            Tuple[PhysicsParameters, PhysicsParameters, float, CollisionType]:
+            Parameters for both balls, simulation time, and collision type (elastic or inelastic).
         """
         def get_float(prompt: str) -> float:
             while True:

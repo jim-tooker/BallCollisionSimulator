@@ -29,4 +29,4 @@ jobs:
         pip install vpython readchar
     - name: Test
       run: |
-        python TestBallCollisionSimulator.py --no_gui
+        python test_ball_collision_sim.py --no_gui
