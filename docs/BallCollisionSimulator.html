@@ -252,7 +252,20 @@ simulation runs without a graphical user interface (GUI).</p>
 
         if Ball._no_gui is False:
             self._sphere.pos = self.position
-            self._label.pos = self.position</code></pre>
+            self._label.pos = self.position
+
+    def set_visibility(self, is_visible: bool) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the visibility of the Ball to visible or hidden
+        
+        Args:
+            is_visible (bool): True=Ball is visible, False=Ball is hidden
+        &#34;&#34;&#34;
+        if Ball._no_gui is False:
+            self._sphere.visible = is_visible
+            self._label.visible = is_visible
+            self._sphere.make_trail = is_visible
+            self._sphere.clear_trail()</code></pre>
 </details>
 <h3>Static methods</h3>
 <dl>
@@ -338,6 +351,17 @@ def speed(self) -&gt; float:
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="BallCollisionSimulator.Ball.set_visibility"><code class="name flex">
+<span>def <span class="ident">set_visibility</span></span>(<span>self, is_visible: bool) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets the visibility of the Ball to visible or hidden</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>is_visible</code></strong> :&ensp;<code>bool</code></dt>
+<dd>True=Ball is visible, False=Ball is hidden</dd>
+</dl></div>
+</dd>
 <dt id="BallCollisionSimulator.Ball.update_position"><code class="name flex">
 <span>def <span class="ident">update_position</span></span>(<span>self, dt: float) ‑> None</span>
 </code></dt>
@@ -379,8 +403,12 @@ def speed(self) -&gt; float:
 <dd>Initial distance of the two balls (m).</dd>
 <dt><strong><code>total_momentum</code></strong> :&ensp;<code>vp.vector</code></dt>
 <dd>Total momentum of both balls together (N⋅s).</dd>
-<dt><strong><code>total_ke</code></strong></dt>
-<dd>Total kinetic energy of both balls together (J).</dd>
+<dt><strong><code>init_total_ke</code></strong> :&ensp;<code>float</code></dt>
+<dd>Total kinetic energy of both balls together, before collision (J).</dd>
+<dt><strong><code>final_total_ke</code></strong> :&ensp;<code>float</code></dt>
+<dd>Total kinetic energy of both balls together, after collision (J).</dd>
+<dt><strong><code>ke_lost</code></strong> :&ensp;<code>float</code></dt>
+<dd>The amount of KE lost during collision (J)</dd>
 <dt><strong><code>dot_product</code></strong> :&ensp;<code>float</code></dt>
 <dd>Dot product of the two balls.</dd>
 <dt><strong><code>relative_speed</code></strong> :&ensp;<code>float</code></dt>
@@ -420,7 +448,9 @@ def speed(self) -&gt; float:
         merged_ball (Ball): For inelastic collisions, this is the merged ball after collision.
         initial_distance (float): Initial distance of the two balls (m).
         total_momentum (vp.vector): Total momentum of both balls together (N⋅s).
-        total_ke: Total kinetic energy of both balls together (J).
+        init_total_ke (float): Total kinetic energy of both balls together, before collision (J).
+        final_total_ke (float): Total kinetic energy of both balls together, after collision (J).
+        ke_lost (float): The amount of KE lost during collision (J)
         dot_product (float): Dot product of the two balls.
         relative_speed (float): Relative speed of the two balls with respect to each other (m/s).
         collision_info (CollisionInfo): Information about the collision.
@@ -454,7 +484,9 @@ def speed(self) -&gt; float:
         self.merged_ball: Optional[Ball] = None
         self.initial_distance: Optional[float] = None
         self.total_momentum: Optional[vp.vector] = None
-        self.total_ke: Optional[float] = None
+        self.init_total_ke: Optional[float] = None
+        self.final_total_ke: Optional[float] = None
+        self.ke_lost: Optional[float] = None
         self.dot_product: Optional[float] = None
         self.relative_speed: Optional[float] = None
         self.collision_info: Optional[CollisionInfo] = None
@@ -535,11 +567,10 @@ def speed(self) -&gt; float:
         self.total_momentum = self.ball1.momentum + self.ball2.momentum
 
         # Calculate initial kinetic energy
-        self.total_ke = self.ball1.kinetic_energy + self.ball2.kinetic_energy
+        self.init_total_ke = self.ball1.kinetic_energy + self.ball2.kinetic_energy
 
         # Calculate initial distance
-        self.initial_distance = vp.mag(
-            self.ball1.position - self.ball2.position)
+        self.initial_distance = vp.mag(self.ball1.position - self.ball2.position)
 
         # Calculate the relative speed of the balls to each other
         self.dot_product = vp.dot(self.ball1.velocity - self.ball2.velocity,
@@ -644,6 +675,9 @@ def speed(self) -&gt; float:
             self.ball2.velocity.x = 0.0 if self.ball2.velocity.x == -0 else self.ball2.velocity.x
             self.ball2.velocity.y = 0.0 if self.ball2.velocity.y == -0 else self.ball2.velocity.y
 
+        assert self.ball1
+        assert self.ball2
+
         m1: float = self.ball1.mass
         m2: float = self.ball2.mass
         v1: vp.vector = self.ball1.velocity
@@ -682,6 +716,9 @@ def speed(self) -&gt; float:
 
     def _inelastic_collision_physics(self) -&gt; None:
         &#34;&#34;&#34;Calculate and update the physics of the balls after inelastic collision.&#34;&#34;&#34;
+        assert self.ball1
+        assert self.ball2
+
         # Calculate new mass
         total_mass = self.ball1.mass + self.ball2.mass
 
@@ -691,6 +728,10 @@ def speed(self) -&gt; float:
         # New position (center of mass)
         new_position = ((self.ball1.position * self.ball1.mass) +
                         (self.ball2.position * self.ball2.mass)) / total_mass
+
+        # Hide original balls
+        self.ball1.set_visibility(is_visible=False)
+        self.ball2.set_visibility(is_visible=False)
 
         # New merged ball parameters
         merged_params = BallParameters(
@@ -704,18 +745,8 @@ def speed(self) -&gt; float:
         # Create merged ball
         self.merged_ball = Ball(merged_params)
 
-        # Make original balls &#34;disappear&#34; if GUI enabled
-        if not self._no_gui:
-            self.ball1._sphere.visible = False
-            self.ball2._sphere.visible = False
-            self.ball1._label.visible = False
-            self.ball2._label.visible = False
-
     def _process_post_collision_physics(self) -&gt; None:
         &#34;&#34;&#34;Calculate and update the physics of the balls after collision.&#34;&#34;&#34;
-        assert self.ball1
-        assert self.ball2
-
         if self.collision_type == CollisionType.ELASTIC:
             self._elastic_collision_physics()
         # Else, inelastic collision
@@ -751,7 +782,7 @@ def speed(self) -&gt; float:
         Verify that kinetic energy is conserved after the collision for elastic collisions,
         or calculate how much kinetic energy was lost after the collision for inelastic collisions.
         &#34;&#34;&#34;
-        assert self.total_ke is not None
+        assert self.init_total_ke is not None
 
         # if the balls haven&#39;t merged, then check their kinetic energy
         if not self.merged_ball:
@@ -759,15 +790,20 @@ def speed(self) -&gt; float:
             assert self.ball2
 
             # Calculate final total ke
-            final_total_ke: float = self.ball1.kinetic_energy + self.ball2.kinetic_energy
+            self.final_total_ke = self.ball1.kinetic_energy + self.ball2.kinetic_energy
+
+            # Calculate ke lost
+            self.ke_lost = self.init_total_ke - self.final_total_ke
 
             # Verify KE has been conserved
-            assert round(self.total_ke, ndigits=3) == round(final_total_ke, ndigits=3), \
-                f&#39;Initial total: {self.total_ke}, Final total: {final_total_ke}&#39;
+            assert round(self.ke_lost, ndigits=3) == 0.0, \
+                f&#39;Initial total: {self.init_total_ke}, Final total: {self.final_total_ke}&#39;
         # Else, check the loss of KE from the merged ball
         else:
-            print(f&#39;Kinetic Energy lost in collision: {
-                  self.total_ke - self.merged_ball.kinetic_energy:.2f} J&#39;)
+            self.final_total_ke = self.merged_ball.kinetic_energy
+            self.ke_lost = self.init_total_ke - self.final_total_ke
+            print(f&#39;Kinetic Energy lost in collision: {self.ke_lost:.2f} J&#39;)
+
 
     def _run_simulation(self) -&gt; None:
         &#34;&#34;&#34;Run the simulation loop.&#34;&#34;&#34;
@@ -777,7 +813,7 @@ def speed(self) -&gt; float:
         dt: float = 0.01
         time_elapsed: float = 0.0
 
-        SIMULATION_TIME_AFTER_COLLISION: int = 2  # secs
+        SIMULATION_TIME_AFTER_COLLISION: int = 3  # secs
 
         while True:
             vp.rate(100)
@@ -823,7 +859,7 @@ def speed(self) -&gt; float:
         assert self.ball2_state_t0
         assert self.dot_product is not None
         assert self.total_momentum
-        assert self.total_ke is not None
+        assert self.init_total_ke is not None
 
         print(&#39;\n***************************************************&#39;)
         print(&#39;Initial Conditions:&#39;)
@@ -837,7 +873,7 @@ def speed(self) -&gt; float:
         print(f&#39;Total Momentum: ({self.total_momentum.x:.2f}, {
             self.total_momentum.y:.2f}), or {vp.mag(self.total_momentum):.2f} N⋅s at {
             vp.degrees(vp.atan2(self.total_momentum.y, self.total_momentum.x)):.2f}°&#39;)
-        print(f&#39;Total Kinetic Energy: {(self.total_ke):.2f} J&#39;)
+        print(f&#39;Total Kinetic Energy: {(self.init_total_ke):.2f} J&#39;)
         print()
 
         # Run the simulation
@@ -1196,6 +1232,7 @@ class IntersectionInfo:
 <li><code><a title="BallCollisionSimulator.Ball.kinetic_energy" href="#BallCollisionSimulator.Ball.kinetic_energy">kinetic_energy</a></code></li>
 <li><code><a title="BallCollisionSimulator.Ball.momentum" href="#BallCollisionSimulator.Ball.momentum">momentum</a></code></li>
 <li><code><a title="BallCollisionSimulator.Ball.momentum_mag" href="#BallCollisionSimulator.Ball.momentum_mag">momentum_mag</a></code></li>
+<li><code><a title="BallCollisionSimulator.Ball.set_visibility" href="#BallCollisionSimulator.Ball.set_visibility">set_visibility</a></code></li>
 <li><code><a title="BallCollisionSimulator.Ball.speed" href="#BallCollisionSimulator.Ball.speed">speed</a></code></li>
 <li><code><a title="BallCollisionSimulator.Ball.update_position" href="#BallCollisionSimulator.Ball.update_position">update_position</a></code></li>
 </ul>

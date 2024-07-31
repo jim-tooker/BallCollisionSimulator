@@ -191,6 +191,19 @@ class Ball:
             self._sphere.pos = self.position
             self._label.pos = self.position
 
+    def set_visibility(self, is_visible: bool) -> None:
+        """
+        Sets the visibility of the Ball to visible or hidden
+        
+        Args:
+            is_visible (bool): True=Ball is visible, False=Ball is hidden
+        """
+        if Ball._no_gui is False:
+            self._sphere.visible = is_visible
+            self._label.visible = is_visible
+            self._sphere.make_trail = is_visible
+            self._sphere.clear_trail()
+
 
 @dataclass
 class CollisionInfo:
@@ -239,7 +252,9 @@ class BallCollisionSimulator:
         merged_ball (Ball): For inelastic collisions, this is the merged ball after collision.
         initial_distance (float): Initial distance of the two balls (m).
         total_momentum (vp.vector): Total momentum of both balls together (N⋅s).
-        total_ke: Total kinetic energy of both balls together (J).
+        init_total_ke (float): Total kinetic energy of both balls together, before collision (J).
+        final_total_ke (float): Total kinetic energy of both balls together, after collision (J).
+        ke_lost (float): The amount of KE lost during collision (J)
         dot_product (float): Dot product of the two balls.
         relative_speed (float): Relative speed of the two balls with respect to each other (m/s).
         collision_info (CollisionInfo): Information about the collision.
@@ -273,7 +288,9 @@ class BallCollisionSimulator:
         self.merged_ball: Optional[Ball] = None
         self.initial_distance: Optional[float] = None
         self.total_momentum: Optional[vp.vector] = None
-        self.total_ke: Optional[float] = None
+        self.init_total_ke: Optional[float] = None
+        self.final_total_ke: Optional[float] = None
+        self.ke_lost: Optional[float] = None
         self.dot_product: Optional[float] = None
         self.relative_speed: Optional[float] = None
         self.collision_info: Optional[CollisionInfo] = None
@@ -354,11 +371,10 @@ class BallCollisionSimulator:
         self.total_momentum = self.ball1.momentum + self.ball2.momentum
 
         # Calculate initial kinetic energy
-        self.total_ke = self.ball1.kinetic_energy + self.ball2.kinetic_energy
+        self.init_total_ke = self.ball1.kinetic_energy + self.ball2.kinetic_energy
 
         # Calculate initial distance
-        self.initial_distance = vp.mag(
-            self.ball1.position - self.ball2.position)
+        self.initial_distance = vp.mag(self.ball1.position - self.ball2.position)
 
         # Calculate the relative speed of the balls to each other
         self.dot_product = vp.dot(self.ball1.velocity - self.ball2.velocity,
@@ -463,6 +479,9 @@ class BallCollisionSimulator:
             self.ball2.velocity.x = 0.0 if self.ball2.velocity.x == -0 else self.ball2.velocity.x
             self.ball2.velocity.y = 0.0 if self.ball2.velocity.y == -0 else self.ball2.velocity.y
 
+        assert self.ball1
+        assert self.ball2
+
         m1: float = self.ball1.mass
         m2: float = self.ball2.mass
         v1: vp.vector = self.ball1.velocity
@@ -501,6 +520,9 @@ class BallCollisionSimulator:
 
     def _inelastic_collision_physics(self) -> None:
         """Calculate and update the physics of the balls after inelastic collision."""
+        assert self.ball1
+        assert self.ball2
+
         # Calculate new mass
         total_mass = self.ball1.mass + self.ball2.mass
 
@@ -510,6 +532,10 @@ class BallCollisionSimulator:
         # New position (center of mass)
         new_position = ((self.ball1.position * self.ball1.mass) +
                         (self.ball2.position * self.ball2.mass)) / total_mass
+
+        # Hide original balls
+        self.ball1.set_visibility(is_visible=False)
+        self.ball2.set_visibility(is_visible=False)
 
         # New merged ball parameters
         merged_params = BallParameters(
@@ -523,18 +549,8 @@ class BallCollisionSimulator:
         # Create merged ball
         self.merged_ball = Ball(merged_params)
 
-        # Make original balls "disappear" if GUI enabled
-        if not self._no_gui:
-            self.ball1._sphere.visible = False
-            self.ball2._sphere.visible = False
-            self.ball1._label.visible = False
-            self.ball2._label.visible = False
-
     def _process_post_collision_physics(self) -> None:
         """Calculate and update the physics of the balls after collision."""
-        assert self.ball1
-        assert self.ball2
-
         if self.collision_type == CollisionType.ELASTIC:
             self._elastic_collision_physics()
         # Else, inelastic collision
@@ -570,7 +586,7 @@ class BallCollisionSimulator:
         Verify that kinetic energy is conserved after the collision for elastic collisions,
         or calculate how much kinetic energy was lost after the collision for inelastic collisions.
         """
-        assert self.total_ke is not None
+        assert self.init_total_ke is not None
 
         # if the balls haven't merged, then check their kinetic energy
         if not self.merged_ball:
@@ -578,15 +594,20 @@ class BallCollisionSimulator:
             assert self.ball2
 
             # Calculate final total ke
-            final_total_ke: float = self.ball1.kinetic_energy + self.ball2.kinetic_energy
+            self.final_total_ke = self.ball1.kinetic_energy + self.ball2.kinetic_energy
+
+            # Calculate ke lost
+            self.ke_lost = self.init_total_ke - self.final_total_ke
 
             # Verify KE has been conserved
-            assert round(self.total_ke, ndigits=3) == round(final_total_ke, ndigits=3), \
-                f'Initial total: {self.total_ke}, Final total: {final_total_ke}'
+            assert round(self.ke_lost, ndigits=3) == 0.0, \
+                f'Initial total: {self.init_total_ke}, Final total: {self.final_total_ke}'
         # Else, check the loss of KE from the merged ball
         else:
-            print(f'Kinetic Energy lost in collision: {
-                  self.total_ke - self.merged_ball.kinetic_energy:.2f} J')
+            self.final_total_ke = self.merged_ball.kinetic_energy
+            self.ke_lost = self.init_total_ke - self.final_total_ke
+            print(f'Kinetic Energy lost in collision: {self.ke_lost:.2f} J')
+
 
     def _run_simulation(self) -> None:
         """Run the simulation loop."""
@@ -596,7 +617,7 @@ class BallCollisionSimulator:
         dt: float = 0.01
         time_elapsed: float = 0.0
 
-        SIMULATION_TIME_AFTER_COLLISION: int = 2  # secs
+        SIMULATION_TIME_AFTER_COLLISION: int = 3  # secs
 
         while True:
             vp.rate(100)
@@ -642,7 +663,7 @@ class BallCollisionSimulator:
         assert self.ball2_state_t0
         assert self.dot_product is not None
         assert self.total_momentum
-        assert self.total_ke is not None
+        assert self.init_total_ke is not None
 
         print('\n***************************************************')
         print('Initial Conditions:')
@@ -656,7 +677,7 @@ class BallCollisionSimulator:
         print(f'Total Momentum: ({self.total_momentum.x:.2f}, {
             self.total_momentum.y:.2f}), or {vp.mag(self.total_momentum):.2f} N⋅s at {
             vp.degrees(vp.atan2(self.total_momentum.y, self.total_momentum.x)):.2f}°')
-        print(f'Total Kinetic Energy: {(self.total_ke):.2f} J')
+        print(f'Total Kinetic Energy: {(self.init_total_ke):.2f} J')
         print()
 
         # Run the simulation
