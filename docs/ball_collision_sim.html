@@ -32,15 +32,20 @@ the simulation, and visualize the collision in a 2D space. The module also suppo
 the simulation without a graphical user interface (GUI).</p>
 <h2 id="enums">Enums</h2>
 <ul>
-<li>CollisionType: Indicates what type of collision to simulate, elastic or inelastic</li>
+<li>CollisionType: Indicates what type of collision to simulate, elastic or inelastic.</li>
+<li>Balls: Used to index the correct ball from the list of active balls</li>
+<li>BallTrajectories: Indicates if the balls are converging, diverging, or at a constant
+distance.</li>
 </ul>
 <h2 id="classes">Classes</h2>
 <ul>
-<li>PhysicsParameters: Stores the physical parameters of a ball.</li>
-<li>BallParameters: Combines physical and visual properties of a ball.</li>
+<li>PhysicsParameters: Data class to store the physical parameters of a ball.</li>
+<li>BallParameters: Data class for storing the physical and visual properties of a ball.</li>
+<li>SimParameters: Data class for storing the parameters for the BallCollisionSimulator</li>
 <li>Ball: Represents a ball in the simulation, managing its state and visualization.</li>
 <li>CollisionInfo: Data class for storing collision information.</li>
 <li>IntersectionInfo: Data class for storing intersection information of ball paths.</li>
+<li>SimulatorState: Data class for storing the state of the simulator</li>
 <li>BallCollisionSimulator: Manages the entire simulation process, including initialization,
 running the simulation, and handling collisions.</li>
 </ul>
@@ -185,9 +190,9 @@ simulation runs without a graphical user interface (GUI).</p>
         Args:
             params (BallParameters): Parameters for the ball.
         &#34;&#34;&#34;
-        self.mass: float = params.mass
-        self.position: vp.vector = params.position
-        self.velocity: vp.vector = params.velocity
+        self.mass: float = params.physics_params.mass
+        self.position: vp.vector = params.physics_params.position
+        self.velocity: vp.vector = params.physics_params.velocity
 
         # Radius proportional to the mass (0.5m for 1 kg)
         self.radius: float = 0.5 * (self.mass ** (1/3))
@@ -257,7 +262,7 @@ simulation runs without a graphical user interface (GUI).</p>
     def set_visibility(self, is_visible: bool) -&gt; None:
         &#34;&#34;&#34;
         Sets the visibility of the Ball to visible or hidden
-        
+
         Args:
             is_visible (bool): True=Ball is visible, False=Ball is hidden
         &#34;&#34;&#34;
@@ -383,40 +388,20 @@ def speed(self) -&gt; float:
 <div class="desc"><p>Class to simulate the collision between two balls.</p>
 <h2 id="attributes">Attributes</h2>
 <dl>
-<dt><strong><code>ball1_params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
-<dd>Parameters for Ball 1.</dd>
-<dt><strong><code>ball2_params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
-<dd>Parameters for Ball 2.</dd>
-<dt><strong><code>simulation_time</code></strong> :&ensp;<code>float</code></dt>
-<dd>Amount of time to run the simulation (s).</dd>
-<dt><strong><code>ball1</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
-<dd>Ball 1 object.</dd>
-<dt><strong><code>ball2</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
-<dd>Ball 2 object.</dd>
-<dt><strong><code>ball1_state_t0</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
-<dd>Ball 1 initial state.</dd>
-<dt><strong><code>ball2_state_t0</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
-<dd>Ball 2 initial state.</dd>
-<dt><strong><code>merged_ball</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
-<dd>For inelastic collisions, this is the merged ball after collision.</dd>
-<dt><strong><code>initial_distance</code></strong> :&ensp;<code>float</code></dt>
-<dd>Initial distance of the two balls (m).</dd>
-<dt><strong><code>total_momentum</code></strong> :&ensp;<code>vp.vector</code></dt>
-<dd>Total momentum of both balls together (N⋅s).</dd>
-<dt><strong><code>init_total_ke</code></strong> :&ensp;<code>float</code></dt>
-<dd>Total kinetic energy of both balls together, before collision (J).</dd>
-<dt><strong><code>final_total_ke</code></strong> :&ensp;<code>float</code></dt>
-<dd>Total kinetic energy of both balls together, after collision (J).</dd>
-<dt><strong><code>ke_lost</code></strong> :&ensp;<code>float</code></dt>
-<dd>The amount of KE lost during collision (J)</dd>
-<dt><strong><code>dot_product</code></strong> :&ensp;<code>float</code></dt>
-<dd>Dot product of the two balls.</dd>
-<dt><strong><code>relative_speed</code></strong> :&ensp;<code>float</code></dt>
-<dd>Relative speed of the two balls with respect to each other (m/s).</dd>
+<dt><strong><code>sim_params</code></strong> :&ensp;<code><a title="ball_collision_sim.SimParameters" href="#ball_collision_sim.SimParameters">SimParameters</a></code></dt>
+<dd>Parameters given to the BallCollisionSimulator.</dd>
 <dt><strong><code>collision_info</code></strong> :&ensp;<code><a title="ball_collision_sim.CollisionInfo" href="#ball_collision_sim.CollisionInfo">CollisionInfo</a></code></dt>
 <dd>Information about the collision.</dd>
-<dt><strong><code>intersection_info</code></strong> :&ensp;<code><a title="ball_collision_sim.IntersectionInfo" href="#ball_collision_sim.IntersectionInfo">IntersectionInfo</a></code></dt>
+<dt><strong><code>intersect_info</code></strong> :&ensp;<code><a title="ball_collision_sim.IntersectionInfo" href="#ball_collision_sim.IntersectionInfo">IntersectionInfo</a></code></dt>
 <dd>Information about the intersection.</dd>
+<dt><strong><code>balls</code></strong> :&ensp;<code>List[<a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>]</code></dt>
+<dd>List of Ball objects.<br>
+- Index 0 = Ball 1.<br>
+- Index 1 = Ball 2.<br>
+- Index 2 = Merged Ball (Optional).
+</dd>
+<dt><strong><code>initial</code></strong> :&ensp;<code><a title="ball_collision_sim.SimulatorState" href="#ball_collision_sim.SimulatorState">SimulatorState</a></code></dt>
+<dd>Initial state of simulator before simulation is run.</dd>
 </dl>
 <h2 id="args">Args</h2>
 <dl>
@@ -438,36 +423,34 @@ def speed(self) -&gt; float:
     Class to simulate the collision between two balls.
 
     Attributes:
-        ball1_params (BallParameters): Parameters for Ball 1.
-        ball2_params (BallParameters): Parameters for Ball 2.
-        simulation_time (float): Amount of time to run the simulation (s).
-        ball1 (Ball): Ball 1 object.
-        ball2 (Ball): Ball 2 object.
-        ball1_state_t0 (Ball): Ball 1 initial state.
-        ball2_state_t0 (Ball): Ball 2 initial state.
-        merged_ball (Ball): For inelastic collisions, this is the merged ball after collision.
-        initial_distance (float): Initial distance of the two balls (m).
-        total_momentum (vp.vector): Total momentum of both balls together (N⋅s).
-        init_total_ke (float): Total kinetic energy of both balls together, before collision (J).
-        final_total_ke (float): Total kinetic energy of both balls together, after collision (J).
-        ke_lost (float): The amount of KE lost during collision (J)
-        dot_product (float): Dot product of the two balls.
-        relative_speed (float): Relative speed of the two balls with respect to each other (m/s).
+        sim_params (SimParameters): Parameters given to the BallCollisionSimulator.
         collision_info (CollisionInfo): Information about the collision.
-        intersection_info (IntersectionInfo): Information about the intersection.
+        intersect_info (IntersectionInfo): Information about the intersection.
+        balls (List[Ball]): List of Ball objects.  
+                            - Index 0 = Ball 1.  
+                            - Index 1 = Ball 2.  
+                            - Index 2 = Merged Ball (Optional).  
+        initial (SimulatorState): Initial state of simulator before simulation is run.
     &#34;&#34;&#34;
 
     # Flag to indicate whether the GUI should be disabled (True = no GUI)
     _no_gui = False
 
-    SIMULATION_TIME_AFTER_COLLISION: Final[int] = 3  # secs
+    SIMULATION_TIME_AFTER_COLLISION: Final[int] = 3
     &#34;&#34;&#34;
     Defines how many seconds the simulation will run after collision.
     Note, if this time exceeds the total simulation time, the simulation will stop at
-    the simulation time first
+    the simulation time first.
     &#34;&#34;&#34;
 
-    def __init__(self, ball1_params: BallParameters,
+    LOOP_EXECUTION_RATE: Final[int] = 100
+    &#34;&#34;&#34;Defines how many times a second the simulation loop will execute.&#34;&#34;&#34;
+
+    DT: Final[float] = 0.01
+    &#34;&#34;&#34;Defines what the time delta between each simulation loop iteration is.&#34;&#34;&#34;
+
+    def __init__(self,
+                 ball1_params: BallParameters,
                  ball2_params: BallParameters,
                  simulation_time: float,
                  collision_type: CollisionType = CollisionType.ELASTIC):
@@ -478,26 +461,38 @@ def speed(self) -&gt; float:
             simulation_time (float): Total time to simulate.
             collision_type (CollisionType): Type of collision to simulate (elastic or inelastic).
         &#34;&#34;&#34;
-        self.ball1_params: BallParameters = ball1_params
-        self.ball2_params: BallParameters = ball2_params
-        self.simulation_time: float = simulation_time
-        self.collision_type: CollisionType = collision_type
+        self.sim_params: SimParameters = SimParameters(ball1_params,
+                                                       ball2_params,
+                                                       simulation_time,
+                                                       collision_type)
 
-        self._scene: Optional[vp.canvas] = None
-        self.ball1: Optional[Ball] = None
-        self.ball2: Optional[Ball] = None
-        self.ball1_state_t0: Optional[Ball] = None
-        self.ball2_state_t0: Optional[Ball] = None
-        self.merged_ball: Optional[Ball] = None
-        self.initial_distance: Optional[float] = None
-        self.total_momentum: Optional[vp.vector] = None
-        self.init_total_ke: Optional[float] = None
-        self.final_total_ke: Optional[float] = None
-        self.ke_lost: Optional[float] = None
-        self.dot_product: Optional[float] = None
-        self.relative_speed: Optional[float] = None
         self.collision_info: Optional[CollisionInfo] = None
-        self.intersection_info: Optional[IntersectionInfo] = None
+        self.intersect_info: Optional[IntersectionInfo] = None
+
+        # Create scene and grid if GUI enabled
+        self._scene: Optional[vp.canvas] = None
+        if BallCollisionSimulator._no_gui is False:
+            self._scene = vp.canvas(
+                title=f&#39;{self.sim_params.collision_type.name} Collision Simulation&#39;,
+                width=800, height=800,
+                center=vp.vector(0, 0, 0),
+                background=vp.color.black)
+
+            # Set up grid
+            self._create_grid_and_axes()
+
+        # Create ball objects
+        self.balls: List[Ball] = []
+        self.balls.append(Ball(self.sim_params.ball1_params))
+        self.balls.append(Ball(self.sim_params.ball2_params))
+
+        # Store Simulator State for later
+        self.initial: SimulatorState = SimulatorState(deepcopy(self.balls),
+                                                      self.momentum,
+                                                      self.kinetic_energy,
+                                                      self.relative_speed,
+                                                      self.distance,
+                                                      self.trajectories)
 
     def __del__(self):
         &#34;&#34;&#34;
@@ -506,6 +501,87 @@ def speed(self) -&gt; float:
         if self._scene:
             self._scene.delete()
             self._scene = None
+
+    @property
+    def relative_speed(self) -&gt; float:
+        &#34;&#34;&#34;Relative speed of the two balls with respect to each other (m/s).&#34;&#34;&#34;
+        if self.merged_ball:
+            return 0.0
+        else:
+            return vp.mag(self.ball1.velocity - self.ball2.velocity)
+
+    @property
+    def distance(self) -&gt; float:
+        &#34;&#34;&#34;Distance between the two balls (m).&#34;&#34;&#34;
+        if self.merged_ball:
+            return 0.0
+        else:
+            return vp.mag(self.ball1.position - self.ball2.position)
+
+    @property
+    def momentum(self) -&gt; vp.vector:
+        &#34;&#34;&#34;Momentum of both balls (N⋅s).&#34;&#34;&#34;
+        if self.merged_ball:
+            return self.merged_ball.momentum
+        else:
+            return self.ball1.momentum + self.ball2.momentum
+
+    @property
+    def kinetic_energy(self) -&gt; float:
+        &#34;&#34;&#34;Kinetic energy of both balls together, before collision (J).&#34;&#34;&#34;
+        if self.merged_ball:
+            return self.merged_ball.kinetic_energy
+        else:
+            return self.ball1.kinetic_energy + self.ball2.kinetic_energy
+
+    @property
+    def trajectories(self) -&gt; BallTrajectories:
+        &#34;&#34;&#34;What the balls&#39; current trajectories are (constant, diverging, or converging)&#34;&#34;&#34;
+        if self.merged_ball:
+            return BallTrajectories.MERGED
+        else:
+            current_distance = vp.mag(self.ball1.position - self.ball2.position)
+
+            # Project positions a tiny bit into the future
+            future_pos1 = self.ball1.position + (self.ball1.velocity * self.DT)
+            future_pos2 = self.ball2.position + (self.ball2.velocity * self.DT)
+            future_distance = vp.mag(future_pos1 - future_pos2)
+
+            # Compare future distance to current distance
+            distance_change = round(future_distance - current_distance, ndigits=6)
+
+            if distance_change &gt; 0.0:
+                return BallTrajectories.DIVERGING
+            if distance_change &lt; 0.0:
+                return BallTrajectories.CONVERGING
+
+            return BallTrajectories.CONSTANT
+
+    @property
+    def ke_lost(self) -&gt; float:
+        &#34;&#34;&#34;The amount of KE lost since start of simulation (J).&#34;&#34;&#34;
+        if self.merged_ball:
+            return self.initial.kinetic_energy - self.merged_ball.kinetic_energy
+        else:
+            return self.initial.kinetic_energy - self.kinetic_energy
+
+    @property
+    def ball1(self) -&gt; Ball:
+        &#34;&#34;&#34;Alias for Ball 1 (self.balls[Balls.BALL1])&#34;&#34;&#34;
+        return self.balls[Balls.BALL1]
+
+    @property
+    def ball2(self) -&gt; Ball:
+        &#34;&#34;&#34;Alias for Ball 2 (self.balls[Balls.BALL2])&#34;&#34;&#34;
+        return self.balls[Balls.BALL2]
+
+    @property
+    def merged_ball(self) -&gt; Optional[Ball]:
+        &#34;&#34;&#34;Alias for Merged Ball (self.balls[Balls.MERGED])&#34;&#34;&#34;
+        if len(self.balls) &gt; Balls.MERGED:
+            return self.balls[Balls.MERGED]
+
+        return None
 
     @classmethod
     def disable_gui(cls, no_gui: bool) -&gt; None:
@@ -524,7 +600,7 @@ def speed(self) -&gt; float:
                          phys2_params: PhysicsParameters,
                          simulation_time: float,
                          collision_type: CollisionType = CollisionType.ELASTIC) \
-                         -&gt; BallCollisionSimulator:
+            -&gt; BallCollisionSimulator:
         &#34;&#34;&#34;
         Create a BallCollisionSimulator instance with given parameters.
 
@@ -544,45 +620,12 @@ def speed(self) -&gt; float:
 
     @staticmethod
     def quit_simulation() -&gt; None:
-        &#34;&#34;&#34;Stop the VPython server.&#34;&#34;&#34;
+        &#34;&#34;&#34;Stops the VPython server.&#34;&#34;&#34;
         if BallCollisionSimulator._no_gui is False:
             # We don&#39;t import vp_services until needed, because importing it will start
             # the server, if not started already.
             import vpython.no_notebook as vp_services
             vp_services.stop_server()
-
-    def _init_simulation(self) -&gt; None:
-        &#34;&#34;&#34;Initialize the simulation by setting up the scene and balls.&#34;&#34;&#34;
-        if BallCollisionSimulator._no_gui is False:
-            self._scene = vp.canvas(title=f&#39;{self.collision_type.name} Collision Simulation&#39;,
-                                    width=800, height=800,
-                                    center=vp.vector(0, 0, 0),
-                                    background=vp.color.black)
-
-            # Set up grid
-            self._create_grid_and_axes()
-
-        # Create ball objects
-        self.ball1 = Ball(self.ball1_params)
-        self.ball2 = Ball(self.ball2_params)
-
-        # Store intial state for later
-        self.ball1_state_t0 = copy(self.ball1)
-        self.ball2_state_t0 = copy(self.ball2)
-
-        # Calculate initial momentum
-        self.total_momentum = self.ball1.momentum + self.ball2.momentum
-
-        # Calculate initial kinetic energy
-        self.init_total_ke = self.ball1.kinetic_energy + self.ball2.kinetic_energy
-
-        # Calculate initial distance
-        self.initial_distance = vp.mag(self.ball1.position - self.ball2.position)
-
-        # Calculate the relative speed of the balls to each other
-        self.dot_product = vp.dot(self.ball1.velocity - self.ball2.velocity,
-                                  self.ball1.position - self.ball2.position)
-        self.relative_speed = (self.ball1.velocity - self.ball2.velocity).mag
 
     def _create_grid_and_axes(self) -&gt; None:
         &#34;&#34;&#34;Create a grid and axes for the simulation scene.&#34;&#34;&#34;
@@ -590,19 +633,15 @@ def speed(self) -&gt; float:
         step: int = 1
 
         for x in vp.arange(-grid_range, grid_range + step, step):
-            vp.curve(pos=[vp.vector(x, -grid_range, 0),
-                          vp.vector(x, grid_range, 0)],
+            vp.curve(pos=[vp.vector(x, -grid_range, 0), vp.vector(x, grid_range, 0)],
                      color=vp.color.gray(0.5) if x != 0 else vp.color.yellow)
         for y in vp.arange(-grid_range, grid_range + step, step):
-            vp.curve(pos=[vp.vector(-grid_range, y, 0),
-                          vp.vector(grid_range, y, 0)],
+            vp.curve(pos=[vp.vector(-grid_range, y, 0), vp.vector(grid_range, y, 0)],
                      color=vp.color.gray(0.5) if y != 0 else vp.color.yellow)
 
         # Create axis labels
-        vp.label(pos=vp.vector(grid_range + 0.5, 0, 0),
-                 text=&#39;X&#39;, height=16, box=False)
-        vp.label(pos=vp.vector(0, grid_range + 0.5, 0),
-                 text=&#39;Y&#39;, height=16, box=False)
+        vp.label(pos=vp.vector(grid_range + 0.5, 0, 0), text=&#39;X&#39;, height=16, box=False)
+        vp.label(pos=vp.vector(0, grid_range + 0.5, 0), text=&#39;Y&#39;, height=16, box=False)
 
     @staticmethod
     def _print_ball_state(balls: List[Ball]) -&gt; None:
@@ -617,8 +656,7 @@ def speed(self) -&gt; float:
             print(f&#39;Ball {ball.name}:&#39;)
             print(f&#39;  Mass: {ball.mass} kg&#39;)
             print(f&#39;  Radius: {ball.radius:.2f} m&#39;)
-            print(f&#39;  Position: ({ball.position.x:.2f}, {
-                  ball.position.y:.2f})&#39;)
+            print(f&#39;  Position: ({ball.position.x:.2f}, {ball.position.y:.2f})&#39;)
             print(f&#39;  Velocity: ({ball.velocity.x:.2f}, {ball.velocity.y:.2f}), or {
                 ball.speed:.2f} m/s at {ball.angle:.2f}°&#39;)
             print(f&#39;  Momentum: ({ball.momentum.x:.2f}, {ball.momentum.y:.2f}), or {
@@ -628,32 +666,26 @@ def speed(self) -&gt; float:
 
     def _calculate_intersection(self) -&gt; None:
         &#34;&#34;&#34;Calculate the intersection point of the paths of the two balls.&#34;&#34;&#34;
-        assert self.ball1_state_t0
-        assert self.ball2_state_t0
-
         # Extract initial positions and velocities
-        x1, y1 = self.ball1_state_t0.position.x, self.ball1_state_t0.position.y
-        x2, y2 = self.ball2_state_t0.position.x, self.ball2_state_t0.position.y
-        vx1, vy1 = self.ball1_state_t0.velocity.x, self.ball1_state_t0.velocity.y
-        vx2, vy2 = self.ball2_state_t0.velocity.x, self.ball2_state_t0.velocity.y
+        x1, y1 = self.initial.ball1.position.x, self.initial.ball1.position.y
+        x2, y2 = self.initial.ball2.position.x, self.initial.ball2.position.y
+        vx1, vy1 = self.initial.ball1.velocity.x, self.initial.ball1.velocity.y
+        vx2, vy2 = self.initial.ball2.velocity.x, self.initial.ball2.velocity.y
 
         # Calculate end points of the line segments
-        x1_end = x1 + vx1 * self.simulation_time
-        y1_end = y1 + vy1 * self.simulation_time
-        x2_end = x2 + vx2 * self.simulation_time
-        y2_end = y2 + vy2 * self.simulation_time
+        x1_end = x1 + vx1 * self.sim_params.simulation_time
+        y1_end = y1 + vy1 * self.sim_params.simulation_time
+        x2_end = x2 + vx2 * self.sim_params.simulation_time
+        y2_end = y2 + vy2 * self.sim_params.simulation_time
 
         # Calculate the intersection of these line segments
-        denominator = (x1 - x1_end) * (y2 - y2_end) - \
-            (y1 - y1_end) * (x2 - x2_end)
+        denominator = (x1 - x1_end) * (y2 - y2_end) - (y1 - y1_end) * (x2 - x2_end)
 
         if denominator == 0:
             return None  # Lines are parallel
 
-        t = ((x1 - x2) * (y2 - y2_end) - (y1 - y2)
-             * (x2 - x2_end)) / denominator
-        u = -((x1 - x1_end) * (y1 - y2) -
-              (y1 - y1_end) * (x1 - x2)) / denominator
+        t = ((x1 - x2) * (y2 - y2_end) - (y1 - y2) * (x2 - x2_end)) / denominator
+        u = -((x1 - x1_end) * (y1 - y2) - (y1 - y1_end) * (x1 - x2)) / denominator
 
         # Correct -0.0 to 0.0
         if t == -0.0:
@@ -667,23 +699,18 @@ def speed(self) -&gt; float:
             iy = y1 + t * (y1_end - y1)
 
             # Store intersection info
-            self.intersection_info = IntersectionInfo(position=vp.vector(ix, iy, 0),
-                                                      ball1_time=t * self.simulation_time,
-                                                      ball2_time=u * self.simulation_time)
+            self.intersect_info = IntersectionInfo(position=vp.vector(ix, iy, 0),
+                                                   ball1_time=t * self.sim_params.simulation_time,
+                                                   ball2_time=u * self.sim_params.simulation_time)
 
     def _elastic_collision_physics(self) -&gt; None:
         &#34;&#34;&#34;Calculate and update the physics of the balls after elastic collision.&#34;&#34;&#34;
         def _check_for_neg_zero() -&gt; None:
             &#34;&#34;&#34;If any of the x,y components have -0 in them, change them to 0&#34;&#34;&#34;
-            assert self.ball1
-            assert self.ball2
             self.ball1.velocity.x = 0.0 if self.ball1.velocity.x == -0 else self.ball1.velocity.x
             self.ball1.velocity.y = 0.0 if self.ball1.velocity.y == -0 else self.ball1.velocity.y
             self.ball2.velocity.x = 0.0 if self.ball2.velocity.x == -0 else self.ball2.velocity.x
             self.ball2.velocity.y = 0.0 if self.ball2.velocity.y == -0 else self.ball2.velocity.y
-
-        assert self.ball1
-        assert self.ball2
 
         m1: float = self.ball1.mass
         m2: float = self.ball2.mass
@@ -695,8 +722,13 @@ def speed(self) -&gt; float:
         # Calculate the normal vector of collision
         diff: vp.vector = x1 - x2
         normal: vp.vector = None
-        if diff.mag == 0:  # Balls are in the same position
-            normal = (v1 - v2).norm()
+        # If balls are in the same position
+        if diff.mag == 0:
+            # If balls are in the same position and the same velocity, then add the velocities
+            if v1 - v2 == vp.vector(0, 0, 0):
+                normal = (v1 + v2).norm()
+            else:
+                normal = (v1 - v2).norm()
         else:
             normal = diff.norm()
 
@@ -723,9 +755,6 @@ def speed(self) -&gt; float:
 
     def _inelastic_collision_physics(self) -&gt; None:
         &#34;&#34;&#34;Calculate and update the physics of the balls after inelastic collision.&#34;&#34;&#34;
-        assert self.ball1
-        assert self.ball2
-
         # Calculate new mass
         total_mass = self.ball1.mass + self.ball2.mass
 
@@ -750,86 +779,73 @@ def speed(self) -&gt; float:
         )
 
         # Create merged ball
-        self.merged_ball = Ball(merged_params)
+        self.balls.append(Ball(merged_params))
 
     def _process_post_collision_physics(self) -&gt; None:
         &#34;&#34;&#34;Calculate and update the physics of the balls after collision.&#34;&#34;&#34;
-        if self.collision_type == CollisionType.ELASTIC:
+        if self.sim_params.collision_type == CollisionType.ELASTIC:
             self._elastic_collision_physics()
         # Else, inelastic collision
         else:
             self._inelastic_collision_physics()
 
-
     def _verify_conservation_of_momentum(self) -&gt; None:
         &#34;&#34;&#34;Verify that momentum is conserved after the collision.&#34;&#34;&#34;
-        assert self.total_momentum
-
-        final_total_momentum: vp.vector
-
-        # if the balls haven&#39;t merged, then check their momentums
-        if not self.merged_ball:
-            assert self.ball1
-            assert self.ball2
-
-            # Calculate final total momentum
-            final_total_momentum = self.ball1.momentum + self.ball2.momentum
-        # Else, check the merged ball momentum
-        else:
-            # Final total momentum is the momentum of the merged ball
-            final_total_momentum = self.merged_ball.momentum
-
         # Verify momentum has been conserved
-        assert round(self.total_momentum.mag, ndigits=3) == \
-            round(final_total_momentum.mag, ndigits=3), \
-            f&#39;Initial total: {self.total_momentum.mag}, Final total: {final_total_momentum.mag}&#39;
+        assert round(self.initial.momentum.mag, ndigits=3) == \
+            round(self.momentum.mag, ndigits=3), \
+            f&#39;Initial total: {self.initial.momentum.mag}, Final total: {self.momentum.mag}&#39;
 
     def _verify_conservation_of_ke(self) -&gt; None:
         &#34;&#34;&#34;
         Verify that kinetic energy is conserved after the collision for elastic collisions,
         or calculate how much kinetic energy was lost after the collision for inelastic collisions.
         &#34;&#34;&#34;
-        assert self.init_total_ke is not None
-
         # if the balls haven&#39;t merged, then check their kinetic energy
         if not self.merged_ball:
-            assert self.ball1
-            assert self.ball2
-
-            # Calculate final total ke
-            self.final_total_ke = self.ball1.kinetic_energy + self.ball2.kinetic_energy
-
-            # Calculate ke lost
-            self.ke_lost = self.init_total_ke - self.final_total_ke
-
             # Verify KE has been conserved
             assert round(self.ke_lost, ndigits=3) == 0.0, \
-                f&#39;Initial total: {self.init_total_ke}, Final total: {self.final_total_ke}&#39;
+                f&#39;Initial total: {self.initial.kinetic_energy}, Final total: {self.kinetic_energy}&#39;
         # Else, check the loss of KE from the merged ball
         else:
-            self.final_total_ke = self.merged_ball.kinetic_energy
-            self.ke_lost = self.init_total_ke - self.final_total_ke
             print(f&#39;Kinetic Energy lost in collision: {self.ke_lost:.2f} J&#39;)
-
 
     def _run_simulation(self) -&gt; None:
         &#34;&#34;&#34;Run the simulation loop.&#34;&#34;&#34;
-        assert self.ball1
-        assert self.ball2
-
-        dt: float = 0.01
         time_elapsed: float = 0.0
+        last_trajectory: Optional[BallTrajectories] = None
+
+        def print_current_trajectory() -&gt; None:
+            nonlocal last_trajectory
+            current_trajectory: BallTrajectories = self.trajectories
+            if last_trajectory != current_trajectory:
+                if current_trajectory == BallTrajectories.CONVERGING:
+                    print(f&#39;t={time_elapsed:.2f}s: Balls are Converging at: {
+                        self.relative_speed:.2f} m/s&#39;)
+                elif current_trajectory == BallTrajectories.DIVERGING:
+                    print(f&#39;t={time_elapsed:.2f}s: Balls are Diverging at: {
+                        self.relative_speed:.2f} m/s&#39;)
+                elif current_trajectory == BallTrajectories.MERGED:
+                    print(f&#39;t={time_elapsed:.2f}s: Balls have Merged.&#39;)
+                else:
+                    print(f&#39;t={time_elapsed:.2f
+                               }s: Balls are maintaining a constant distance. Relative speed: {
+                        self.relative_speed:.2f} m/s&#39;)
+                last_trajectory = current_trajectory
 
         while True:
-            vp.rate(100)
+            vp.rate(self.LOOP_EXECUTION_RATE)
+            print_current_trajectory()
 
             # If a collision hasn&#39;t occured already and the ball&#39;s positions are within the
             # distance of both radiuses, we have a collision
             if not self.collision_info and \
-                   vp.mag(self.ball1.position - self.ball2.position) &lt;= \
-                   (self.ball1.radius + self.ball2.radius):
+                    vp.mag(self.ball1.position - self.ball2.position) &lt;= \
+                    (self.ball1.radius + self.ball2.radius):
                 # update balls based on physics of collision
                 self._process_post_collision_physics()
+
+                print_current_trajectory()
 
                 # Store collision state info for later
                 self.collision_info = CollisionInfo(ball1=copy(self.ball1),
@@ -839,53 +855,42 @@ def speed(self) -&gt; float:
 
             # If we&#39;ve had a collision, check if we&#39;ve reached the &#34;run a bit after the collision&#34;
             # time. If we haven&#39;t had a collision, check if simulation duration has past
-            if ((self.collision_info is not None) and
-                time_elapsed &gt; (self.collision_info.time + self.SIMULATION_TIME_AFTER_COLLISION)) \
-                    or (time_elapsed &gt; self.simulation_time):
+            if (self.collision_info and time_elapsed &gt;
+                (self.collision_info.time + self.SIMULATION_TIME_AFTER_COLLISION)) \
+                    or (time_elapsed &gt; self.sim_params.simulation_time):
                 break
 
             if self.merged_ball:  # If we have a merged ball after collision
-                self.merged_ball.update_position(dt)
+                self.merged_ball.update_position(self.DT)
             else:
-                self.ball1.update_position(dt)
-                self.ball2.update_position(dt)
+                self.ball1.update_position(self.DT)
+                self.ball2.update_position(self.DT)
 
-            time_elapsed += dt
+            time_elapsed += self.DT
 
     def run(self) -&gt; None:
         &#34;&#34;&#34;
         Run the simulation.
         &#34;&#34;&#34;
-        self._init_simulation()
-
-        assert self.ball1
-        assert self.ball2
-        assert self.ball1_state_t0
-        assert self.ball2_state_t0
-        assert self.dot_product is not None
-        assert self.total_momentum
-        assert self.init_total_ke is not None
-
         print(&#39;\n***************************************************&#39;)
         print(&#39;Initial Conditions:&#39;)
-        self._print_ball_state([self.ball1_state_t0, self.ball2_state_t0])
-        print(f&#39;Initial Distance from each other: {self.initial_distance:.2f} m&#39;)
+        self._print_ball_state([self.initial.ball1, self.initial.ball2])
+        print(f&#39;Initial Distance: {self.initial.distance:.2f} m&#39;)
         print(f&#39;Sum of Radii: {(self.ball1.radius + self.ball2.radius):.2f}&#39;)
-        if self.dot_product &lt; 0.0:
-            print(f&#39;Relative Speed toward each other: {self.relative_speed:.2f} m/s&#39;)
-        else:
-            print(f&#39;Relative Speed away from each other: {self.relative_speed:.2f} m/s&#39;)
-        print(f&#39;Total Momentum: ({self.total_momentum.x:.2f}, {
-            self.total_momentum.y:.2f}), or {vp.mag(self.total_momentum):.2f} N⋅s at {
-            vp.degrees(vp.atan2(self.total_momentum.y, self.total_momentum.x)):.2f}°&#39;)
-        print(f&#39;Total Kinetic Energy: {(self.init_total_ke):.2f} J&#39;)
+        print(f&#39;Total Momentum: ({self.initial.momentum.x:.2f}, {
+            self.initial.momentum.y:.2f}), or {
+            vp.mag(self.initial.momentum):.2f} N⋅s at {
+            vp.degrees(vp.atan2(self.initial.momentum.y, self.initial.momentum.x)):.2f}°&#39;)
+        print(f&#39;Total Kinetic Energy: {(self.initial.kinetic_energy):.2f} J&#39;)
         print()
 
         # Run the simulation
         self._run_simulation()
 
+        print()
+
         # If collision occured
-        if self.collision_info is not None:
+        if self.collision_info:
             print(f&#39;Collision occured at time: {self.collision_info.time:.2f} secs&#39;)
             print(&#39;\nPost Collision Conditions:&#39;)
             if self.collision_info.merged_ball:
@@ -895,18 +900,18 @@ def speed(self) -&gt; float:
         # Else no collision, see if the paths intersected
         else:
             print(f&#39;No collision occured during simulation time of {
-                self.simulation_time} secs.&#39;)
+                self.sim_params.simulation_time} secs.&#39;)
 
             # Calculate path intersection (if any)
             self._calculate_intersection()
-            if self.intersection_info:
+            if self.intersect_info:
                 print(&#39;Paths did intersect though:&#39;)
-                print(f&#39;  Path Intersection Point: ({self.intersection_info.position.x:.2f}, {
-                    self.intersection_info.position.y:.2f})&#39;)
+                print(f&#39;  Path Intersection Point: ({self.intersect_info.position.x:.2f}, {
+                    self.intersect_info.position.y:.2f})&#39;)
                 print(f&#39;  Time for Ball 1 to reach intersection: {
-                    self.intersection_info.ball1_time:.2f} secs&#39;)
+                    self.intersect_info.ball1_time:.2f} secs&#39;)
                 print(f&#39;  Time for Ball 2 to reach intersection: {
-                    self.intersection_info.ball2_time:.2f} secs&#39;)
+                    self.intersect_info.ball2_time:.2f} secs&#39;)
             else:
                 print(&#39;No path intersection found either.&#39;)
 
@@ -917,11 +922,19 @@ def speed(self) -&gt; float:
 </details>
 <h3>Class variables</h3>
 <dl>
+<dt id="ball_collision_sim.BallCollisionSimulator.DT"><code class="name">var <span class="ident">DT</span> : Final[float]</code></dt>
+<dd>
+<div class="desc"><p>Defines what the time delta between each simulation loop iteration is.</p></div>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.LOOP_EXECUTION_RATE"><code class="name">var <span class="ident">LOOP_EXECUTION_RATE</span> : Final[int]</code></dt>
+<dd>
+<div class="desc"><p>Defines how many times a second the simulation loop will execute.</p></div>
+</dd>
 <dt id="ball_collision_sim.BallCollisionSimulator.SIMULATION_TIME_AFTER_COLLISION"><code class="name">var <span class="ident">SIMULATION_TIME_AFTER_COLLISION</span> : Final[int]</code></dt>
 <dd>
 <div class="desc"><p>Defines how many seconds the simulation will run after collision.
 Note, if this time exceeds the total simulation time, the simulation will stop at
-the simulation time first</p></div>
+the simulation time first.</p></div>
 </dd>
 </dl>
 <h3>Static methods</h3>
@@ -963,7 +976,163 @@ the simulation time first</p></div>
 <span>def <span class="ident">quit_simulation</span></span>(<span>) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Stop the VPython server.</p></div>
+<div class="desc"><p>Stops the VPython server.</p></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="ball_collision_sim.BallCollisionSimulator.ball1"><code class="name">prop <span class="ident">ball1</span> : <a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for Ball 1 (self.balls[Balls.BALL1])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ball1(self) -&gt; Ball:
+    &#34;&#34;&#34;Alias for Ball 1 (self.balls[Balls.BALL1])&#34;&#34;&#34;
+    return self.balls[Balls.BALL1]</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.ball2"><code class="name">prop <span class="ident">ball2</span> : <a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for Ball 2 (self.balls[Balls.BALL2])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ball2(self) -&gt; Ball:
+    &#34;&#34;&#34;Alias for Ball 2 (self.balls[Balls.BALL2])&#34;&#34;&#34;
+    return self.balls[Balls.BALL2]</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.distance"><code class="name">prop <span class="ident">distance</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Distance between the two balls (m).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def distance(self) -&gt; float:
+    &#34;&#34;&#34;Distance between the two balls (m).&#34;&#34;&#34;
+    if self.merged_ball:
+        return 0.0
+    else:
+        return vp.mag(self.ball1.position - self.ball2.position)</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.ke_lost"><code class="name">prop <span class="ident">ke_lost</span> : float</code></dt>
+<dd>
+<div class="desc"><p>The amount of KE lost since start of simulation (J).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ke_lost(self) -&gt; float:
+    &#34;&#34;&#34;The amount of KE lost since start of simulation (J).&#34;&#34;&#34;
+    if self.merged_ball:
+        return self.initial.kinetic_energy - self.merged_ball.kinetic_energy
+    else:
+        return self.initial.kinetic_energy - self.kinetic_energy</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.kinetic_energy"><code class="name">prop <span class="ident">kinetic_energy</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Kinetic energy of both balls together, before collision (J).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def kinetic_energy(self) -&gt; float:
+    &#34;&#34;&#34;Kinetic energy of both balls together, before collision (J).&#34;&#34;&#34;
+    if self.merged_ball:
+        return self.merged_ball.kinetic_energy
+    else:
+        return self.ball1.kinetic_energy + self.ball2.kinetic_energy</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.merged_ball"><code class="name">prop <span class="ident">merged_ball</span> : Optional[<a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>]</code></dt>
+<dd>
+<div class="desc"><p>Alias for Merged Ball (self.balls[Balls.MERGED])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def merged_ball(self) -&gt; Optional[Ball]:
+    &#34;&#34;&#34;Alias for Merged Ball (self.balls[Balls.MERGED])&#34;&#34;&#34;
+    if len(self.balls) &gt; Balls.MERGED:
+        return self.balls[Balls.MERGED]
+
+    return None</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.momentum"><code class="name">prop <span class="ident">momentum</span> : vp.vector</code></dt>
+<dd>
+<div class="desc"><p>Momentum of both balls (N⋅s).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def momentum(self) -&gt; vp.vector:
+    &#34;&#34;&#34;Momentum of both balls (N⋅s).&#34;&#34;&#34;
+    if self.merged_ball:
+        return self.merged_ball.momentum
+    else:
+        return self.ball1.momentum + self.ball2.momentum</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.relative_speed"><code class="name">prop <span class="ident">relative_speed</span> : float</code></dt>
+<dd>
+<div class="desc"><p>Relative speed of the two balls with respect to each other (m/s).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def relative_speed(self) -&gt; float:
+    &#34;&#34;&#34;Relative speed of the two balls with respect to each other (m/s).&#34;&#34;&#34;
+    if self.merged_ball:
+        return 0.0
+    else:
+        return vp.mag(self.ball1.velocity - self.ball2.velocity)</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.BallCollisionSimulator.trajectories"><code class="name">prop <span class="ident">trajectories</span> : <a title="ball_collision_sim.BallTrajectories" href="#ball_collision_sim.BallTrajectories">BallTrajectories</a></code></dt>
+<dd>
+<div class="desc"><p>What the balls' current trajectories are (constant, diverging, or converging)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def trajectories(self) -&gt; BallTrajectories:
+    &#34;&#34;&#34;What the balls&#39; current trajectories are (constant, diverging, or converging)&#34;&#34;&#34;
+    if self.merged_ball:
+        return BallTrajectories.MERGED
+    else:
+        current_distance = vp.mag(self.ball1.position - self.ball2.position)
+
+        # Project positions a tiny bit into the future
+        future_pos1 = self.ball1.position + (self.ball1.velocity * self.DT)
+        future_pos2 = self.ball2.position + (self.ball2.velocity * self.DT)
+        future_distance = vp.mag(future_pos1 - future_pos2)
+
+        # Compare future distance to current distance
+        distance_change = round(future_distance - current_distance, ndigits=6)
+
+        if distance_change &gt; 0.0:
+            return BallTrajectories.DIVERGING
+        if distance_change &lt; 0.0:
+            return BallTrajectories.CONVERGING
+
+        return BallTrajectories.CONSTANT</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -978,61 +1147,137 @@ the simulation time first</p></div>
 </dd>
 <dt id="ball_collision_sim.BallParameters"><code class="flex name class">
 <span>class <span class="ident">BallParameters</span></span>
-<span>(</span><span>physics: <a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a>, color: vp.color = vp.color.red, name: str = '')</span>
+<span>(</span><span>physics_params: <a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a>, color: vp.color, name: str)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class to store all parameters of a ball, including physics and visual properties.</p>
+<div class="desc"><p>Data class to store all parameters of a ball, including physics and visual properties.</p>
 <h2 id="attributes">Attributes</h2>
 <dl>
-<dt><strong><code>mass</code></strong> :&ensp;<code>float</code></dt>
-<dd>Mass of the ball in kg.</dd>
-<dt><strong><code>position</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
-<dd>Initial position of the ball (x, y) in meters.</dd>
-<dt><strong><code>velocity</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
-<dd>Initial velocity of the ball (vx, vy) in m/s.</dd>
-<dt><strong><code>color</code></strong> :&ensp;<code>vp.color</code>, optional</dt>
-<dd>Color of the ball. Defaults to red.</dd>
-<dt><strong><code>name</code></strong> :&ensp;<code>str</code>, optional</dt>
-<dd>Name or identifier for the ball. Defaults to ''.</dd>
-</dl>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>physics</code></strong> :&ensp;<code><a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a></code></dt>
-<dd>Physical parameters of the ball.</dd>
-<dt><strong><code>color</code></strong> :&ensp;<code>vp.color</code>, optional</dt>
-<dd>Color of the ball. Defaults to red.</dd>
-<dt><strong><code>name</code></strong> :&ensp;<code>str</code>, optional</dt>
-<dd>Name or identifier for the ball. Defaults to ''.</dd>
+<dt><strong><code>physics_params</code></strong> :&ensp;<code><a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a></code></dt>
+<dd>The physical parameters of the ball.</dd>
+<dt><strong><code>color</code></strong> :&ensp;<code>vp.color</code></dt>
+<dd>Color of the ball.</dd>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name or identifier for the ball.</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class BallParameters:
+<pre><code class="python">@dataclass
+class BallParameters:
     &#34;&#34;&#34;
-    Class to store all parameters of a ball, including physics and visual properties.
+    Data class to store all parameters of a ball, including physics and visual properties.
 
     Attributes:
-        mass (float): Mass of the ball in kg.
-        position (Tuple[float, float]): Initial position of the ball (x, y) in meters.
-        velocity (Tuple[float, float]): Initial velocity of the ball (vx, vy) in m/s.
-        color (vp.color, optional): Color of the ball. Defaults to red.
-        name (str, optional): Name or identifier for the ball. Defaults to &#39;&#39;.
+        physics_params (PhysicsParameters): The physical parameters of the ball.
+        color (vp.color): Color of the ball.
+        name (str): Name or identifier for the ball.
     &#34;&#34;&#34;
 
-    def __init__(self, physics: PhysicsParameters, color: vp.color = vp.color.red, name: str = &#39;&#39;):
-        &#34;&#34;&#34;
-        Args:
-            physics (PhysicsParameters): Physical parameters of the ball.
-            color (vp.color, optional): Color of the ball. Defaults to red.
-            name (str, optional): Name or identifier for the ball. Defaults to &#39;&#39;.
-        &#34;&#34;&#34;
-        self.mass: float = physics.mass
-        self.position: vp.vector = physics.position
-        self.velocity: vp.vector = physics.velocity
-        self.color: vp.color = color
-        self.name: str = name</code></pre>
+    physics_params: PhysicsParameters
+    color: vp.color
+    name: str</code></pre>
 </details>
+<h3>Class variables</h3>
+<dl>
+<dt id="ball_collision_sim.BallParameters.color"><code class="name">var <span class="ident">color</span> : vp.color</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.BallParameters.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.BallParameters.physics_params"><code class="name">var <span class="ident">physics_params</span> : <a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="ball_collision_sim.BallTrajectories"><code class="flex name class">
+<span>class <span class="ident">BallTrajectories</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enum to indicate the if the balls are converging, diverging, constant distance, or merged.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BallTrajectories(Enum):
+    &#34;&#34;&#34;
+    Enum to indicate the if the balls are converging, diverging, constant distance, or merged.
+    &#34;&#34;&#34;
+    CONSTANT = auto()
+    CONVERGING = auto()
+    DIVERGING = auto()
+    MERGED = auto()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="ball_collision_sim.BallTrajectories.CONSTANT"><code class="name">var <span class="ident">CONSTANT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.BallTrajectories.CONVERGING"><code class="name">var <span class="ident">CONVERGING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.BallTrajectories.DIVERGING"><code class="name">var <span class="ident">DIVERGING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.BallTrajectories.MERGED"><code class="name">var <span class="ident">MERGED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="ball_collision_sim.Balls"><code class="flex name class">
+<span>class <span class="ident">Balls</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Enum to indicate which ball is being referenced.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Balls(IntEnum):
+    &#34;&#34;&#34;
+    Enum to indicate which ball is being referenced.
+    &#34;&#34;&#34;
+    BALL1 = 0
+    BALL2 = 1
+    MERGED = 2</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.IntEnum</li>
+<li>builtins.int</li>
+<li>enum.ReprEnum</li>
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="ball_collision_sim.Balls.BALL1"><code class="name">var <span class="ident">BALL1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.Balls.BALL2"><code class="name">var <span class="ident">BALL2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.Balls.MERGED"><code class="name">var <span class="ident">MERGED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 </dd>
 <dt id="ball_collision_sim.CollisionInfo"><code class="flex name class">
 <span>class <span class="ident">CollisionInfo</span></span>
@@ -1105,8 +1350,8 @@ class CollisionInfo:
     &#34;&#34;&#34;
     Enum to indicate the type of Collision, elastic or inelastic.
     &#34;&#34;&#34;
-    ELASTIC = 1
-    INELASTIC = 2</code></pre>
+    ELASTIC = auto()
+    INELASTIC = auto()</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -1175,7 +1420,7 @@ class IntersectionInfo:
 </dd>
 <dt id="ball_collision_sim.PhysicsParameters"><code class="flex name class">
 <span>class <span class="ident">PhysicsParameters</span></span>
-<span>(</span><span>mass: float, position: Tuple[float, float], velocity: Tuple[float, float])</span>
+<span>(</span><span>mass: float, position: Union[Tuple[float, float], vp.vector], velocity: Union[Tuple[float, float], vp.vector])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class to store the physical parameters of a ball.</p>
@@ -1183,45 +1428,225 @@ class IntersectionInfo:
 <dl>
 <dt><strong><code>mass</code></strong> :&ensp;<code>float</code></dt>
 <dd>Mass of the ball in kg.</dd>
-<dt><strong><code>position</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
-<dd>Initial position of the ball (x, y) in meters.</dd>
-<dt><strong><code>velocity</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
-<dd>Initial velocity of the ball (vx, vy) in m/s.</dd>
-</dl>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>mass</code></strong> :&ensp;<code>float</code></dt>
-<dd>Mass of the ball in kg.</dd>
-<dt><strong><code>position</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
-<dd>Initial position of the ball (x, y) in meters.</dd>
-<dt><strong><code>velocity</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
-<dd>Initial velocity of the ball (vx, vy) in m/s.</dd>
+<dt><strong><code>position</code></strong> :&ensp;<code>Union[Tuple[float, float], vp.vector]</code></dt>
+<dd>Position vector of the ball (x, y) in meters.</dd>
+<dt><strong><code>velocity</code></strong> :&ensp;<code>Union[Tuple[float, float], vp.vector]</code></dt>
+<dd>Velocity vector of the ball (vx, vy) in m/s.</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class PhysicsParameters:
+<pre><code class="python">@dataclass
+class PhysicsParameters:
     &#34;&#34;&#34;
     Class to store the physical parameters of a ball.
 
     Attributes:
         mass (float): Mass of the ball in kg.
-        position (Tuple[float, float]): Initial position of the ball (x, y) in meters.
-        velocity (Tuple[float, float]): Initial velocity of the ball (vx, vy) in m/s.
+        position (Union[Tuple[float, float], vp.vector]): Position vector of the ball (x, y) in meters.
+        velocity (Union[Tuple[float, float], vp.vector]): Velocity vector of the ball (vx, vy) in m/s.
+    &#34;&#34;&#34;
+    mass: float
+    position: Union[Tuple[float, float], vp.vector]
+    velocity: Union[Tuple[float, float], vp.vector]
+
+    def __post_init__(self):
+        self.position = vp.vector(*self.position, 0)
+        self.velocity = vp.vector(*self.velocity, 0)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="ball_collision_sim.PhysicsParameters.mass"><code class="name">var <span class="ident">mass</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.PhysicsParameters.position"><code class="name">var <span class="ident">position</span> : Union[Tuple[float, float], vp.vector]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.PhysicsParameters.velocity"><code class="name">var <span class="ident">velocity</span> : Union[Tuple[float, float], vp.vector]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="ball_collision_sim.SimParameters"><code class="flex name class">
+<span>class <span class="ident">SimParameters</span></span>
+<span>(</span><span>ball1_params: <a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a>, ball2_params: <a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a>, simulation_time: float, collision_type: <a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Data class to store all parameters for a Simulator instance.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>ball1_params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
+<dd>Parameters for the first ball.</dd>
+<dt><strong><code>ball2_params</code></strong> :&ensp;<code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
+<dd>Parameters for the second ball.</dd>
+<dt><strong><code>simulation_time</code></strong> :&ensp;<code>float</code></dt>
+<dd>Total time to simulate.</dd>
+<dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a></code></dt>
+<dd>Type of collision to simulate (elastic or inelastic).</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class SimParameters:
+    &#34;&#34;&#34;
+    Data class to store all parameters for a Simulator instance.
+
+    Attributes:
+        ball1_params (BallParameters): Parameters for the first ball.
+        ball2_params (BallParameters): Parameters for the second ball.
+        simulation_time (float): Total time to simulate.
+        collision_type (CollisionType): Type of collision to simulate (elastic or inelastic).
     &#34;&#34;&#34;
 
-    def __init__(self, mass: float, position: Tuple[float, float], velocity: Tuple[float, float]):
-        &#34;&#34;&#34;
-        Args:
-            mass (float): Mass of the ball in kg.
-            position (Tuple[float, float]): Initial position of the ball (x, y) in meters.
-            velocity (Tuple[float, float]): Initial velocity of the ball (vx, vy) in m/s.
-        &#34;&#34;&#34;
-        self.mass: float = mass
-        self.position: vp.vector = vp.vector(*position, 0)
-        self.velocity: vp.vector = vp.vector(*velocity, 0)</code></pre>
+    ball1_params: BallParameters
+    ball2_params: BallParameters
+    simulation_time: float
+    collision_type: CollisionType</code></pre>
 </details>
+<h3>Class variables</h3>
+<dl>
+<dt id="ball_collision_sim.SimParameters.ball1_params"><code class="name">var <span class="ident">ball1_params</span> : <a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.SimParameters.ball2_params"><code class="name">var <span class="ident">ball2_params</span> : <a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.SimParameters.collision_type"><code class="name">var <span class="ident">collision_type</span> : <a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.SimParameters.simulation_time"><code class="name">var <span class="ident">simulation_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="ball_collision_sim.SimulatorState"><code class="flex name class">
+<span>class <span class="ident">SimulatorState</span></span>
+<span>(</span><span>balls: List[<a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>], momentum: vp.vector, kinetic_energy: float, relative_speed: float, distance: float, trajectories: <a title="ball_collision_sim.BallTrajectories" href="#ball_collision_sim.BallTrajectories">BallTrajectories</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Data class to store the state of the Simulator.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>balls</code></strong> :&ensp;<code>List[<a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>]</code></dt>
+<dd>List of Ball objects.<br>
+- Index 0 = Ball 1.<br>
+- Index 1 = Ball 2.<br>
+- Index 2 = Merged Ball (Optional).
+</dd>
+<dt><strong><code>momentum</code></strong> :&ensp;<code>vp.vector</code></dt>
+<dd>Total momentum of both balls (N⋅s).</dd>
+<dt><strong><code>kinetic_energy</code></strong> :&ensp;<code>float</code></dt>
+<dd>Total kinetic energy of both balls (J).</dd>
+<dt><strong><code>relative_speed</code></strong> :&ensp;<code>float</code></dt>
+<dd>Relative speed of the two balls with respect to each other (m/s).</dd>
+<dt><strong><code>distance</code></strong> :&ensp;<code>float</code></dt>
+<dd>Distance of the two balls (m).</dd>
+<dt><strong><code>trajectories</code></strong> :&ensp;<code><a title="ball_collision_sim.BallTrajectories" href="#ball_collision_sim.BallTrajectories">BallTrajectories</a></code></dt>
+<dd>What the balls current trajectories are: (constant, diverging, or converging).</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class SimulatorState:
+    &#34;&#34;&#34;
+    Data class to store the state of the Simulator.
+
+    Attributes:
+        balls (List[Ball]): List of Ball objects.  
+                            - Index 0 = Ball 1.  
+                            - Index 1 = Ball 2.  
+                            - Index 2 = Merged Ball (Optional).  
+        momentum (vp.vector): Total momentum of both balls (N⋅s).
+        kinetic_energy (float): Total kinetic energy of both balls (J).
+        relative_speed (float): Relative speed of the two balls with respect to each other (m/s).
+        distance (float): Distance of the two balls (m).
+        trajectories (BallTrajectories): What the balls current trajectories are: (constant, diverging, or converging).
+    &#34;&#34;&#34;
+    balls: List[Ball]
+    momentum: vp.vector
+    kinetic_energy: float
+    relative_speed: float
+    distance: float
+    trajectories: BallTrajectories
+
+    @property
+    def ball1(self) -&gt; Ball:
+        &#34;&#34;&#34;Alias for Ball 1 (self.balls[Balls.BALL1])&#34;&#34;&#34;
+        return self.balls[Balls.BALL1]
+
+    @property
+    def ball2(self) -&gt; Ball:
+        &#34;&#34;&#34;Alias for Ball 2 (self.balls[Balls.BALL2])&#34;&#34;&#34;
+        return self.balls[Balls.BALL2]</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="ball_collision_sim.SimulatorState.balls"><code class="name">var <span class="ident">balls</span> : List[<a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a>]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.SimulatorState.distance"><code class="name">var <span class="ident">distance</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.SimulatorState.kinetic_energy"><code class="name">var <span class="ident">kinetic_energy</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.SimulatorState.momentum"><code class="name">var <span class="ident">momentum</span> : vp.vector</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.SimulatorState.relative_speed"><code class="name">var <span class="ident">relative_speed</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="ball_collision_sim.SimulatorState.trajectories"><code class="name">var <span class="ident">trajectories</span> : <a title="ball_collision_sim.BallTrajectories" href="#ball_collision_sim.BallTrajectories">BallTrajectories</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="ball_collision_sim.SimulatorState.ball1"><code class="name">prop <span class="ident">ball1</span> : <a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for Ball 1 (self.balls[Balls.BALL1])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ball1(self) -&gt; Ball:
+    &#34;&#34;&#34;Alias for Ball 1 (self.balls[Balls.BALL1])&#34;&#34;&#34;
+    return self.balls[Balls.BALL1]</code></pre>
+</details>
+</dd>
+<dt id="ball_collision_sim.SimulatorState.ball2"><code class="name">prop <span class="ident">ball2</span> : <a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
+<dd>
+<div class="desc"><p>Alias for Ball 2 (self.balls[Balls.BALL2])</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def ball2(self) -&gt; Ball:
+    &#34;&#34;&#34;Alias for Ball 2 (self.balls[Balls.BALL2])&#34;&#34;&#34;
+    return self.balls[Balls.BALL2]</code></pre>
+</details>
+</dd>
+</dl>
 </dd>
 </dl>
 </section>
@@ -1254,15 +1679,48 @@ class IntersectionInfo:
 <li>
 <h4><code><a title="ball_collision_sim.BallCollisionSimulator" href="#ball_collision_sim.BallCollisionSimulator">BallCollisionSimulator</a></code></h4>
 <ul class="">
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.DT" href="#ball_collision_sim.BallCollisionSimulator.DT">DT</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.LOOP_EXECUTION_RATE" href="#ball_collision_sim.BallCollisionSimulator.LOOP_EXECUTION_RATE">LOOP_EXECUTION_RATE</a></code></li>
 <li><code><a title="ball_collision_sim.BallCollisionSimulator.SIMULATION_TIME_AFTER_COLLISION" href="#ball_collision_sim.BallCollisionSimulator.SIMULATION_TIME_AFTER_COLLISION">SIMULATION_TIME_AFTER_COLLISION</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.ball1" href="#ball_collision_sim.BallCollisionSimulator.ball1">ball1</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.ball2" href="#ball_collision_sim.BallCollisionSimulator.ball2">ball2</a></code></li>
 <li><code><a title="ball_collision_sim.BallCollisionSimulator.create_simulator" href="#ball_collision_sim.BallCollisionSimulator.create_simulator">create_simulator</a></code></li>
 <li><code><a title="ball_collision_sim.BallCollisionSimulator.disable_gui" href="#ball_collision_sim.BallCollisionSimulator.disable_gui">disable_gui</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.distance" href="#ball_collision_sim.BallCollisionSimulator.distance">distance</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.ke_lost" href="#ball_collision_sim.BallCollisionSimulator.ke_lost">ke_lost</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.kinetic_energy" href="#ball_collision_sim.BallCollisionSimulator.kinetic_energy">kinetic_energy</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.merged_ball" href="#ball_collision_sim.BallCollisionSimulator.merged_ball">merged_ball</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.momentum" href="#ball_collision_sim.BallCollisionSimulator.momentum">momentum</a></code></li>
 <li><code><a title="ball_collision_sim.BallCollisionSimulator.quit_simulation" href="#ball_collision_sim.BallCollisionSimulator.quit_simulation">quit_simulation</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.relative_speed" href="#ball_collision_sim.BallCollisionSimulator.relative_speed">relative_speed</a></code></li>
 <li><code><a title="ball_collision_sim.BallCollisionSimulator.run" href="#ball_collision_sim.BallCollisionSimulator.run">run</a></code></li>
+<li><code><a title="ball_collision_sim.BallCollisionSimulator.trajectories" href="#ball_collision_sim.BallCollisionSimulator.trajectories">trajectories</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="ball_collision_sim.BallParameters" href="#ball_collision_sim.BallParameters">BallParameters</a></code></h4>
+<ul class="">
+<li><code><a title="ball_collision_sim.BallParameters.color" href="#ball_collision_sim.BallParameters.color">color</a></code></li>
+<li><code><a title="ball_collision_sim.BallParameters.name" href="#ball_collision_sim.BallParameters.name">name</a></code></li>
+<li><code><a title="ball_collision_sim.BallParameters.physics_params" href="#ball_collision_sim.BallParameters.physics_params">physics_params</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="ball_collision_sim.BallTrajectories" href="#ball_collision_sim.BallTrajectories">BallTrajectories</a></code></h4>
+<ul class="">
+<li><code><a title="ball_collision_sim.BallTrajectories.CONSTANT" href="#ball_collision_sim.BallTrajectories.CONSTANT">CONSTANT</a></code></li>
+<li><code><a title="ball_collision_sim.BallTrajectories.CONVERGING" href="#ball_collision_sim.BallTrajectories.CONVERGING">CONVERGING</a></code></li>
+<li><code><a title="ball_collision_sim.BallTrajectories.DIVERGING" href="#ball_collision_sim.BallTrajectories.DIVERGING">DIVERGING</a></code></li>
+<li><code><a title="ball_collision_sim.BallTrajectories.MERGED" href="#ball_collision_sim.BallTrajectories.MERGED">MERGED</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="ball_collision_sim.Balls" href="#ball_collision_sim.Balls">Balls</a></code></h4>
+<ul class="">
+<li><code><a title="ball_collision_sim.Balls.BALL1" href="#ball_collision_sim.Balls.BALL1">BALL1</a></code></li>
+<li><code><a title="ball_collision_sim.Balls.BALL2" href="#ball_collision_sim.Balls.BALL2">BALL2</a></code></li>
+<li><code><a title="ball_collision_sim.Balls.MERGED" href="#ball_collision_sim.Balls.MERGED">MERGED</a></code></li>
+</ul>
 </li>
 <li>
 <h4><code><a title="ball_collision_sim.CollisionInfo" href="#ball_collision_sim.CollisionInfo">CollisionInfo</a></code></h4>
@@ -1290,6 +1748,33 @@ class IntersectionInfo:
 </li>
 <li>
 <h4><code><a title="ball_collision_sim.PhysicsParameters" href="#ball_collision_sim.PhysicsParameters">PhysicsParameters</a></code></h4>
+<ul class="">
+<li><code><a title="ball_collision_sim.PhysicsParameters.mass" href="#ball_collision_sim.PhysicsParameters.mass">mass</a></code></li>
+<li><code><a title="ball_collision_sim.PhysicsParameters.position" href="#ball_collision_sim.PhysicsParameters.position">position</a></code></li>
+<li><code><a title="ball_collision_sim.PhysicsParameters.velocity" href="#ball_collision_sim.PhysicsParameters.velocity">velocity</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="ball_collision_sim.SimParameters" href="#ball_collision_sim.SimParameters">SimParameters</a></code></h4>
+<ul class="">
+<li><code><a title="ball_collision_sim.SimParameters.ball1_params" href="#ball_collision_sim.SimParameters.ball1_params">ball1_params</a></code></li>
+<li><code><a title="ball_collision_sim.SimParameters.ball2_params" href="#ball_collision_sim.SimParameters.ball2_params">ball2_params</a></code></li>
+<li><code><a title="ball_collision_sim.SimParameters.collision_type" href="#ball_collision_sim.SimParameters.collision_type">collision_type</a></code></li>
+<li><code><a title="ball_collision_sim.SimParameters.simulation_time" href="#ball_collision_sim.SimParameters.simulation_time">simulation_time</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="ball_collision_sim.SimulatorState" href="#ball_collision_sim.SimulatorState">SimulatorState</a></code></h4>
+<ul class="two-column">
+<li><code><a title="ball_collision_sim.SimulatorState.ball1" href="#ball_collision_sim.SimulatorState.ball1">ball1</a></code></li>
+<li><code><a title="ball_collision_sim.SimulatorState.ball2" href="#ball_collision_sim.SimulatorState.ball2">ball2</a></code></li>
+<li><code><a title="ball_collision_sim.SimulatorState.balls" href="#ball_collision_sim.SimulatorState.balls">balls</a></code></li>
+<li><code><a title="ball_collision_sim.SimulatorState.distance" href="#ball_collision_sim.SimulatorState.distance">distance</a></code></li>
+<li><code><a title="ball_collision_sim.SimulatorState.kinetic_energy" href="#ball_collision_sim.SimulatorState.kinetic_energy">kinetic_energy</a></code></li>
+<li><code><a title="ball_collision_sim.SimulatorState.momentum" href="#ball_collision_sim.SimulatorState.momentum">momentum</a></code></li>
+<li><code><a title="ball_collision_sim.SimulatorState.relative_speed" href="#ball_collision_sim.SimulatorState.relative_speed">relative_speed</a></code></li>
+<li><code><a title="ball_collision_sim.SimulatorState.trajectories" href="#ball_collision_sim.SimulatorState.trajectories">trajectories</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
