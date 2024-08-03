@@ -87,7 +87,7 @@ class PhysicsParameters:
     position: Union[Tuple[float, float], vp.vector]
     velocity: Union[Tuple[float, float], vp.vector]
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.position = vp.vector(*self.position, 0)
         self.velocity = vp.vector(*self.velocity, 0)
 
@@ -178,12 +178,12 @@ class Ball:
     @property
     def angle(self) -> float:
         """Calculate and return the angle of the ball's velocity vector."""
-        return vp.degrees(vp.atan2(self.velocity.y, self.velocity.x))
+        return float(vp.degrees(vp.atan2(self.velocity.y, self.velocity.x)))
 
     @property
     def speed(self) -> float:
         """Calculate and return the speed of the ball."""
-        return vp.mag(self.velocity)
+        return float(vp.mag(self.velocity))
 
     @property
     def momentum(self) -> vp.vector:
@@ -193,7 +193,7 @@ class Ball:
     @property
     def momentum_mag(self) -> float:
         """Calculate and return the magnitude of the ball's momentum."""
-        return vp.mag(self.momentum)
+        return float(vp.mag(self.momentum))
 
     @property
     def kinetic_energy(self) -> float:
@@ -379,7 +379,7 @@ class BallCollisionSimulator:
                                                       self.distance,
                                                       self.trajectories)
 
-    def __del__(self):
+    def __del__(self) -> None:
         """
         Deletes the scene and sets the reference to None to allow scene to disappear from GUI
         """
@@ -393,7 +393,7 @@ class BallCollisionSimulator:
         if self.merged_ball:
             return 0.0
         else:
-            return vp.mag(self.ball1.velocity - self.ball2.velocity)
+            return float(vp.mag(self.ball1.velocity - self.ball2.velocity))
 
     @property
     def distance(self) -> float:
@@ -401,7 +401,7 @@ class BallCollisionSimulator:
         if self.merged_ball:
             return 0.0
         else:
-            return vp.mag(self.ball1.position - self.ball2.position)
+            return float(vp.mag(self.ball1.position - self.ball2.position))
 
     @property
     def momentum(self) -> vp.vector:
