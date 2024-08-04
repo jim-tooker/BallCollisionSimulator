@@ -9,4 +9,7 @@
 * Test cases for BallCollisionSimulator
 
 ## Documentation
-For detailed API documentation, see [API Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/ball_collision_sim.html).
+For detailed API documentation, see:
+* [BallCollisionSimulator API Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/ball_collision_sim.html).
+* [Testing Suite Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/test_ball_collision_sim.html).
+* [Test Cases Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/test_cases.html).

@@ -35,9 +35,10 @@ Usage:
     without the GUI.
 """
 from __future__ import annotations
-from typing import Tuple, List, Union, Optional, Final
+from typing import Tuple, List, Optional, Final
 import argparse
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+import math
 from copy import copy, deepcopy
 from enum import Enum, IntEnum, auto
 import vpython as vp
@@ -73,23 +74,22 @@ class BallTrajectories(Enum):
     MERGED = auto()
 
 
-@dataclass
 class PhysicsParameters:
     """
     Class to store the physical parameters of a ball.
-
-    Attributes:
-        mass (float): Mass of the ball in kg.
-        position (Union[Tuple[float, float], vp.vector]): Position vector of the ball (x, y) in meters.
-        velocity (Union[Tuple[float, float], vp.vector]): Velocity vector of the ball (vx, vy) in m/s.
     """
-    mass: float
-    position: Union[Tuple[float, float], vp.vector]
-    velocity: Union[Tuple[float, float], vp.vector]
+    def __init__(self, mass: float, position: Tuple[float, float], velocity: Tuple[float, float]):
+        """
+        Initialize the PhysicsParameters object.
 
-    def __post_init__(self) -> None:
-        self.position = vp.vector(*self.position, 0)
-        self.velocity = vp.vector(*self.velocity, 0)
+        Args:
+            mass (float): Mass of the ball in kg.
+            position (Tuple[float, float]): Initial position of the ball (x, y) in meters.
+            velocity (Tuple[float, float]): Initial velocity of the ball (vx, vy) in m/s.
+        """
+        self.mass: float = mass
+        self.position: vp.vector = vp.vector(*position, 0)
+        self.velocity: vp.vector = vp.vector(*velocity, 0)
 
 
 @dataclass
@@ -99,12 +99,12 @@ class BallParameters:
 
     Attributes:
         physics_params (PhysicsParameters): The physical parameters of the ball.
-        color (vp.color): Color of the ball.
+        color (vp.vector): Color of the ball.
         name (str): Name or identifier for the ball.
     """
 
     physics_params: PhysicsParameters
-    color: vp.color
+    color: vp.vector
     name: str
 
 
@@ -114,14 +114,12 @@ class SimParameters:
     Data class to store all parameters for a Simulator instance.
 
     Attributes:
-        ball1_params (BallParameters): Parameters for the first ball.
-        ball2_params (BallParameters): Parameters for the second ball.
+        ball_params (List[BallParameters]): List of parameters for each ball.
         simulation_time (float): Total time to simulate.
         collision_type (CollisionType): Type of collision to simulate (elastic or inelastic).
     """
 
-    ball1_params: BallParameters
-    ball2_params: BallParameters
+    ball_params: List[BallParameters]
     simulation_time: float
     collision_type: CollisionType
 
@@ -158,9 +156,6 @@ class Ball:
         self.position: vp.vector = params.physics_params.position
         self.velocity: vp.vector = params.physics_params.velocity
 
-        # Radius proportional to the mass (0.5m for 1 kg)
-        self.radius: float = 0.5 * (self.mass ** (1/3))
-
         self.name: str = params.name
 
         if Ball._no_gui is False:
@@ -176,9 +171,17 @@ class Ball:
                                              opacity=0)
 
     @property
+    def radius(self) -> float:
+        """
+        Calculate and return the radius of the ball.
+        In this sim, radius is proportional to the mass (0.5m for 1 kg)
+        """
+        return float(0.5 * (self.mass ** (1/3)))
+
+    @property
     def angle(self) -> float:
         """Calculate and return the angle of the ball's velocity vector."""
-        return float(vp.degrees(vp.atan2(self.velocity.y, self.velocity.x)))
+        return float(math.degrees(math.atan2(self.velocity.y, self.velocity.x)))
 
     @property
     def speed(self) -> float:
@@ -335,19 +338,16 @@ class BallCollisionSimulator:
     """Defines what the time delta between each simulation loop iteration is."""
 
     def __init__(self,
-                 ball1_params: BallParameters,
-                 ball2_params: BallParameters,
+                 ball_params: List[BallParameters],
                  simulation_time: float,
                  collision_type: CollisionType = CollisionType.ELASTIC):
         """
         Args:
-            ball1_params (BallParameters): Parameters for the first ball.
-            ball2_params (BallParameters): Parameters for the second ball.
+            ball_params (List[BallParameters]): List of parameters for each ball.
             simulation_time (float): Total time to simulate.
             collision_type (CollisionType): Type of collision to simulate (elastic or inelastic).
         """
-        self.sim_params: SimParameters = SimParameters(ball1_params,
-                                                       ball2_params,
+        self.sim_params: SimParameters = SimParameters(ball_params,
                                                        simulation_time,
                                                        collision_type)
 
@@ -359,17 +359,15 @@ class BallCollisionSimulator:
         if BallCollisionSimulator._no_gui is False:
             self._scene = vp.canvas(
                 title=f'{self.sim_params.collision_type.name} Collision Simulation',
-                width=800, height=800,
-                center=vp.vector(0, 0, 0),
-                background=vp.color.black)
+                width=800, height=800)
 
             # Set up grid
             self._create_grid_and_axes()
 
         # Create ball objects
         self.balls: List[Ball] = []
-        self.balls.append(Ball(self.sim_params.ball1_params))
-        self.balls.append(Ball(self.sim_params.ball2_params))
+        for ball_param in ball_params:
+            self.balls.append(Ball(ball_param))
 
         # Store Simulator State for later
         self.initial: SimulatorState = SimulatorState(deepcopy(self.balls),
@@ -437,10 +435,10 @@ class BallCollisionSimulator:
 
             if distance_change > 0.0:
                 return BallTrajectories.DIVERGING
-            if distance_change < 0.0:
+            elif distance_change < 0.0:
                 return BallTrajectories.CONVERGING
-
-            return BallTrajectories.CONSTANT
+            else:
+                return BallTrajectories.CONSTANT
 
     @property
     def ke_lost(self) -> float:
@@ -465,8 +463,8 @@ class BallCollisionSimulator:
         """Alias for Merged Ball (self.balls[Balls.MERGED])"""
         if len(self.balls) > Balls.MERGED:
             return self.balls[Balls.MERGED]
-
-        return None
+        else:
+            return None
 
     @classmethod
     def disable_gui(cls, no_gui: bool) -> None:
@@ -481,8 +479,7 @@ class BallCollisionSimulator:
 
     @classmethod
     def create_simulator(cls,
-                         phys1_params: PhysicsParameters,
-                         phys2_params: PhysicsParameters,
+                         phys_params: List[PhysicsParameters],
                          simulation_time: float,
                          collision_type: CollisionType = CollisionType.ELASTIC) \
             -> BallCollisionSimulator:
@@ -490,18 +487,18 @@ class BallCollisionSimulator:
         Create a BallCollisionSimulator instance with given parameters.
 
         Args:
-            phys1_params (PhysicsParameters): Physics parameters for the first ball.
-            phys2_params (PhysicsParameters): Physics parameters for the second ball.
+            phys_params (List[PhysicsParameters]): List of physics parameters for each ball.
             simulation_time (float): Total time to simulate.
             collision_type (CollisionType): Type of collision to simulate (elastic or inelastic).
 
         Returns:
             BallCollisionSimulator: An instance of the simulator.
         """
-        ball1_params: BallParameters = BallParameters(phys1_params, color=vp.color.blue, name='1')
-        ball2_params: BallParameters = BallParameters(phys2_params, color=vp.color.red, name='2')
+        ball_params: List[BallParameters] = []
+        ball_params.append(BallParameters(phys_params[0], color=vp.color.blue, name='1'))
+        ball_params.append(BallParameters(phys_params[1], color=vp.color.red, name='2'))
 
-        return cls(ball1_params, ball2_params, simulation_time, collision_type)
+        return cls(ball_params, simulation_time, collision_type)
 
     @staticmethod
     def quit_simulation() -> None:
@@ -509,7 +506,7 @@ class BallCollisionSimulator:
         if BallCollisionSimulator._no_gui is False:
             # We don't import vp_services until needed, because importing it will start
             # the server, if not started already.
-            import vpython.no_notebook as vp_services
+            import vpython.no_notebook as vp_services  # type: ignore[import-untyped]
             vp_services.stop_server()
 
     def _create_grid_and_axes(self) -> None:
@@ -540,17 +537,45 @@ class BallCollisionSimulator:
         for ball in balls:
             print(f'Ball {ball.name}:')
             print(f'  Mass: {ball.mass} kg')
-            print(f'  Radius: {ball.radius:.2f} m')
-            print(f'  Position: ({ball.position.x:.2f}, {ball.position.y:.2f})')
-            print(f'  Velocity: ({ball.velocity.x:.2f}, {ball.velocity.y:.2f}), or {
-                ball.speed:.2f} m/s at {ball.angle:.2f}°')
-            print(f'  Momentum: ({ball.momentum.x:.2f}, {ball.momentum.y:.2f}), or {
-                ball.momentum_mag:.2f} N⋅s at {ball.angle:.2f}°')
-            print(f'  Kinetic Energy: {ball.kinetic_energy:.2f} J')
+            print(f'  Radius: {ball.radius:.3g} m')
+            print(f'  Position: ({ball.position.x:.3g}, {ball.position.y:.3g})')
+            print(f'  Velocity: ({ball.velocity.x:.3g}, {ball.velocity.y:.3g}), or {
+                ball.speed:.3g} m/s at {ball.angle:.3g}°')
+            print(f'  Momentum: ({ball.momentum.x:.3g}, {ball.momentum.y:.3g}), or {
+                ball.momentum_mag:.3g} N⋅s at {ball.angle:.3g}°')
+            print(f'  Kinetic Energy: {ball.kinetic_energy:.3g} J')
         print()
 
     def _calculate_intersection(self) -> None:
-        """Calculate the intersection point of the paths of the two balls."""
+        """
+        Calculate the intersection point of the paths of the two balls.
+
+        This method determines if and where the paths of two balls intersect
+        within the simulation time. It uses a parametric approach to find
+        the intersection of two line segments representing the ball paths.
+
+        The algorithm uses parametric variables t and u (range 0 to 1) which 
+        represent positions along ball1 and ball2's paths respectively. An 
+        intersection exists if both t and u are between 0 and 1.
+
+        Notes on 't' and 'u':  
+        - 't' and 'u' are parametric variables. They represent a position along  
+           each line segment, scaled from 0 to 1.  
+        - For 't' (related to ball1's path):  
+            - 't = 0' means you're at ball1's starting point (x1, y1)  
+            - 't = 1' means you're at ball1's ending point (x1_end, y1_end)  
+            - '0 < t < 1' means you're somewhere along ball1's path  
+        - 'u' works the same way but for ball2's path.  
+        -  If '0 <= t <= 1' and '0 <= u <= 1', it means the intersection point lies  
+           within both line segments, i.e., the balls' paths genuinely intersect.
+
+
+           The method stores the intersection information in self.intersect_info
+        if an intersection is found within the valid range of both paths.
+
+        Returns:
+            None
+        """
         # Extract initial positions and velocities
         x1, y1 = self.initial.ball1.position.x, self.initial.ball1.position.y
         x2, y2 = self.initial.ball2.position.x, self.initial.ball2.position.y
@@ -566,30 +591,52 @@ class BallCollisionSimulator:
         # Calculate the intersection of these line segments
         denominator = (x1 - x1_end) * (y2 - y2_end) - (y1 - y1_end) * (x2 - x2_end)
 
+        # If lines are parallel, return None
         if denominator == 0:
-            return None  # Lines are parallel
+            return None
 
+        # Calculate parameters t and u
+        # t represents how far along the first ball's path the intersection occurs
+        # u represents the same for the second ball's path
         t = ((x1 - x2) * (y2 - y2_end) - (y1 - y2) * (x2 - x2_end)) / denominator
         u = -((x1 - x1_end) * (y1 - y2) - (y1 - y1_end) * (x1 - x2)) / denominator
 
-        # Correct -0.0 to 0.0
-        if t == -0.0:
-            t = 0.0
-        if u == -0.0:
-            u = 0.0
+        # Correct -0.0 to 0.0 for consistency  (float-point math anomalies)
+        t = 0.0 if t == -0.0 else t
+        u = 0.0 if u == -0.0 else u
 
+        # Check if intersection point is within both line segments
         if 0 <= t <= 1 and 0 <= u <= 1:
-            # Intersection point
+            # Calculate intersection point
             ix = x1 + t * (x1_end - x1)
             iy = y1 + t * (y1_end - y1)
 
             # Store intersection info
-            self.intersect_info = IntersectionInfo(position=vp.vector(ix, iy, 0),
-                                                   ball1_time=t * self.sim_params.simulation_time,
-                                                   ball2_time=u * self.sim_params.simulation_time)
+            self.intersect_info = IntersectionInfo(
+                position=vp.vector(ix, iy, 0),
+                ball1_time=t * self.sim_params.simulation_time,
+                ball2_time=u * self.sim_params.simulation_time
+            )
 
     def _elastic_collision_physics(self) -> None:
-        """Calculate and update the physics of the balls after elastic collision."""
+        """
+        Calculate and update ball velocities after an elastic collision.
+
+        This method simulates an elastic collision between two balls by:
+        1. Computing the collision normal vector (direction of impact)
+        2. Decomposing velocities into components parallel and perpendicular to this normal
+        3. Applying collision physics equations to compute new velocities
+        4. Reconstructing velocity vectors and updating ball states
+
+        The collision normal vector is crucial as it defines the line along which 
+        momentum and energy are exchanged during collision. It typically points 
+        from one ball's center to the other's. Components of velocity along this 
+        normal are modified by the collision, while perpendicular components 
+        (tangential) remain unchanged.
+
+        Special cases are handled when balls occupy the same position, where
+        velocity vectors are used to infer a meaningful collision normal.
+        """
         def _check_for_neg_zero() -> None:
             """If any of the x,y components have -0 in them, change them to 0"""
             self.ball1.velocity.x = 0.0 if self.ball1.velocity.x == -0 else self.ball1.velocity.x
@@ -606,34 +653,39 @@ class BallCollisionSimulator:
 
         # Calculate the normal vector of collision
         diff: vp.vector = x1 - x2
-        normal: vp.vector = None
-        # If balls are in the same position
-        if diff.mag == 0:
-            # If balls are in the same position and the same velocity, then add the velocities
-            if v1 - v2 == vp.vector(0, 0, 0):
-                normal = (v1 + v2).norm()
+        normal: vp.vector
+
+        # Handle special cases for normal vector calculation
+        # Balls are superimposed (can occur due to user-defined initial conditions)
+        if diff.mag == 0:  # If balls are in the same position
+            if v1 == v2:  # If balls have the same velocity
+                # Use either v1 or v2, they're the same
+                normal = v1.norm()
             else:
+                # Use the difference of velocities as the normal direction
                 normal = (v1 - v2).norm()
         else:
+            # Normal case: normal is the unit vector from ball2 to ball1
             normal = diff.norm()
 
-        # Calculate the tangential vector
+        # Calculate the tangential vector (perpendicular to normal)
         tangent: vp.vector = vp.vector(-normal.y, normal.x, 0)
 
         # Project velocities onto normal and tangential vectors
-        v1n: float = v1.dot(normal)
-        v1t: float = v1.dot(tangent)
-        v2n: float = v2.dot(normal)
-        v2t: float = v2.dot(tangent)
+        v1n: float = v1.dot(normal)   # Normal component of v1
+        v1t: float = v1.dot(tangent)  # Tangential component of v1
+        v2n: float = v2.dot(normal)   # Normal component of v2
+        v2t: float = v2.dot(tangent)  # Tangential component of v2
 
-        # Calculate new normal velocities
+        # Calculate new normal velocities using elastic collision formula
         v1n_new: float = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2)
         v2n_new: float = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2)
 
-        # Convert scalar normal and tangential velocities back to vectors
-        # and store into ball velocities
-        self.ball1.velocity = v1n_new * normal + v1t * tangent
-        self.ball2.velocity = v2n_new * normal + v2t * tangent
+        # Reconstruct the new velocity vectors
+        # New velocity = (new normal component * normal vector) +
+        #                (unchanged tangential component * tangential vector)
+        self.ball1.velocity = (v1n_new * normal) + (v1t * tangent)
+        self.ball2.velocity = (v2n_new * normal) + (v2t * tangent)
 
         # Check if any of the velocities have any -0's to get rid of
         _check_for_neg_zero()
@@ -693,7 +745,7 @@ class BallCollisionSimulator:
                 f'Initial total: {self.initial.kinetic_energy}, Final total: {self.kinetic_energy}'
         # Else, check the loss of KE from the merged ball
         else:
-            print(f'Kinetic Energy lost in collision: {self.ke_lost:.2f} J')
+            print(f'Kinetic Energy lost in collision: {self.ke_lost:.3g} J')
 
     def _run_simulation(self) -> None:
         """Run the simulation loop."""
@@ -705,17 +757,14 @@ class BallCollisionSimulator:
             current_trajectory: BallTrajectories = self.trajectories
             if last_trajectory != current_trajectory:
                 if current_trajectory == BallTrajectories.CONVERGING:
-                    print(f't={time_elapsed:.2f}s: Balls are Converging at: {
-                        self.relative_speed:.2f} m/s')
+                    print(f't={time_elapsed:.3g}s: Balls are Converging at: {self.relative_speed:.3g} m/s')
                 elif current_trajectory == BallTrajectories.DIVERGING:
-                    print(f't={time_elapsed:.2f}s: Balls are Diverging at: {
-                        self.relative_speed:.2f} m/s')
+                    print(f't={time_elapsed:.3g}s: Balls are Diverging at: {self.relative_speed:.3g} m/s')
                 elif current_trajectory == BallTrajectories.MERGED:
-                    print(f't={time_elapsed:.2f}s: Balls have Merged.')
+                    print(f't={time_elapsed:.3g}s: Balls have Merged.')
                 else:
-                    print(f't={time_elapsed:.2f
-                               }s: Balls are maintaining a constant distance. Relative speed: {
-                        self.relative_speed:.2f} m/s')
+                    print(f't={time_elapsed:.3g}s: Balls are maintaining a constant distance. Relative speed: {
+                        self.relative_speed:.3g} m/s')
                 last_trajectory = current_trajectory
 
         while True:
@@ -760,13 +809,13 @@ class BallCollisionSimulator:
         print('\n***************************************************')
         print('Initial Conditions:')
         self._print_ball_state([self.initial.ball1, self.initial.ball2])
-        print(f'Initial Distance: {self.initial.distance:.2f} m')
-        print(f'Sum of Radii: {(self.ball1.radius + self.ball2.radius):.2f}')
-        print(f'Total Momentum: ({self.initial.momentum.x:.2f}, {
-            self.initial.momentum.y:.2f}), or {
-            vp.mag(self.initial.momentum):.2f} N⋅s at {
-            vp.degrees(vp.atan2(self.initial.momentum.y, self.initial.momentum.x)):.2f}°')
-        print(f'Total Kinetic Energy: {(self.initial.kinetic_energy):.2f} J')
+        print(f'Initial Distance: {self.initial.distance:.3g} m')
+        print(f'Sum of Radii: {(self.ball1.radius + self.ball2.radius):.3g}')
+        print(f'Total Momentum: ({self.initial.momentum.x:.3g}, {
+            self.initial.momentum.y:.3g}), or {
+            vp.mag(self.initial.momentum):.3g} N⋅s at {
+            math.degrees(math.atan2(self.initial.momentum.y, self.initial.momentum.x)):.3g}°')
+        print(f'Total Kinetic Energy: {(self.initial.kinetic_energy):.3g} J')
         print()
 
         # Run the simulation
@@ -776,7 +825,7 @@ class BallCollisionSimulator:
 
         # If collision occured
         if self.collision_info:
-            print(f'Collision occured at time: {self.collision_info.time:.2f} secs')
+            print(f'Collision occured at time: {self.collision_info.time:.3g} secs')
             print('\nPost Collision Conditions:')
             if self.collision_info.merged_ball:
                 self._print_ball_state([self.collision_info.merged_ball])
@@ -791,12 +840,12 @@ class BallCollisionSimulator:
             self._calculate_intersection()
             if self.intersect_info:
                 print('Paths did intersect though:')
-                print(f'  Path Intersection Point: ({self.intersect_info.position.x:.2f}, {
-                    self.intersect_info.position.y:.2f})')
+                print(f'  Path Intersection Point: ({self.intersect_info.position.x:.3g}, {
+                    self.intersect_info.position.y:.3g})')
                 print(f'  Time for Ball 1 to reach intersection: {
-                    self.intersect_info.ball1_time:.2f} secs')
+                    self.intersect_info.ball1_time:.3g} secs')
                 print(f'  Time for Ball 2 to reach intersection: {
-                    self.intersect_info.ball2_time:.2f} secs')
+                    self.intersect_info.ball2_time:.3g} secs')
             else:
                 print('No path intersection found either.')
 
@@ -833,12 +882,12 @@ def main() -> None:
         - Waits for a keypress to exit if the GUI is enabled.  
 
     """
-    def _get_user_input() -> Tuple[PhysicsParameters, PhysicsParameters, float, CollisionType]:
+    def _get_user_input() -> Tuple[List[PhysicsParameters], float, CollisionType]:
         """
         Get user input for ball parameters, simulation time, and collision type.
 
         Returns:
-            Tuple[PhysicsParameters, PhysicsParameters, float, CollisionType]:
+            Tuple[List[PhysicsParameters], float, CollisionType]:
             Parameters for both balls, simulation time, and collision type (elastic or inelastic).
         """
         def get_float(prompt: str) -> float:
@@ -870,18 +919,18 @@ def main() -> None:
 
         print("Enter parameters for Ball 1:")
         mass1: float = get_float("Mass (kg): ")
-        position1: vp.vector = get_vector("Position (x,y) in meters: ")
-        velocity1: vp.vector = get_vector("Velocity (x,y) in m/s: ")
+        position1: Tuple[float, float] = get_vector("Position (x,y) in meters: ")
+        velocity1: Tuple[float, float] = get_vector("Velocity (x,y) in m/s: ")
 
         print("\nEnter parameters for Ball 2:")
         mass2: float = get_float("Mass (kg): ")
-        position2: vp.vector = get_vector("Position (x,y) in meters: ")
-        velocity2: vp.vector = get_vector("Velocity (x,y) in m/s: ")
+        position2: Tuple[float, float] = get_vector("Position (x,y) in meters: ")
+        velocity2: Tuple[float, float] = get_vector("Velocity (x,y) in m/s: ")
 
         simulation_time: float = get_float("\nEnter simulation time (seconds): ")
 
-        return (PhysicsParameters(mass1, position1, velocity1),
-                PhysicsParameters(mass2, position2, velocity2),
+        return ([PhysicsParameters(mass1, position1, velocity1),
+                 PhysicsParameters(mass2, position2, velocity2)],
                 simulation_time,
                 collision_type)
 
@@ -895,9 +944,8 @@ def main() -> None:
 
     if args.test:
         # Pre-defined test case
-        #                               Mass,  ( Position )   ( Velocity )
-        ball1_params = PhysicsParameters(1.0, (1.5, 0.0), (1.0, 0.0))
-        ball2_params = PhysicsParameters(1.0, (1.5, 0.0), (1.0, 0.0))
+        ball_params: List[PhysicsParameters] = [PhysicsParameters(mass=1.0, position=(1.5, 0.0), velocity=(1.0, 0.0)),
+                                                PhysicsParameters(mass=1.0, position=(1.5, 0.0), velocity=(1.0, 0.0))]
 
         simulation_time: float = 10.0  # secs
 
@@ -905,10 +953,9 @@ def main() -> None:
         collision_type = CollisionType.INELASTIC
     else:
         # Get user input
-        ball1_params, ball2_params, simulation_time, collision_type = _get_user_input()
+        ball_params, simulation_time, collision_type = _get_user_input()
 
-    ball_collision_sim: BallCollisionSimulator = BallCollisionSimulator.create_simulator(ball1_params,
-                                                                                         ball2_params,
+    ball_collision_sim: BallCollisionSimulator = BallCollisionSimulator.create_simulator(ball_params,
                                                                                          simulation_time,
                                                                                          collision_type
     )
