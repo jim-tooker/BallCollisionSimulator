@@ -2,13 +2,13 @@
 """
 Ball Collision Simulator
 
-This module simulates the elastic or inelastic collision between two balls using the VPython
-library. It contains classes to define the physical and visual properties of the balls, perform
-the simulation, and visualize the collision in a 2D space. The module also supports running
-the simulation without a graphical user interface (GUI).
+This module simulates the elastic, inelastic, or partially elastic collisions between two balls
+using the VPython library. It contains classes to define the physical and visual properties of
+the balls, perform the simulation, and visualize the collision in a 2D space. The module also
+supports running the simulation without a graphical user interface (GUI).
 
 Enums:
-    - CollisionType: Indicates what type of collision to simulate, elastic or inelastic.
+    - CollisionType: Indicates what type of collision to simulate: elastic, inelastic, or partially elastic.
     - Balls: Used to index the correct ball from the list of active balls
     - BallTrajectories: Indicates if the balls are converging, diverging, or at a constant
                         distance.
@@ -49,10 +49,11 @@ __author__ = "Jim Tooker"
 
 class CollisionType(Enum):
     """
-    Enum to indicate the type of Collision, elastic or inelastic.
+    Enum to indicate the type of Collision: elastic, inelastic, or partially elastic.
     """
     ELASTIC = auto()
     INELASTIC = auto()
+    PARTIAL = auto()
 
 
 class Balls(IntEnum):
@@ -116,12 +117,15 @@ class SimParameters:
     Attributes:
         ball_params (List[BallParameters]): List of parameters for each ball.
         simulation_time (float): Total time to simulate.
-        collision_type (CollisionType): Type of collision to simulate (elastic or inelastic).
+        collision_type (CollisionType): Type of collision to simulate:
+                                        (elastic, inelastic, or partially elastic).
+        cor (float): Coefficient of Restitution (used for partially elastic collisions)
     """
 
     ball_params: List[BallParameters]
     simulation_time: float
     collision_type: CollisionType
+    cor: float
 
 
 class Ball:
@@ -134,6 +138,9 @@ class Ball:
         velocity (Tuple[float, float]): Velocity of the ball (vx, vy) (m/s).
         radius (float): Radius of the ball (m).
         name (str): Name of the Ball.
+        collision_point (Optional[vp.vector]): Point on the ball where the collision occurred
+        collision_point_offset (Optional[vp.vector]): Vector offset between the center of the ball
+                                                      and where the collision occurred
         angle (float): Angle of ball travel (0° -> +x-axis,
                                              90° -> +y-axis,
                                              180° -> -x-axis,
@@ -155,8 +162,10 @@ class Ball:
         self.mass: float = params.physics_params.mass
         self.position: vp.vector = params.physics_params.position
         self.velocity: vp.vector = params.physics_params.velocity
-
         self.name: str = params.name
+
+        self.collision_point: Optional[vp.vector] = None
+        self.collision_point_offset: Optional[vp.vector] = None
 
         if Ball._no_gui is False:
             self._sphere: vp.sphere = vp.sphere(pos=self.position,
@@ -169,6 +178,8 @@ class Ball:
                                              color=vp.color.white,
                                              box=False,
                                              opacity=0)
+            self._collision_blob: Optional[vp.ellipsoid] = None
+
 
     @property
     def radius(self) -> float:
@@ -225,6 +236,27 @@ class Ball:
         if Ball._no_gui is False:
             self._sphere.pos = self.position
             self._label.pos = self.position
+            if self._collision_blob and self.collision_point_offset:
+                self._collision_blob.pos = self.position - self.collision_point_offset
+
+    def mark_collision_point(self, cor: float) -> None:
+        """
+        Mark the collision point with a visible blob
+
+        Args:
+            cor (float): The Coefficient of Restitution
+        """
+        if Ball._no_gui is False:
+            assert self.collision_point_offset
+
+            # The scaling factor is arbitrary to look okay with CORs between 0-1
+            scaling_factor: float = 1.5
+
+            self._collision_blob = vp.ellipsoid(color=vp.color.yellow,
+                                                axis=self.collision_point_offset,
+                                                size=vp.vector(self.radius/scaling_factor,
+                                                               self.radius*scaling_factor,
+                                                               self.radius*scaling_factor) * cor)
 
     def set_visibility(self, is_visible: bool) -> None:
         """
@@ -247,8 +279,8 @@ class CollisionInfo:
 
     Attributes:
         time (float): Time of collision.
-        ball1 (Ball): Ball 1 object (for elastic collision)
-        ball2 (Ball): Ball 2 object (for elastic collision)
+        ball1 (Ball): Ball 1 object (for elastic or partially elastic collisions)
+        ball2 (Ball): Ball 2 object (for elastic or partially elastic  collisions)
         merged_ball (Ball): Merged ball (for inelastic collision)
     """
     time: float
@@ -286,7 +318,8 @@ class SimulatorState:
         kinetic_energy (float): Total kinetic energy of both balls (J).
         relative_speed (float): Relative speed of the two balls with respect to each other (m/s).
         distance (float): Distance of the two balls (m).
-        trajectories (BallTrajectories): What the balls current trajectories are: (constant, diverging, or converging).
+        trajectories (BallTrajectories): What the balls current trajectories are:
+                                         (constant, diverging, or converging).
     """
     balls: List[Ball]
     momentum: vp.vector
@@ -340,26 +373,40 @@ class BallCollisionSimulator:
     def __init__(self,
                  ball_params: List[BallParameters],
                  simulation_time: float,
-                 collision_type: CollisionType = CollisionType.ELASTIC):
+                 collision_type: CollisionType = CollisionType.ELASTIC,
+                 cor: Optional[float] = None):
         """
         Args:
             ball_params (List[BallParameters]): List of parameters for each ball.
             simulation_time (float): Total time to simulate.
-            collision_type (CollisionType): Type of collision to simulate (elastic or inelastic).
+            collision_type (CollisionType): Type of collision to simulate:
+                                            (elastic, inelastic, or partially elastic).
+            cor (Optional[float]): Coefficient of Restitution (used for partially elastic collisions)
         """
+        self._scene: Optional[vp.canvas] = None
+
+        # Error check given COR
+        if cor is None or collision_type != CollisionType.PARTIAL:
+            cor = 1.0
+        elif cor <= 0.0 or cor >= 1.0:
+            raise ValueError("COR must be > 0.0 and < 1.0.")
+
         self.sim_params: SimParameters = SimParameters(ball_params,
                                                        simulation_time,
-                                                       collision_type)
+                                                       collision_type,
+                                                       cor)
 
         self.collision_info: Optional[CollisionInfo] = None
         self.intersect_info: Optional[IntersectionInfo] = None
 
         # Create scene and grid if GUI enabled
-        self._scene: Optional[vp.canvas] = None
         if BallCollisionSimulator._no_gui is False:
             self._scene = vp.canvas(
-                title=f'{self.sim_params.collision_type.name} Collision Simulation',
+                title=f'{self.sim_params.collision_type.name} Collision Simulator',
                 width=800, height=800)
+            
+            if self.sim_params.collision_type == CollisionType.PARTIAL:
+                self._scene.append_to_title(f', COR: {self.sim_params.cor}')
 
             # Set up grid
             self._create_grid_and_axes()
@@ -481,7 +528,8 @@ class BallCollisionSimulator:
     def create_simulator(cls,
                          phys_params: List[PhysicsParameters],
                          simulation_time: float,
-                         collision_type: CollisionType = CollisionType.ELASTIC) \
+                         collision_type: CollisionType = CollisionType.ELASTIC,
+                         cor: Optional[float] = None) \
             -> BallCollisionSimulator:
         """
         Create a BallCollisionSimulator instance with given parameters.
@@ -489,7 +537,9 @@ class BallCollisionSimulator:
         Args:
             phys_params (List[PhysicsParameters]): List of physics parameters for each ball.
             simulation_time (float): Total time to simulate.
-            collision_type (CollisionType): Type of collision to simulate (elastic or inelastic).
+            collision_type (CollisionType): Type of collision to simulate:
+                                            (elastic, inelastic, or partially elastic).
+            cor (Optional[float]): Coefficient of Restitution (used for partially elastic collisions)
 
         Returns:
             BallCollisionSimulator: An instance of the simulator.
@@ -498,7 +548,7 @@ class BallCollisionSimulator:
         ball_params.append(BallParameters(phys_params[0], color=vp.color.blue, name='1'))
         ball_params.append(BallParameters(phys_params[1], color=vp.color.red, name='2'))
 
-        return cls(ball_params, simulation_time, collision_type)
+        return cls(ball_params, simulation_time, collision_type, cor)
 
     @staticmethod
     def quit_simulation() -> None:
@@ -516,10 +566,10 @@ class BallCollisionSimulator:
 
         for x in vp.arange(-grid_range, grid_range + step, step):
             vp.curve(pos=[vp.vector(x, -grid_range, 0), vp.vector(x, grid_range, 0)],
-                     color=vp.color.gray(0.5) if x != 0 else vp.color.yellow)
+                     color=vp.color.gray(0.5) if x != 0 else vp.color.white)
         for y in vp.arange(-grid_range, grid_range + step, step):
             vp.curve(pos=[vp.vector(-grid_range, y, 0), vp.vector(grid_range, y, 0)],
-                     color=vp.color.gray(0.5) if y != 0 else vp.color.yellow)
+                     color=vp.color.gray(0.5) if y != 0 else vp.color.white)
 
         # Create axis labels
         vp.label(pos=vp.vector(grid_range + 0.5, 0, 0), text='X', height=16, box=False)
@@ -618,9 +668,41 @@ class BallCollisionSimulator:
                 ball2_time=u * self.sim_params.simulation_time
             )
 
+    def _calculate_collision_point(self) -> None:
+        """Calculate the single point where the balls touch during collision."""
+        x1: vp.vector = self.ball1.position
+        x2: vp.vector = self.ball2.position
+        r1: float = self.ball1.radius
+        r2: float = self.ball2.radius
+
+        # Vector from ball1 to ball2
+        direction: vp.vector = x2 - x1
+        distance: float = direction.mag
+
+        # Normalize the direction vector
+        if distance != 0:
+            direction = direction.norm()
+        else:
+            # If balls are at the same position, use velocity difference as direction
+            direction = (self.ball2.velocity - self.ball1.velocity).norm()
+
+        # Calculate the collision point
+        # This point is r1 / (r1 + r2) of the way from ball1 to ball2
+        collision_point: vp.vector = x1 + direction * (distance * r1 / (r1 + r2))
+        self.ball1.collision_point = self.ball2.collision_point = collision_point
+
+        # Calculate collision point offsets
+        self.ball1.collision_point_offset = self.ball1.position - collision_point
+        self.ball2.collision_point_offset = self.ball2.position - collision_point
+
+        # Mark the collision point on the balls
+        self.ball1.mark_collision_point(self.sim_params.cor)
+        self.ball2.mark_collision_point(self.sim_params.cor)
+
+    
     def _elastic_collision_physics(self) -> None:
         """
-        Calculate and update ball velocities after an elastic collision.
+        Calculate and update ball velocities after an elastic or partially elastic collision.
 
         This method simulates an elastic collision between two balls by:
         1. Computing the collision normal vector (direction of impact)
@@ -651,6 +733,10 @@ class BallCollisionSimulator:
         x1: vp.vector = self.ball1.position
         x2: vp.vector = self.ball2.position
 
+        # Only mark collision points on partially elastic collisions
+        if self.sim_params.collision_type == CollisionType.PARTIAL:
+            self._calculate_collision_point()
+
         # Calculate the normal vector of collision
         diff: vp.vector = x1 - x2
         normal: vp.vector
@@ -678,8 +764,8 @@ class BallCollisionSimulator:
         v2t: float = v2.dot(tangent)  # Tangential component of v2
 
         # Calculate new normal velocities using elastic collision formula
-        v1n_new: float = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2)
-        v2n_new: float = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2)
+        v1n_new: float = ((self.sim_params.cor * m2 * (v2n - v1n)) + (m1 * v1n) + (m2 * v2n)) / (m1 + m2)
+        v2n_new: float = ((self.sim_params.cor * m1 * (v1n - v2n)) + (m1 * v1n) + (m2 * v2n)) / (m1 + m2)
 
         # Reconstruct the new velocity vectors
         # New velocity = (new normal component * normal vector) +
@@ -720,7 +806,7 @@ class BallCollisionSimulator:
 
     def _process_post_collision_physics(self) -> None:
         """Calculate and update the physics of the balls after collision."""
-        if self.sim_params.collision_type == CollisionType.ELASTIC:
+        if self.sim_params.collision_type in [CollisionType.ELASTIC, CollisionType.PARTIAL]:
             self._elastic_collision_physics()
         # Else, inelastic collision
         else:
@@ -736,14 +822,15 @@ class BallCollisionSimulator:
     def _verify_conservation_of_ke(self) -> None:
         """
         Verify that kinetic energy is conserved after the collision for elastic collisions,
-        or calculate how much kinetic energy was lost after the collision for inelastic collisions.
+        or calculate how much kinetic energy was lost after the collision for partially
+        elastic or inelastic collisions.
         """
-        # if the balls haven't merged, then check their kinetic energy
-        if not self.merged_ball:
+        # If elastic collision, check that kinetic energy was conserved
+        if self.sim_params.collision_type == CollisionType.ELASTIC:
             # Verify KE has been conserved
             assert round(self.ke_lost, ndigits=3) == 0.0, \
                 f'Initial total: {self.initial.kinetic_energy}, Final total: {self.kinetic_energy}'
-        # Else, check the loss of KE from the merged ball
+        # Else, check the loss of KE from inelastic or partially elastic collision
         else:
             print(f'Kinetic Energy lost in collision: {self.ke_lost:.3g} J')
 
@@ -870,7 +957,8 @@ def main() -> None:
 
     * Prompts:  
         - If not using predefined test parameters, the user is prompted to enter:  
-            - Simulation type (elastic or inelastic)  
+            - Simulation type: (elastic, inelastic, or partially elastic)  
+            - Coefficient of Restitution (COR): (0.0 < COR < 1.0)  
             - Mass (kg) for Ball 1 and Ball 2  
             - Initial position (x, y) in meters for Ball 1 and Ball 2  
             - Initial velocity (vx, vy) in m/s for Ball 1 and Ball 2  
@@ -882,20 +970,21 @@ def main() -> None:
         - Waits for a keypress to exit if the GUI is enabled.  
 
     """
-    def _get_user_input() -> Tuple[List[PhysicsParameters], float, CollisionType]:
+    def _get_user_input() -> Tuple[List[PhysicsParameters], float, CollisionType, Optional[float]]:
         """
         Get user input for ball parameters, simulation time, and collision type.
 
         Returns:
-            Tuple[List[PhysicsParameters], float, CollisionType]:
-            Parameters for both balls, simulation time, and collision type (elastic or inelastic).
+            Tuple[List[PhysicsParameters], float, CollisionType, Optional[float]]:
+            Parameters for both balls, simulation time, and collision type (elastic,
+            inelastic, or partially elastic), and optionally a Coefficient of Restitution (COR).
         """
         def get_float(prompt: str) -> float:
             while True:
                 try:
                     return float(input(prompt))
                 except ValueError:
-                    print("Please enter a valid number.")
+                    print('Please enter a valid number.')
 
         def get_vector(prompt: str) -> Tuple[float, float]:
             while True:
@@ -903,19 +992,37 @@ def main() -> None:
                     x, y = map(float, input(prompt).split(','))
                     return (x, y)
                 except ValueError:
-                    print("Please enter two numbers separated by a comma.")
+                    print('Please enter two numbers separated by a comma.')
 
         def get_collision_type() -> CollisionType:
             collision_selection = None
-            while collision_selection not in ['e', 'i']:
-                collision_selection = input("Enter collision type ('e'=elastic/'i'=inelastic): ").lower()
+            while collision_selection not in ['e', 'i', 'p']:
+                collision_selection = input(
+                    "Enter collision type ('e'=elastic, 'i'=inelastic), 'p'= partial: ").lower()
 
             if collision_selection == 'i':
                 return CollisionType.INELASTIC
+            elif collision_selection == 'p':
+                return CollisionType.PARTIAL
             else:
                 return CollisionType.ELASTIC
 
+        def get_cor(prompt: str) -> float:
+            while True:
+                try:
+                    cor: float = float(input(prompt))
+                    if cor > 0 and cor < 1:
+                        return cor
+                    else:
+                        print('COR must be > 0.0 and < 1.0.')
+                except ValueError:
+                    print('Please enter a valid number.')
+
         collision_type = get_collision_type()
+
+        cor: Optional[float] = None
+        if collision_type == CollisionType.PARTIAL:
+            cor = get_cor("\nEnter Coefficient of Restitution (0.0 < cor < 1.0): ")
 
         print("Enter parameters for Ball 1:")
         mass1: float = get_float("Mass (kg): ")
@@ -932,7 +1039,8 @@ def main() -> None:
         return ([PhysicsParameters(mass1, position1, velocity1),
                  PhysicsParameters(mass2, position2, velocity2)],
                 simulation_time,
-                collision_type)
+                collision_type,
+                cor)
 
     parser = argparse.ArgumentParser(description='Ball Collision Simulator')
     parser.add_argument('--test', action='store_true', help='Run with pre-defined test case')
@@ -944,21 +1052,24 @@ def main() -> None:
 
     if args.test:
         # Pre-defined test case
-        ball_params: List[PhysicsParameters] = [PhysicsParameters(mass=1.0, position=(1.5, 0.0), velocity=(1.0, 0.0)),
-                                                PhysicsParameters(mass=1.0, position=(1.5, 0.0), velocity=(1.0, 0.0))]
+        ball_params: List[PhysicsParameters] = [PhysicsParameters(mass=1, position=(2.4, 2), velocity=(-1, -1)),
+                                                PhysicsParameters(mass=3, position=(-2, -2), velocity=(1, 1))]
 
         simulation_time: float = 10.0  # secs
 
         # collision_type = CollisionType.ELASTIC
-        collision_type = CollisionType.INELASTIC
+        # collision_type = CollisionType.INELASTIC
+        collision_type = CollisionType.PARTIAL
+
+        cor: Optional[float] = 0.5
     else:
         # Get user input
-        ball_params, simulation_time, collision_type = _get_user_input()
+        ball_params, simulation_time, collision_type, cor = _get_user_input()
 
     ball_collision_sim: BallCollisionSimulator = BallCollisionSimulator.create_simulator(ball_params,
                                                                                          simulation_time,
-                                                                                         collision_type
-    )
+                                                                                         collision_type,
+                                                                                         cor)
 
     ball_collision_sim.run()
 
