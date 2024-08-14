@@ -3,10 +3,10 @@
 This module contains unit tests for the BallCollisionSimulator class.
 
 It uses pytest to run various test scenarios for ball collisions, 
-including elastic and inelastic collisions, intersections, and misses.
+including elastic, inelastic, and paritial elastic collisions, intersections, and misses.
 """
 
-from typing import Tuple, List, Dict, Union
+from typing import Tuple, List, Dict, Union, Optional
 import sys
 import argparse
 import math
@@ -22,12 +22,13 @@ __author__ = "Jim Tooker"
 def get_active_tests() -> List[Tuple[str, Tuple[List[PhysicsParameters],
                                                float,
                                                CollisionType,
+                                               Optional[float],
                                                ExpectedResults]]]:
     """
     Get the list of active tests to run and returns a list of active tests with their parameters.
 
     Returns:
-        List[Tuple[str, Tuple[List[PhysicsParameters], float, CollisionType,  ExpectedResults]]]  
+        List[Tuple[str, Tuple[List[PhysicsParameters], float, CollisionType, Optional[float], ExpectedResults]]]  
     """
     if "all" in ACTIVE_TESTS:
         return [(name, params) for name, params in TESTS.items()]  # All tests
@@ -48,6 +49,7 @@ def get_characteristics(test_name: str) -> Dict[str, Union[bool, str]]:
     # Define regular expressions for each category
     elastic_re = re.compile(r'_elastic_')
     inelastic_re = re.compile(r'_inelastic_')
+    partial_re = re.compile(r'_partial_')
     collision_re = re.compile(r'_collision_')
     intersection_re = re.compile(r'_intersection_')
     miss_re = re.compile(r'_miss_')
@@ -55,23 +57,34 @@ def get_characteristics(test_name: str) -> Dict[str, Union[bool, str]]:
     # Compute characteristics
     is_elastic = elastic_re.search(test_name) is not None
     is_inelastic = inelastic_re.search(test_name) is not None
+    is_partial = partial_re.search(test_name) is not None
     is_collision = collision_re.search(test_name) is not None
     is_intersection = intersection_re.search(test_name) is not None
     is_miss = miss_re.search(test_name) is not None
 
     # Check validity
-    is_valid = (is_elastic != is_inelastic) and (sum([is_collision, is_intersection, is_miss]) == 1)
+    is_valid = (sum([is_elastic, is_inelastic, is_partial]) == 1) and (sum([is_collision, is_intersection, is_miss]) == 1)
 
     # Create a human-readable test description
-    collision_type = "Elastic" if is_elastic else "Inelastic" if is_inelastic else "Unknown"
-    event_type = (", With Collision" if is_collision else 
+    if is_elastic:
+        collision_type = "Elastic"
+    elif is_inelastic:
+        collision_type = "Inelastic"
+    elif is_partial:
+        collision_type = "Partial"
+    else:
+        collision_type = "Unknown"
+
+    event_type = (", With Collision" if is_collision else
                   ", With Intersection" if is_intersection else 
                   ", With Neither Collision nor Intersection" if is_miss else ", Unknown")
+
     description = f"{collision_type}{event_type}"
 
     return {
         'elastic': is_elastic,
         'inelastic': is_inelastic,
+        'partial': is_partial,
         'collision': is_collision,
         'intersection': is_intersection,
         'miss': is_miss,
@@ -223,12 +236,13 @@ def get_distance(p1: vp.vector, p2: vp.vector) -> float:
     return float(vp.mag(p1 - p2))
 
 
-@pytest.mark.parametrize("ball_params, sim_time, collision_type, expected, test_name",
+@pytest.mark.parametrize("ball_params, sim_time, collision_type, cor, expected, test_name",
                          [(*test[1], test[0]) for test in get_active_tests()],
                          ids=[test[0] for test in get_active_tests()])
 def test_ball_collision(ball_params: List[PhysicsParameters],
                         sim_time: float,
                         collision_type: CollisionType,
+                        cor: Optional[float],
                         expected: ExpectedResults,
                         test_name: str) -> None:
     """
@@ -240,7 +254,7 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
     Args:
         ball_params (List[PhysicsParameters]): List of parameters for the balls.
         sim_time (float): Simulation time.
-        collision_type (CollisionType): Type of collision (elastic or inelastic).
+        collision_type (CollisionType): Type of collision (elastic, inelastic, or partial elastic).
         expected (ExpectedResults): Expected results of the simulation.
         test_name (str): Name of the test case.
     """
@@ -255,7 +269,8 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
     # Create and run the simulation
     sim = BallCollisionSimulator.create_simulator(ball_params,
                                                   sim_time,
-                                                  collision_type)
+                                                  collision_type,
+                                                  cor)
     sim.run()
 
     # Check for None object values
@@ -321,7 +336,7 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
         assert vector_approx(sim.merged_ball.momentum, final_expected_ball_momentum[0])
         final_expected_ball_ke.append(get_kinetic_energy(merged_ball_mass, final_expected_ball_speed[0]))
         assert value_approx(sim.merged_ball.kinetic_energy, final_expected_ball_ke[0])
-    else:  # Else, elastic collision, no merged ball
+    else:  # Else, elastic or partial elastic collision, no merged ball
         assert sim.balls
         assert expected.final_balls
         for i, (ball, expected_final_ball) in enumerate(zip(sim.balls, expected.final_balls)):
@@ -362,8 +377,8 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
     # Check for conservation of momentum
     assert vector_approx(init_expected_total_momentum, sim.momentum)
 
-    # Check KE lost (for inelastic)
-    if sim.merged_ball:
+    # Check KE lost (for inelastic and partial elastic)
+    if test_characteristics['inelastic'] or test_characteristics['partial']:
         assert expected.final_sim.ke_lost
         assert value_approx(sim.ke_lost, expected.final_sim.ke_lost)
     # Else, check for conservation of KE
@@ -389,6 +404,42 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
         assert vector_approx(sim.intersect_info.position, expected.intersect_info.position)
         assert value_approx(sim.intersect_info.ball1_time, expected.intersect_info.ball1_time)
         assert value_approx(sim.intersect_info.ball2_time, expected.intersect_info.ball2_time)
+
+
+def test_ball_collision_sim_low_cor() -> None:
+    """
+    Tests for too low of a COR
+    """
+    with pytest.raises(ValueError) as e_info:
+        ball_params: List[PhysicsParameters] = [PhysicsParameters(mass=1, position=(0, 0), velocity=(0, 0)),
+                                                PhysicsParameters(mass=1, position=(0, 0), velocity=(0, 0))]
+        sim_time: float = 10.0  # secs
+        collision_type = CollisionType.PARTIAL
+        cor: float = 0.0
+        BallCollisionSimulator.create_simulator(ball_params,
+                                                sim_time,
+                                                collision_type,
+                                                cor)
+        
+    print(f'Exception string: "{e_info.value}"')
+
+def test_ball_collision_sim_high_cor() -> None:
+    """
+    Tests for too high of a COR
+    """
+    with pytest.raises(ValueError) as e_info:
+        ball_params: List[PhysicsParameters] = [PhysicsParameters(mass=1, position=(0, 0), velocity=(0, 0)),
+                                                PhysicsParameters(mass=1, position=(0, 0), velocity=(0, 0))]
+        sim_time: float = 10.0  # secs
+        collision_type = CollisionType.PARTIAL
+        cor: float = 1.0
+        BallCollisionSimulator.create_simulator(ball_params,
+                                                sim_time,
+                                                collision_type,
+                                                cor)
+
+    print(f'Exception string: "{e_info.value}"')
+
 
 
 if __name__ == '__main__':

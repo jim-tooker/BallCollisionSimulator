@@ -108,12 +108,13 @@ class ExpectedResults:
     intersect_info: Optional[ExpectedIntersectionInfo] = None
 
 
-TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, ExpectedResults]]] = {
+TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Optional[float], ExpectedResults]]] = {
     "test01_elastic_collision_head_on_x_axis": (
         [PhysicsParameters(mass=1, position=(-1.5, 0), velocity=(1, 0)),
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(-1, 0))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(-1, 0)),
@@ -131,6 +132,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(-1, 1))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(-1, 1)),
@@ -148,6 +150,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1, 0), velocity=(1, 1))],
         5,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING),
             final_balls=None,
@@ -162,6 +165,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 1.5), velocity=(-1, -1))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(-1, -1)),
@@ -179,6 +183,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(0, 2))],
         5,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -195,6 +200,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(0, 1))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(0, 1)),
@@ -214,6 +220,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
                                                                  math.sin(46*DEGREES_TO_RADIANS)))],
         45,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -230,6 +237,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(0, 2), velocity=(1, 0))],
         5,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONSTANT),
             final_balls=None,
@@ -244,6 +252,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(0, 2), velocity=(-1, 0))],
         5,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING),
             final_balls=None,
@@ -258,6 +267,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(0, 2), velocity=(2, 0))],
         5,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING),
             final_balls=None,
@@ -272,6 +282,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(-2.5, 0), velocity=(2, 0))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(2, 0)),
@@ -289,6 +300,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=4, position=(5, 0), velocity=(-1, 0))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(-2.8, 0)),
@@ -306,6 +318,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(0, 0))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(0, 0)),
@@ -323,6 +336,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(0, 0))],
         5,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONSTANT),
             final_balls=None,
@@ -337,6 +351,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(-1, 0))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING),
             final_balls=[ExpectedBallState(velocity=(-1, 0)),
@@ -354,6 +369,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(-3.3, -4), velocity=(0, 1))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(0.05172, -0.4628)),
@@ -371,6 +387,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=2, position=(-0.5, -3), velocity=(0, 1))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(1.9075, -0.60116)),
@@ -388,6 +405,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(-3.3, -4), velocity=(0, 1))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -404,6 +422,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(-0.495, -10), velocity=(0, 5))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=[ExpectedBallState(velocity=(0.5, 0.0505)),
@@ -421,6 +440,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(-1, 0))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -437,6 +457,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=2, position=(3, 0), velocity=(-1, 0))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -453,6 +474,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(-0.5, -3), velocity=(0, 1))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -469,6 +491,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(0, 0))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -485,6 +508,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(-0.495, -10), velocity=(0, 5))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -501,6 +525,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=2, position=(5, 5), velocity=(-2, -2))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -517,6 +542,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(2, 0), velocity=(-4, 0))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING),
             final_balls=None,
@@ -533,6 +559,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(1.5, 0), velocity=(1, 0))],
         10,  # simulation time (s)
         CollisionType.ELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONSTANT),
             final_balls=[ExpectedBallState(velocity=(1, 0)),
@@ -550,6 +577,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=1, position=(10, 0), velocity=(-10, 0))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -566,6 +594,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=10, position=(10, 0), velocity=(-1, 0))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -582,6 +611,7 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
          PhysicsParameters(mass=5, position=(8, 0), velocity=(-1, 0))],
         10,  # simulation time (s)
         CollisionType.INELASTIC,
+        None,  # COR
         ExpectedResults(
             init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
             final_balls=None,
@@ -593,6 +623,101 @@ TESTS: Final[Dict[str, Tuple[List[PhysicsParameters], float, CollisionType, Expe
             intersect_info=None
         )
     ),
+    "test31_partial_collision_head_on_x_axis": (
+        [PhysicsParameters(mass=1, position=(-1.5, 0), velocity=(1, 0)),
+         PhysicsParameters(mass=1, position=(1.5, 0), velocity=(-1, 0))],
+        10,  # simulation time (s)
+        CollisionType.PARTIAL,
+        0.5, # COR
+        ExpectedResults(
+            init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
+            final_balls=[ExpectedBallState(velocity=(-0.5, 0)),
+                         ExpectedBallState(velocity=(0.5, 0))],
+            merged_ball=None,
+            final_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING,
+                                       ke_lost=0.75),
+            collision_info=ExpectedCollisionInfo(time=1,
+                                                 ball1_position=(-0.5, 0),
+                                                 ball2_position=(0.5, 0)),
+            intersect_info=None
+        )
+    ),
+    "test32_partial_collision_side_pocket_pool_shot": (
+        [PhysicsParameters(mass=1, position=(0.495, 0), velocity=(0, 0)),
+         PhysicsParameters(mass=1, position=(-0.495, -10), velocity=(0, 5))],
+        10,  # simulation time (s)
+        CollisionType.PARTIAL,
+        0.8,  # COR
+        ExpectedResults(
+            init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
+            final_balls=[ExpectedBallState(velocity=(0.44995, 0.04545)),
+                         ExpectedBallState(velocity=(-0.44995, 4.9546))],
+            merged_ball=None,
+            final_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING,
+                                       ke_lost=0.0227),
+            collision_info=ExpectedCollisionInfo(time=1.98,
+                                                 ball1_position=(0.495, 0),
+                                                 ball2_position=(-0.495, -0.1)),
+            intersect_info=None
+        )
+    ),
+    "test33_partial_collision_different_masses_and_velocities": (
+        [PhysicsParameters(mass=1, position=(-5, 0), velocity=(2, 0)),
+         PhysicsParameters(mass=4, position=(5, 0), velocity=(-1, 0))],
+        10,  # simulation time (s)
+        CollisionType.PARTIAL,
+        0.2,  # COR
+        ExpectedResults(
+            init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
+            final_balls=[ExpectedBallState(velocity=(-0.88, 0)),
+                         ExpectedBallState(velocity=(-0.28, 0))],
+            merged_ball=None,
+            final_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING,
+                                       ke_lost=3.456),
+            collision_info=ExpectedCollisionInfo(time=2.91,
+                                                 ball1_position=(0.82, 0),
+                                                 ball2_position=(2.09, 0)),
+            intersect_info=None
+        )
+    ),
+    "test34_partial_collision_same_position_opposing_velocities": (
+        [PhysicsParameters(mass=1, position=(1.5, 0), velocity=(1, 0)),
+         PhysicsParameters(mass=1, position=(1.5, 0), velocity=(-1, 0))],
+        10,  # simulation time (s)
+        CollisionType.PARTIAL,
+        0.5,  # COR
+        ExpectedResults(
+            init_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING),
+            final_balls=[ExpectedBallState(velocity=(-0.5, 0)),
+                         ExpectedBallState(velocity=(0.5, 0))],
+            merged_ball=None,
+            final_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING,
+                                       ke_lost=0.75),
+            collision_info=ExpectedCollisionInfo(time=0,
+                                                 ball1_position=(1.5, 0),
+                                                 ball2_position=(1.5, 0)),
+            intersect_info=None
+        )
+    ),
+    "test35_partial_collision_diagonal_opposing_symmetry": (
+        [PhysicsParameters(mass=1, position=(-1.5, -1.5), velocity=(1, 1)),
+         PhysicsParameters(mass=1, position=(1.5, 1.5), velocity=(-1, -1))],
+        10,  # simulation time (s)
+        CollisionType.PARTIAL,
+        0.7,  # COR
+        ExpectedResults(
+            init_sim=ExpectedSimState(trajectories=BallTrajectories.CONVERGING),
+            final_balls=[ExpectedBallState(velocity=(-0.7, -0.7)),
+                         ExpectedBallState(velocity=(0.7, 0.7))],
+            merged_ball=None,
+            final_sim=ExpectedSimState(trajectories=BallTrajectories.DIVERGING,
+                                       ke_lost=1.02),
+            collision_info=ExpectedCollisionInfo(time=1.15,
+                                                 ball1_position=(-0.35, -0.35),
+                                                 ball2_position=(0.35, 0.35)),
+            intersect_info=None
+        )
+    ),
 }
 """
 TESTS: Contains all the test cases definitions
@@ -600,7 +725,7 @@ TESTS: Contains all the test cases definitions
 
 
 ACTIVE_TESTS: Final[List[str]] = [
-    "all",   # This will run everything
+    # "all",   # This will run everything
     # "test01_elastic_collision_head_on_x_axis",
     # "test02_elastic_collision_converging_diagonal",
     # "test03_elastic_miss_diverging_diagonal",
@@ -630,7 +755,12 @@ ACTIVE_TESTS: Final[List[str]] = [
     # "test27_elastic_collision_same_position_same_velocity",
     # "test28_inelastic_collision_different_velocities",
     # "test29_inelastic_collision_different_masses_and_velocities",
-    # "test30_inelastic_collision_small_fast_ball_wins"
+    # "test30_inelastic_collision_small_fast_ball_wins",
+    # "test31_partial_collision_head_on_x_axis",
+    # "test32_partial_collision_side_pocket_pool_shot",
+    # "test33_partial_collision_different_masses_and_velocities",
+    # "test34_partial_collision_same_position_opposing_velocities",
+    # "test35_partial_collision_diagonal_opposing_symmetry",
 ]
 """
 ACTIVE_TESTS: Defines the active tests (what tests will be run)
