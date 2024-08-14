@@ -725,7 +725,7 @@ TESTS: Contains all the test cases definitions
 
 
 ACTIVE_TESTS: Final[List[str]] = [
-    # "all",   # This will run everything
+    "all",   # This will run everything
     # "test01_elastic_collision_head_on_x_axis",
     # "test02_elastic_collision_converging_diagonal",
     # "test03_elastic_miss_diverging_diagonal",

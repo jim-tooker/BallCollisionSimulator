@@ -26,13 +26,13 @@ hljs.highlightAll();
 </header>
 <section id="section-intro">
 <p>Ball Collision Simulator</p>
-<p>This module simulates the elastic, inelastic, or parital collision between two balls using the VPython
-library. It contains classes to define the physical and visual properties of the balls, perform
-the simulation, and visualize the collision in a 2D space. The module also supports running
-the simulation without a graphical user interface (GUI).</p>
+<p>This module simulates the elastic, inelastic, or partially elastic collisions between two balls
+using the VPython library. It contains classes to define the physical and visual properties of
+the balls, perform the simulation, and visualize the collision in a 2D space. The module also
+supports running the simulation without a graphical user interface (GUI).</p>
 <h2 id="enums">Enums</h2>
 <ul>
-<li>CollisionType: Indicates what type of collision to simulate, elastic, inelastic, or parital.</li>
+<li>CollisionType: Indicates what type of collision to simulate: elastic, inelastic, or partially elastic.</li>
 <li>Balls: Used to index the correct ball from the list of active balls</li>
 <li>BallTrajectories: Indicates if the balls are converging, diverging, or at a constant
 distance.</li>
@@ -89,7 +89,7 @@ simulation runs without a graphical user interface (GUI).</p>
 <ul>
 <li>If not using predefined test parameters, the user is prompted to enter:
 <ul>
-<li>Simulation type (elastic, inelastic, or parital)
+<li>Simulation type: (elastic, inelastic, or partially elastic)
 </li>
 <li>Coefficient of Restitution (COR): (0.0 &lt; COR &lt; 1.0)
 </li>
@@ -478,7 +478,8 @@ def speed(self) -&gt; float:
 <dt><strong><code>simulation_time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Total time to simulate.</dd>
 <dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a></code></dt>
-<dd>Type of collision to simulate (elastic, inelastic, or parital).</dd>
+<dd>Type of collision to simulate:
+(elastic, inelastic, or partially elastic).</dd>
 <dt><strong><code>cor</code></strong> :&ensp;<code>Optional[float]</code></dt>
 <dd>Coefficient of Restitution (used for partially elastic collisions)</dd>
 </dl></div>
@@ -526,7 +527,8 @@ def speed(self) -&gt; float:
         Args:
             ball_params (List[BallParameters]): List of parameters for each ball.
             simulation_time (float): Total time to simulate.
-            collision_type (CollisionType): Type of collision to simulate (elastic, inelastic, or parital).
+            collision_type (CollisionType): Type of collision to simulate:
+                                            (elastic, inelastic, or partially elastic).
             cor (Optional[float]): Coefficient of Restitution (used for partially elastic collisions)
         &#34;&#34;&#34;
         self._scene: Optional[vp.canvas] = None
@@ -683,7 +685,8 @@ def speed(self) -&gt; float:
         Args:
             phys_params (List[PhysicsParameters]): List of physics parameters for each ball.
             simulation_time (float): Total time to simulate.
-            collision_type (CollisionType): Type of collision to simulate (elastic, inelastic, or parital).
+            collision_type (CollisionType): Type of collision to simulate:
+                                            (elastic, inelastic, or partially elastic).
             cor (Optional[float]): Coefficient of Restitution (used for partially elastic collisions)
 
         Returns:
@@ -878,7 +881,7 @@ def speed(self) -&gt; float:
         x1: vp.vector = self.ball1.position
         x2: vp.vector = self.ball2.position
 
-        # Only mark collision points on partial elastic collisions
+        # Only mark collision points on partially elastic collisions
         if self.sim_params.collision_type == CollisionType.PARTIAL:
             self._calculate_collision_point()
 
@@ -975,7 +978,7 @@ def speed(self) -&gt; float:
             # Verify KE has been conserved
             assert round(self.ke_lost, ndigits=3) == 0.0, \
                 f&#39;Initial total: {self.initial.kinetic_energy}, Final total: {self.kinetic_energy}&#39;
-        # Else, check the loss of KE from inelastic or partial collision
+        # Else, check the loss of KE from inelastic or partially elastic collision
         else:
             print(f&#39;Kinetic Energy lost in collision: {self.ke_lost:.3g} J&#39;)
 
@@ -1117,7 +1120,8 @@ the simulation time first.</p></div>
 <dt><strong><code>simulation_time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Total time to simulate.</dd>
 <dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a></code></dt>
-<dd>Type of collision to simulate (elastic, inelastic, or parital).</dd>
+<dd>Type of collision to simulate:
+(elastic, inelastic, or partially elastic).</dd>
 <dt><strong><code>cor</code></strong> :&ensp;<code>Optional[float]</code></dt>
 <dd>Coefficient of Restitution (used for partially elastic collisions)</dd>
 </dl>
@@ -1456,10 +1460,10 @@ class BallParameters:
 <dt><strong><code>time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Time of collision.</dd>
 <dt><strong><code>ball1</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
-<dd>Ball 1 object (for elastic or partially elastic collision)</dd>
+<dd>Ball 1 object (for elastic or partially elastic collisions)</dd>
 <dt><strong><code>ball2</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Ball 2 object (for elastic or partially elastic
-collision)</dd>
+collisions)</dd>
 <dt><strong><code>merged_ball</code></strong> :&ensp;<code><a title="ball_collision_sim.Ball" href="#ball_collision_sim.Ball">Ball</a></code></dt>
 <dd>Merged ball (for inelastic collision)</dd>
 </dl></div>
@@ -1474,8 +1478,8 @@ class CollisionInfo:
 
     Attributes:
         time (float): Time of collision.
-        ball1 (Ball): Ball 1 object (for elastic or partially elastic collision)
-        ball2 (Ball): Ball 2 object (for elastic or partially elastic  collision)
+        ball1 (Ball): Ball 1 object (for elastic or partially elastic collisions)
+        ball2 (Ball): Ball 2 object (for elastic or partially elastic  collisions)
         merged_ball (Ball): Merged ball (for inelastic collision)
     &#34;&#34;&#34;
     time: float
@@ -1508,14 +1512,14 @@ class CollisionInfo:
 <span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Enum to indicate the type of Collision, elastic, inelastic, or parital.</p></div>
+<div class="desc"><p>Enum to indicate the type of Collision: elastic, inelastic, or partially elastic.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class CollisionType(Enum):
     &#34;&#34;&#34;
-    Enum to indicate the type of Collision, elastic, inelastic, or parital.
+    Enum to indicate the type of Collision: elastic, inelastic, or partially elastic.
     &#34;&#34;&#34;
     ELASTIC = auto()
     INELASTIC = auto()
@@ -1641,7 +1645,8 @@ class IntersectionInfo:
 <dt><strong><code>simulation_time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Total time to simulate.</dd>
 <dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="ball_collision_sim.CollisionType" href="#ball_collision_sim.CollisionType">CollisionType</a></code></dt>
-<dd>Type of collision to simulate (elastic, inelastic, or partial).</dd>
+<dd>Type of collision to simulate:
+(elastic, inelastic, or partially elastic).</dd>
 <dt><strong><code>cor</code></strong> :&ensp;<code>float</code></dt>
 <dd>Coefficient of Restitution (used for partially elastic collisions)</dd>
 </dl></div>
@@ -1657,7 +1662,8 @@ class SimParameters:
     Attributes:
         ball_params (List[BallParameters]): List of parameters for each ball.
         simulation_time (float): Total time to simulate.
-        collision_type (CollisionType): Type of collision to simulate (elastic, inelastic, or partial).
+        collision_type (CollisionType): Type of collision to simulate:
+                                        (elastic, inelastic, or partially elastic).
         cor (float): Coefficient of Restitution (used for partially elastic collisions)
     &#34;&#34;&#34;
 

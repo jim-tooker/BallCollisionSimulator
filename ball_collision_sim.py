@@ -2,13 +2,13 @@
 """
 Ball Collision Simulator
 
-This module simulates the elastic, inelastic, or parital collision between two balls using the VPython
-library. It contains classes to define the physical and visual properties of the balls, perform
-the simulation, and visualize the collision in a 2D space. The module also supports running
-the simulation without a graphical user interface (GUI).
+This module simulates the elastic, inelastic, or partially elastic collisions between two balls
+using the VPython library. It contains classes to define the physical and visual properties of
+the balls, perform the simulation, and visualize the collision in a 2D space. The module also
+supports running the simulation without a graphical user interface (GUI).
 
 Enums:
-    - CollisionType: Indicates what type of collision to simulate, elastic, inelastic, or parital.
+    - CollisionType: Indicates what type of collision to simulate: elastic, inelastic, or partially elastic.
     - Balls: Used to index the correct ball from the list of active balls
     - BallTrajectories: Indicates if the balls are converging, diverging, or at a constant
                         distance.
@@ -49,7 +49,7 @@ __author__ = "Jim Tooker"
 
 class CollisionType(Enum):
     """
-    Enum to indicate the type of Collision, elastic, inelastic, or parital.
+    Enum to indicate the type of Collision: elastic, inelastic, or partially elastic.
     """
     ELASTIC = auto()
     INELASTIC = auto()
@@ -117,7 +117,8 @@ class SimParameters:
     Attributes:
         ball_params (List[BallParameters]): List of parameters for each ball.
         simulation_time (float): Total time to simulate.
-        collision_type (CollisionType): Type of collision to simulate (elastic, inelastic, or partial).
+        collision_type (CollisionType): Type of collision to simulate:
+                                        (elastic, inelastic, or partially elastic).
         cor (float): Coefficient of Restitution (used for partially elastic collisions)
     """
 
@@ -278,8 +279,8 @@ class CollisionInfo:
 
     Attributes:
         time (float): Time of collision.
-        ball1 (Ball): Ball 1 object (for elastic or partially elastic collision)
-        ball2 (Ball): Ball 2 object (for elastic or partially elastic  collision)
+        ball1 (Ball): Ball 1 object (for elastic or partially elastic collisions)
+        ball2 (Ball): Ball 2 object (for elastic or partially elastic  collisions)
         merged_ball (Ball): Merged ball (for inelastic collision)
     """
     time: float
@@ -378,7 +379,8 @@ class BallCollisionSimulator:
         Args:
             ball_params (List[BallParameters]): List of parameters for each ball.
             simulation_time (float): Total time to simulate.
-            collision_type (CollisionType): Type of collision to simulate (elastic, inelastic, or parital).
+            collision_type (CollisionType): Type of collision to simulate:
+                                            (elastic, inelastic, or partially elastic).
             cor (Optional[float]): Coefficient of Restitution (used for partially elastic collisions)
         """
         self._scene: Optional[vp.canvas] = None
@@ -535,7 +537,8 @@ class BallCollisionSimulator:
         Args:
             phys_params (List[PhysicsParameters]): List of physics parameters for each ball.
             simulation_time (float): Total time to simulate.
-            collision_type (CollisionType): Type of collision to simulate (elastic, inelastic, or parital).
+            collision_type (CollisionType): Type of collision to simulate:
+                                            (elastic, inelastic, or partially elastic).
             cor (Optional[float]): Coefficient of Restitution (used for partially elastic collisions)
 
         Returns:
@@ -730,7 +733,7 @@ class BallCollisionSimulator:
         x1: vp.vector = self.ball1.position
         x2: vp.vector = self.ball2.position
 
-        # Only mark collision points on partial elastic collisions
+        # Only mark collision points on partially elastic collisions
         if self.sim_params.collision_type == CollisionType.PARTIAL:
             self._calculate_collision_point()
 
@@ -827,7 +830,7 @@ class BallCollisionSimulator:
             # Verify KE has been conserved
             assert round(self.ke_lost, ndigits=3) == 0.0, \
                 f'Initial total: {self.initial.kinetic_energy}, Final total: {self.kinetic_energy}'
-        # Else, check the loss of KE from inelastic or partial collision
+        # Else, check the loss of KE from inelastic or partially elastic collision
         else:
             print(f'Kinetic Energy lost in collision: {self.ke_lost:.3g} J')
 
@@ -954,7 +957,7 @@ def main() -> None:
 
     * Prompts:  
         - If not using predefined test parameters, the user is prompted to enter:  
-            - Simulation type (elastic, inelastic, or parital)  
+            - Simulation type: (elastic, inelastic, or partially elastic)  
             - Coefficient of Restitution (COR): (0.0 < COR < 1.0)  
             - Mass (kg) for Ball 1 and Ball 2  
             - Initial position (x, y) in meters for Ball 1 and Ball 2  
@@ -974,7 +977,7 @@ def main() -> None:
         Returns:
             Tuple[List[PhysicsParameters], float, CollisionType, Optional[float]]:
             Parameters for both balls, simulation time, and collision type (elastic,
-            inelastic, or parital), and optionally a Coefficient of Restitution (COR).
+            inelastic, or partially elastic), and optionally a Coefficient of Restitution (COR).
         """
         def get_float(prompt: str) -> float:
             while True:
