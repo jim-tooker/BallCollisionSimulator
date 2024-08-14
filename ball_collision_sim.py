@@ -589,7 +589,7 @@ class BallCollisionSimulator:
             print(f'  Mass: {ball.mass} kg')
             print(f'  Radius: {ball.radius:.3g} m')
             print(f'  Position: ({ball.position.x:.3g}, {ball.position.y:.3g})')
-            print(f'  Velocity: ({ball.velocity.x:.5g}, {ball.velocity.y:.5g}), or {
+            print(f'  Velocity: ({ball.velocity.x:.3g}, {ball.velocity.y:.3g}), or {
                 ball.speed:.3g} m/s at {ball.angle:.3g}°')
             print(f'  Momentum: ({ball.momentum.x:.3g}, {ball.momentum.y:.3g}), or {
                 ball.momentum_mag:.3g} N⋅s at {ball.angle:.3g}°')
@@ -825,7 +825,7 @@ class BallCollisionSimulator:
         or calculate how much kinetic energy was lost after the collision for partially
         elastic or inelastic collisions.
         """
-        # if the balls haven't merged, then check their kinetic energy
+        # If elastic collision, check that kinetic energy was conserved
         if self.sim_params.collision_type == CollisionType.ELASTIC:
             # Verify KE has been conserved
             assert round(self.ke_lost, ndigits=3) == 0.0, \
@@ -970,7 +970,7 @@ def main() -> None:
         - Waits for a keypress to exit if the GUI is enabled.  
 
     """
-    def _get_user_input() -> Tuple[List[PhysicsParameters], float, CollisionType, float]:
+    def _get_user_input() -> Tuple[List[PhysicsParameters], float, CollisionType, Optional[float]]:
         """
         Get user input for ball parameters, simulation time, and collision type.
 
@@ -1020,7 +1020,7 @@ def main() -> None:
 
         collision_type = get_collision_type()
 
-        cor: float = 1.0
+        cor: Optional[float] = None
         if collision_type == CollisionType.PARTIAL:
             cor = get_cor("\nEnter Coefficient of Restitution (0.0 < cor < 1.0): ")
 
@@ -1061,7 +1061,7 @@ def main() -> None:
         # collision_type = CollisionType.INELASTIC
         collision_type = CollisionType.PARTIAL
 
-        cor: float = 0.5
+        cor: Optional[float] = 0.5
     else:
         # Get user input
         ball_params, simulation_time, collision_type, cor = _get_user_input()

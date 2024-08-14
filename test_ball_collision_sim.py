@@ -3,7 +3,7 @@
 This module contains unit tests for the BallCollisionSimulator class.
 
 It uses pytest to run various test scenarios for ball collisions, 
-including elastic, inelastic, and paritial elastic collisions, intersections, and misses.
+including elastic, inelastic, and partially elastic collisions, intersections, and misses.
 """
 
 from typing import Tuple, List, Dict, Union, Optional
@@ -71,7 +71,7 @@ def get_characteristics(test_name: str) -> Dict[str, Union[bool, str]]:
     elif is_inelastic:
         collision_type = "Inelastic"
     elif is_partial:
-        collision_type = "Partial"
+        collision_type = "Partially Elastic"
     else:
         collision_type = "Unknown"
 
@@ -254,7 +254,7 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
     Args:
         ball_params (List[PhysicsParameters]): List of parameters for the balls.
         sim_time (float): Simulation time.
-        collision_type (CollisionType): Type of collision (elastic, inelastic, or partial elastic).
+        collision_type (CollisionType): Type of collision: (elastic, inelastic, or partially elastic).
         expected (ExpectedResults): Expected results of the simulation.
         test_name (str): Name of the test case.
     """
@@ -336,7 +336,7 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
         assert vector_approx(sim.merged_ball.momentum, final_expected_ball_momentum[0])
         final_expected_ball_ke.append(get_kinetic_energy(merged_ball_mass, final_expected_ball_speed[0]))
         assert value_approx(sim.merged_ball.kinetic_energy, final_expected_ball_ke[0])
-    else:  # Else, elastic or partial elastic collision, no merged ball
+    else:  # Else, elastic or partially elastic collision, no merged ball
         assert sim.balls
         assert expected.final_balls
         for i, (ball, expected_final_ball) in enumerate(zip(sim.balls, expected.final_balls)):
@@ -377,7 +377,7 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
     # Check for conservation of momentum
     assert vector_approx(init_expected_total_momentum, sim.momentum)
 
-    # Check KE lost (for inelastic and partial elastic)
+    # Check KE lost (for inelastic and partially elastic)
     if test_characteristics['inelastic'] or test_characteristics['partial']:
         assert expected.final_sim.ke_lost
         assert value_approx(sim.ke_lost, expected.final_sim.ke_lost)
