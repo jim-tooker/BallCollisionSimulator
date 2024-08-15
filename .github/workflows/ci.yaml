@@ -39,7 +39,5 @@ jobs:
     - name: Test
       run: |
         export PYTHONPATH=$PYTHONPATH:.:/home/runner/work/ballcollide
-        echo $PYTHONPATH
-        pwd
         python tests/test_ball_collision_sim.py --no_gui
   
