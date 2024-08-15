@@ -1,10 +1,11 @@
 """
-Defines the test cases used for the test_ball_collision() test.
+##Defines the test cases used for the test_ball_collision() test.
 """
 from typing import Tuple, Dict, List, Optional, Final
 from dataclasses import dataclass
 import math
-from ball_collision_sim import PhysicsParameters, CollisionType, BallTrajectories
+from ballcollide.ball_sim_enums import CollisionType, BallTrajectories
+from ballcollide.ball_sim_parameters import PhysicsParameters
 
 __author__ = "Jim Tooker"
 
@@ -43,7 +44,7 @@ class ExpectedSimState:
         kinetic_energy (Optional[float]): The expected total kinetic energy of the system.
         relative_speed (Optional[float]): The expected relative speed between the balls.
         distance (Optional[float]): The expected distance between the balls.
-        trajectories (Optional[BallTrajectories]): The expected trajectories of the balls.
+        trajectories (Optional[ballcollide.ball_sim_enums.BallTrajectories]): The expected trajectories of the balls.
         ke_lost (Optional[float]): The expected kinetic energy lost in an inelastic collision.
     """
     momentum: Optional[Tuple[float, float]] = None

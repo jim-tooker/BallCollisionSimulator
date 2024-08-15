@@ -1,15 +1,16 @@
-# Ball Collision Simulator
 
-## ball_collision_sim.py
-* Simulates two balls colliding with an elastic or inelastic collision.
-* Plots their paths pre and post collision
-* Outputs physics initial conditions and results
+# Ball Collision Simulator (Package `ballcollide`)
 
-## test_ball_collision_sim.py
-* Test cases for BallCollisionSimulator
+This package simulates the elastic, inelastic, or partially elastic collisions between two balls using the VPython library. It contains modules to define the physical and visual properties of the balls, perform the simulation, and visualize the collision in a 2D space.
+
+Modules:
+    - `ball_collision_sim`: The main module that runs the system. It manages the entire simulation process, including initialization, running the simulation, and handling collisions.
+    - `ball_sim_enums`: Contains enums used by the system.
+    - `ball_sim_parameters`: Contains classes to store parameter data needed by the system.
+    - `ball_sim`: Contains the `Ball` class which represents the balls in the system.
+    - `ball_sim_info`: Contains classes to hold info/state of the system.
+    - `tests`: Tests for the Ball Collision Simulator system.
 
 ## Documentation
 For detailed API documentation, see:
-* [BallCollisionSimulator API Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/ball_collision_sim.html)
-* [Testing Suite Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/test_ball_collision_sim.html)
-* [Test Cases Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/test_cases.html)
+[Ball Collision Simulator API Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/ballcollide/index.html)

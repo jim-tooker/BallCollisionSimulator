@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
-<title>test_ball_collision_sim API documentation</title>
+<title>ballcollide.tests.test_ball_collision_sim API documentation</title>
 <meta name="description" content="This module contains unit tests for the BallCollisionSimulator class …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
@@ -22,7 +22,7 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>test_ball_collision_sim</code></h1>
+<h1 class="title">Module <code>ballcollide.tests.test_ball_collision_sim</code></h1>
 </header>
 <section id="section-intro">
 <p>This module contains unit tests for the BallCollisionSimulator class.</p>
@@ -36,15 +36,15 @@ including elastic, inelastic, and partially elastic collisions, intersections, a
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="test_ball_collision_sim.get_active_tests"><code class="name flex">
-<span>def <span class="ident">get_active_tests</span></span>(<span>) ‑> List[Tuple[str, Tuple[List[ball_collision_sim.PhysicsParameters], float, ball_collision_sim.CollisionType, Optional[float], test_cases.ExpectedResults]]]</span>
+<dt id="ballcollide.tests.test_ball_collision_sim.get_active_tests"><code class="name flex">
+<span>def <span class="ident">get_active_tests</span></span>(<span>) ‑> List[Tuple[str, Tuple[List[<a title="ballcollide.ball_sim_parameters.PhysicsParameters" href="../ball_sim_parameters.html#ballcollide.ball_sim_parameters.PhysicsParameters">PhysicsParameters</a>], float, <a title="ballcollide.ball_sim_enums.CollisionType" href="../ball_sim_enums.html#ballcollide.ball_sim_enums.CollisionType">CollisionType</a>, Optional[float], <a title="ballcollide.tests.test_cases.ExpectedResults" href="test_cases.html#ballcollide.tests.test_cases.ExpectedResults">ExpectedResults</a>]]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Get the list of active tests to run and returns a list of active tests with their parameters.</p>
 <h2 id="returns">Returns</h2>
 <p>List[Tuple[str, Tuple[List[PhysicsParameters], float, CollisionType, Optional[float], ExpectedResults]]]</p></div>
 </dd>
-<dt id="test_ball_collision_sim.get_angle"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.get_angle"><code class="name flex">
 <span>def <span class="ident">get_angle</span></span>(<span>velocity: Union[Tuple[float, float], vp.vector]) ‑> float</span>
 </code></dt>
 <dd>
@@ -57,7 +57,7 @@ velocity (Union[Tuple[float, float], vp.vector]): Velocity vector of the ball.</
 <dd>The angle of the ball (degrees).</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.get_characteristics"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.get_characteristics"><code class="name flex">
 <span>def <span class="ident">get_characteristics</span></span>(<span>test_name: str) ‑> Dict[str, Union[bool, str]]</span>
 </code></dt>
 <dd>
@@ -73,7 +73,7 @@ velocity (Union[Tuple[float, float], vp.vector]): Velocity vector of the ball.</
 <dd>A dictionary containing test characteristics.</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.get_distance"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.get_distance"><code class="name flex">
 <span>def <span class="ident">get_distance</span></span>(<span>p1: vp.vector, p2: vp.vector) ‑> float</span>
 </code></dt>
 <dd>
@@ -87,7 +87,7 @@ v2 (vp.vector): Velocity vector of ball 2.</p>
 <dd>The distance between the balls (m).</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.get_kinetic_energy"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.get_kinetic_energy"><code class="name flex">
 <span>def <span class="ident">get_kinetic_energy</span></span>(<span>mass: float, speed: float) ‑> float</span>
 </code></dt>
 <dd>
@@ -101,7 +101,7 @@ speed (float): The speed of the ball (m/s).</p>
 <dd>The kinetic energy of the ball (J).</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.get_momentum"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.get_momentum"><code class="name flex">
 <span>def <span class="ident">get_momentum</span></span>(<span>mass: float, velocity: Union[Tuple[float, float], vp.vector]) ‑> vp.vector</span>
 </code></dt>
 <dd>
@@ -115,7 +115,7 @@ velocity (Union[Tuple[float, float], vp.vector]): Velocity vector of the ball.</
 <dd>The momentum vector of the ball.</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.get_radius"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.get_radius"><code class="name flex">
 <span>def <span class="ident">get_radius</span></span>(<span>mass: float) ‑> float</span>
 </code></dt>
 <dd>
@@ -129,7 +129,7 @@ mass (float): Mass of the ball (kg).</p>
 <dd>The radius of the ball (m).</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.get_relative_speed"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.get_relative_speed"><code class="name flex">
 <span>def <span class="ident">get_relative_speed</span></span>(<span>v1: Union[Tuple[float, float], vp.vector], v2: Union[Tuple[float, float], vp.vector]) ‑> float</span>
 </code></dt>
 <dd>
@@ -143,7 +143,7 @@ v2 (Union[Tuple[float, float], vp.vector]): Velocity vector of ball 2.</p>
 <dd>The relative speed of the balls with respect to each other (m/s).</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.get_speed"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.get_speed"><code class="name flex">
 <span>def <span class="ident">get_speed</span></span>(<span>velocity: Union[Tuple[float, float], vp.vector]) ‑> float</span>
 </code></dt>
 <dd>
@@ -156,8 +156,8 @@ velocity (Union[Tuple[float, float], vp.vector]): Velocity vector of the ball.</
 <dd>The speed of the ball (m/s).</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.test_ball_collision"><code class="name flex">
-<span>def <span class="ident">test_ball_collision</span></span>(<span>ball_params: List[ball_collision_sim.PhysicsParameters], sim_time: float, collision_type: ball_collision_sim.CollisionType, cor: Optional[float], expected: test_cases.ExpectedResults, test_name: str) ‑> None</span>
+<dt id="ballcollide.tests.test_ball_collision_sim.test_ball_collision"><code class="name flex">
+<span>def <span class="ident">test_ball_collision</span></span>(<span>ball_params: List[<a title="ballcollide.ball_sim_parameters.PhysicsParameters" href="../ball_sim_parameters.html#ballcollide.ball_sim_parameters.PhysicsParameters">PhysicsParameters</a>], sim_time: float, collision_type: <a title="ballcollide.ball_sim_enums.CollisionType" href="../ball_sim_enums.html#ballcollide.ball_sim_enums.CollisionType">CollisionType</a>, cor: Optional[float], expected: <a title="ballcollide.tests.test_cases.ExpectedResults" href="test_cases.html#ballcollide.tests.test_cases.ExpectedResults">ExpectedResults</a>, test_name: str) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Test function for ball collision scenarios.</p>
@@ -165,31 +165,32 @@ velocity (Union[Tuple[float, float], vp.vector]): Velocity vector of the ball.</
 the results against expected values.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>ball_params</code></strong> :&ensp;<code>List[PhysicsParameters]</code></dt>
+<dt><strong><code>ball_params</code></strong> :&ensp;<code>List[<a title="ballcollide.ball_sim_parameters.PhysicsParameters" href="../ball_sim_parameters.html#ballcollide.ball_sim_parameters.PhysicsParameters">PhysicsParameters</a>]</code></dt>
 <dd>List of parameters for the balls.</dd>
 <dt><strong><code>sim_time</code></strong> :&ensp;<code>float</code></dt>
 <dd>Simulation time.</dd>
-<dt><strong><code>collision_type</code></strong> :&ensp;<code>CollisionType</code></dt>
-<dd>Type of collision: (elastic, inelastic, or partially elastic).</dd>
-<dt><strong><code>expected</code></strong> :&ensp;<code>ExpectedResults</code></dt>
+<dt><strong><code>collision_type</code></strong> :&ensp;<code><a title="ballcollide.ball_sim_enums.CollisionType" href="../ball_sim_enums.html#ballcollide.ball_sim_enums.CollisionType">CollisionType</a></code></dt>
+<dd>Type of collision
+(elastic, inelastic, or partially elastic).</dd>
+<dt><strong><code>expected</code></strong> :&ensp;<code><a title="ballcollide.tests.test_cases.ExpectedResults" href="test_cases.html#ballcollide.tests.test_cases.ExpectedResults">ExpectedResults</a></code></dt>
 <dd>Expected results of the simulation.</dd>
 <dt><strong><code>test_name</code></strong> :&ensp;<code>str</code></dt>
 <dd>Name of the test case.</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.test_ball_collision_sim_high_cor"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.test_ball_collision_sim_high_cor"><code class="name flex">
 <span>def <span class="ident">test_ball_collision_sim_high_cor</span></span>(<span>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Tests for too high of a COR</p></div>
 </dd>
-<dt id="test_ball_collision_sim.test_ball_collision_sim_low_cor"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.test_ball_collision_sim_low_cor"><code class="name flex">
 <span>def <span class="ident">test_ball_collision_sim_low_cor</span></span>(<span>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Tests for too low of a COR</p></div>
 </dd>
-<dt id="test_ball_collision_sim.value_approx"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.value_approx"><code class="name flex">
 <span>def <span class="ident">value_approx</span></span>(<span>v1: float, v2: float) ‑> bool</span>
 </code></dt>
 <dd>
@@ -207,7 +208,7 @@ the results against expected values.</p>
 <dd>True if the values are approximately equal, False otherwise.</dd>
 </dl></div>
 </dd>
-<dt id="test_ball_collision_sim.vector_approx"><code class="name flex">
+<dt id="ballcollide.tests.test_ball_collision_sim.vector_approx"><code class="name flex">
 <span>def <span class="ident">vector_approx</span></span>(<span>v1: vp.vector, v2: Union[Tuple[float, float], vp.vector]) ‑> bool</span>
 </code></dt>
 <dd>
@@ -235,22 +236,27 @@ the results against expected values.</p>
 <ul></ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ballcollide.tests" href="index.html">ballcollide.tests</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="test_ball_collision_sim.get_active_tests" href="#test_ball_collision_sim.get_active_tests">get_active_tests</a></code></li>
-<li><code><a title="test_ball_collision_sim.get_angle" href="#test_ball_collision_sim.get_angle">get_angle</a></code></li>
-<li><code><a title="test_ball_collision_sim.get_characteristics" href="#test_ball_collision_sim.get_characteristics">get_characteristics</a></code></li>
-<li><code><a title="test_ball_collision_sim.get_distance" href="#test_ball_collision_sim.get_distance">get_distance</a></code></li>
-<li><code><a title="test_ball_collision_sim.get_kinetic_energy" href="#test_ball_collision_sim.get_kinetic_energy">get_kinetic_energy</a></code></li>
-<li><code><a title="test_ball_collision_sim.get_momentum" href="#test_ball_collision_sim.get_momentum">get_momentum</a></code></li>
-<li><code><a title="test_ball_collision_sim.get_radius" href="#test_ball_collision_sim.get_radius">get_radius</a></code></li>
-<li><code><a title="test_ball_collision_sim.get_relative_speed" href="#test_ball_collision_sim.get_relative_speed">get_relative_speed</a></code></li>
-<li><code><a title="test_ball_collision_sim.get_speed" href="#test_ball_collision_sim.get_speed">get_speed</a></code></li>
-<li><code><a title="test_ball_collision_sim.test_ball_collision" href="#test_ball_collision_sim.test_ball_collision">test_ball_collision</a></code></li>
-<li><code><a title="test_ball_collision_sim.test_ball_collision_sim_high_cor" href="#test_ball_collision_sim.test_ball_collision_sim_high_cor">test_ball_collision_sim_high_cor</a></code></li>
-<li><code><a title="test_ball_collision_sim.test_ball_collision_sim_low_cor" href="#test_ball_collision_sim.test_ball_collision_sim_low_cor">test_ball_collision_sim_low_cor</a></code></li>
-<li><code><a title="test_ball_collision_sim.value_approx" href="#test_ball_collision_sim.value_approx">value_approx</a></code></li>
-<li><code><a title="test_ball_collision_sim.vector_approx" href="#test_ball_collision_sim.vector_approx">vector_approx</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_active_tests" href="#ballcollide.tests.test_ball_collision_sim.get_active_tests">get_active_tests</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_angle" href="#ballcollide.tests.test_ball_collision_sim.get_angle">get_angle</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_characteristics" href="#ballcollide.tests.test_ball_collision_sim.get_characteristics">get_characteristics</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_distance" href="#ballcollide.tests.test_ball_collision_sim.get_distance">get_distance</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_kinetic_energy" href="#ballcollide.tests.test_ball_collision_sim.get_kinetic_energy">get_kinetic_energy</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_momentum" href="#ballcollide.tests.test_ball_collision_sim.get_momentum">get_momentum</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_radius" href="#ballcollide.tests.test_ball_collision_sim.get_radius">get_radius</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_relative_speed" href="#ballcollide.tests.test_ball_collision_sim.get_relative_speed">get_relative_speed</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.get_speed" href="#ballcollide.tests.test_ball_collision_sim.get_speed">get_speed</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.test_ball_collision" href="#ballcollide.tests.test_ball_collision_sim.test_ball_collision">test_ball_collision</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.test_ball_collision_sim_high_cor" href="#ballcollide.tests.test_ball_collision_sim.test_ball_collision_sim_high_cor">test_ball_collision_sim_high_cor</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.test_ball_collision_sim_low_cor" href="#ballcollide.tests.test_ball_collision_sim.test_ball_collision_sim_low_cor">test_ball_collision_sim_low_cor</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.value_approx" href="#ballcollide.tests.test_ball_collision_sim.value_approx">value_approx</a></code></li>
+<li><code><a title="ballcollide.tests.test_ball_collision_sim.vector_approx" href="#ballcollide.tests.test_ball_collision_sim.vector_approx">vector_approx</a></code></li>
 </ul>
 </li>
 </ul>

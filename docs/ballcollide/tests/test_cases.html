@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
-<title>test_cases API documentation</title>
+<title>ballcollide.tests.test_cases API documentation</title>
 <meta name="description" content="Defines the test cases used for the test_ball_collision() test.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
@@ -22,21 +22,21 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>test_cases</code></h1>
+<h1 class="title">Module <code>ballcollide.tests.test_cases</code></h1>
 </header>
 <section id="section-intro">
-<p>Defines the test cases used for the test_ball_collision() test.</p>
+<h2 id="defines-the-test-cases-used-for-the-test_ball_collision-test">Defines the test cases used for the test_ball_collision() test.</h2>
 </section>
 <section>
 </section>
 <section>
 <h2 class="section-title" id="header-variables">Global variables</h2>
 <dl>
-<dt id="test_cases.ACTIVE_TESTS"><code class="name">var <span class="ident">ACTIVE_TESTS</span> : Final[List[str]]</code></dt>
+<dt id="ballcollide.tests.test_cases.ACTIVE_TESTS"><code class="name">var <span class="ident">ACTIVE_TESTS</span> : Final[List[str]]</code></dt>
 <dd>
 <div class="desc"><p>ACTIVE_TESTS: Defines the active tests (what tests will be run)</p></div>
 </dd>
-<dt id="test_cases.TESTS"><code class="name">var <span class="ident">TESTS</span> : Final[Dict[str, Tuple[List[ball_collision_sim.PhysicsParameters], float, ball_collision_sim.CollisionType, Optional[float], <a title="test_cases.ExpectedResults" href="#test_cases.ExpectedResults">ExpectedResults</a>]]]</code></dt>
+<dt id="ballcollide.tests.test_cases.TESTS"><code class="name">var <span class="ident">TESTS</span> : Final[Dict[str, Tuple[List[<a title="ballcollide.ball_sim_parameters.PhysicsParameters" href="../ball_sim_parameters.html#ballcollide.ball_sim_parameters.PhysicsParameters">PhysicsParameters</a>], float, <a title="ballcollide.ball_sim_enums.CollisionType" href="../ball_sim_enums.html#ballcollide.ball_sim_enums.CollisionType">CollisionType</a>, Optional[float], <a title="ballcollide.tests.test_cases.ExpectedResults" href="#ballcollide.tests.test_cases.ExpectedResults">ExpectedResults</a>]]]</code></dt>
 <dd>
 <div class="desc"><p>TESTS: Contains all the test cases definitions</p></div>
 </dd>
@@ -47,7 +47,7 @@ hljs.highlightAll();
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="test_cases.ExpectedBallState"><code class="flex name class">
+<dt id="ballcollide.tests.test_cases.ExpectedBallState"><code class="flex name class">
 <span>class <span class="ident">ExpectedBallState</span></span>
 <span>(</span><span>radius: Optional[float] = None, angle: Optional[float] = None, velocity: Optional[Tuple[float, float]] = None, speed: Optional[float] = None, momentum: Optional[Tuple[float, float]] = None, kinetic_energy: Optional[float] = None)</span>
 </code></dt>
@@ -94,33 +94,33 @@ class ExpectedBallState:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="test_cases.ExpectedBallState.angle"><code class="name">var <span class="ident">angle</span> : Optional[float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedBallState.angle"><code class="name">var <span class="ident">angle</span> : Optional[float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedBallState.kinetic_energy"><code class="name">var <span class="ident">kinetic_energy</span> : Optional[float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedBallState.kinetic_energy"><code class="name">var <span class="ident">kinetic_energy</span> : Optional[float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedBallState.momentum"><code class="name">var <span class="ident">momentum</span> : Optional[Tuple[float, float]]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedBallState.momentum"><code class="name">var <span class="ident">momentum</span> : Optional[Tuple[float, float]]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedBallState.radius"><code class="name">var <span class="ident">radius</span> : Optional[float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedBallState.radius"><code class="name">var <span class="ident">radius</span> : Optional[float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedBallState.speed"><code class="name">var <span class="ident">speed</span> : Optional[float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedBallState.speed"><code class="name">var <span class="ident">speed</span> : Optional[float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedBallState.velocity"><code class="name">var <span class="ident">velocity</span> : Optional[Tuple[float, float]]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedBallState.velocity"><code class="name">var <span class="ident">velocity</span> : Optional[Tuple[float, float]]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
-<dt id="test_cases.ExpectedCollisionInfo"><code class="flex name class">
+<dt id="ballcollide.tests.test_cases.ExpectedCollisionInfo"><code class="flex name class">
 <span>class <span class="ident">ExpectedCollisionInfo</span></span>
 <span>(</span><span>time: float, ball1_position: Optional[Tuple[float, float]] = None, ball2_position: Optional[Tuple[float, float]] = None, merged_position: Optional[Tuple[float, float]] = None)</span>
 </code></dt>
@@ -161,25 +161,25 @@ class ExpectedCollisionInfo:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="test_cases.ExpectedCollisionInfo.ball1_position"><code class="name">var <span class="ident">ball1_position</span> : Optional[Tuple[float, float]]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedCollisionInfo.ball1_position"><code class="name">var <span class="ident">ball1_position</span> : Optional[Tuple[float, float]]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedCollisionInfo.ball2_position"><code class="name">var <span class="ident">ball2_position</span> : Optional[Tuple[float, float]]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedCollisionInfo.ball2_position"><code class="name">var <span class="ident">ball2_position</span> : Optional[Tuple[float, float]]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedCollisionInfo.merged_position"><code class="name">var <span class="ident">merged_position</span> : Optional[Tuple[float, float]]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedCollisionInfo.merged_position"><code class="name">var <span class="ident">merged_position</span> : Optional[Tuple[float, float]]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedCollisionInfo.time"><code class="name">var <span class="ident">time</span> : float</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedCollisionInfo.time"><code class="name">var <span class="ident">time</span> : float</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
-<dt id="test_cases.ExpectedIntersectionInfo"><code class="flex name class">
+<dt id="ballcollide.tests.test_cases.ExpectedIntersectionInfo"><code class="flex name class">
 <span>class <span class="ident">ExpectedIntersectionInfo</span></span>
 <span>(</span><span>position: Tuple[float, float], ball1_time: float, ball2_time: float)</span>
 </code></dt>
@@ -214,39 +214,39 @@ class ExpectedIntersectionInfo:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="test_cases.ExpectedIntersectionInfo.ball1_time"><code class="name">var <span class="ident">ball1_time</span> : float</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedIntersectionInfo.ball1_time"><code class="name">var <span class="ident">ball1_time</span> : float</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedIntersectionInfo.ball2_time"><code class="name">var <span class="ident">ball2_time</span> : float</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedIntersectionInfo.ball2_time"><code class="name">var <span class="ident">ball2_time</span> : float</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedIntersectionInfo.position"><code class="name">var <span class="ident">position</span> : Tuple[float, float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedIntersectionInfo.position"><code class="name">var <span class="ident">position</span> : Tuple[float, float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
-<dt id="test_cases.ExpectedResults"><code class="flex name class">
+<dt id="ballcollide.tests.test_cases.ExpectedResults"><code class="flex name class">
 <span>class <span class="ident">ExpectedResults</span></span>
-<span>(</span><span>init_sim: <a title="test_cases.ExpectedSimState" href="#test_cases.ExpectedSimState">ExpectedSimState</a>, final_sim: <a title="test_cases.ExpectedSimState" href="#test_cases.ExpectedSimState">ExpectedSimState</a>, final_balls: Optional[List[<a title="test_cases.ExpectedBallState" href="#test_cases.ExpectedBallState">ExpectedBallState</a>]] = None, merged_ball: Optional[<a title="test_cases.ExpectedBallState" href="#test_cases.ExpectedBallState">ExpectedBallState</a>] = None, collision_info: Optional[<a title="test_cases.ExpectedCollisionInfo" href="#test_cases.ExpectedCollisionInfo">ExpectedCollisionInfo</a>] = None, intersect_info: Optional[<a title="test_cases.ExpectedIntersectionInfo" href="#test_cases.ExpectedIntersectionInfo">ExpectedIntersectionInfo</a>] = None)</span>
+<span>(</span><span>init_sim: <a title="ballcollide.tests.test_cases.ExpectedSimState" href="#ballcollide.tests.test_cases.ExpectedSimState">ExpectedSimState</a>, final_sim: <a title="ballcollide.tests.test_cases.ExpectedSimState" href="#ballcollide.tests.test_cases.ExpectedSimState">ExpectedSimState</a>, final_balls: Optional[List[<a title="ballcollide.tests.test_cases.ExpectedBallState" href="#ballcollide.tests.test_cases.ExpectedBallState">ExpectedBallState</a>]] = None, merged_ball: Optional[<a title="ballcollide.tests.test_cases.ExpectedBallState" href="#ballcollide.tests.test_cases.ExpectedBallState">ExpectedBallState</a>] = None, collision_info: Optional[<a title="ballcollide.tests.test_cases.ExpectedCollisionInfo" href="#ballcollide.tests.test_cases.ExpectedCollisionInfo">ExpectedCollisionInfo</a>] = None, intersect_info: Optional[<a title="ballcollide.tests.test_cases.ExpectedIntersectionInfo" href="#ballcollide.tests.test_cases.ExpectedIntersectionInfo">ExpectedIntersectionInfo</a>] = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Dataclass to hold all expected results for a test case.</p>
 <h2 id="attributes">Attributes</h2>
 <dl>
-<dt><strong><code>init_sim</code></strong> :&ensp;<code><a title="test_cases.ExpectedSimState" href="#test_cases.ExpectedSimState">ExpectedSimState</a></code></dt>
+<dt><strong><code>init_sim</code></strong> :&ensp;<code><a title="ballcollide.tests.test_cases.ExpectedSimState" href="#ballcollide.tests.test_cases.ExpectedSimState">ExpectedSimState</a></code></dt>
 <dd>Expected initial state of the simulation.</dd>
-<dt><strong><code>final_balls</code></strong> :&ensp;<code>Optional[List[<a title="test_cases.ExpectedBallState" href="#test_cases.ExpectedBallState">ExpectedBallState</a>]]</code></dt>
+<dt><strong><code>final_balls</code></strong> :&ensp;<code>Optional[List[<a title="ballcollide.tests.test_cases.ExpectedBallState" href="#ballcollide.tests.test_cases.ExpectedBallState">ExpectedBallState</a>]]</code></dt>
 <dd>Expected final states of the balls.</dd>
-<dt><strong><code>merged_ball</code></strong> :&ensp;<code>Optional[<a title="test_cases.ExpectedBallState" href="#test_cases.ExpectedBallState">ExpectedBallState</a>]</code></dt>
+<dt><strong><code>merged_ball</code></strong> :&ensp;<code>Optional[<a title="ballcollide.tests.test_cases.ExpectedBallState" href="#ballcollide.tests.test_cases.ExpectedBallState">ExpectedBallState</a>]</code></dt>
 <dd>Expected state of the merged ball in an inelastic collision.</dd>
-<dt><strong><code>final_sim</code></strong> :&ensp;<code><a title="test_cases.ExpectedSimState" href="#test_cases.ExpectedSimState">ExpectedSimState</a></code></dt>
+<dt><strong><code>final_sim</code></strong> :&ensp;<code><a title="ballcollide.tests.test_cases.ExpectedSimState" href="#ballcollide.tests.test_cases.ExpectedSimState">ExpectedSimState</a></code></dt>
 <dd>Expected final state of the simulation.</dd>
-<dt><strong><code>collision_info</code></strong> :&ensp;<code>Optional[<a title="test_cases.ExpectedCollisionInfo" href="#test_cases.ExpectedCollisionInfo">ExpectedCollisionInfo</a>]</code></dt>
+<dt><strong><code>collision_info</code></strong> :&ensp;<code>Optional[<a title="ballcollide.tests.test_cases.ExpectedCollisionInfo" href="#ballcollide.tests.test_cases.ExpectedCollisionInfo">ExpectedCollisionInfo</a>]</code></dt>
 <dd>Expected collision information.</dd>
-<dt><strong><code>intersect_info</code></strong> :&ensp;<code>Optional[<a title="test_cases.ExpectedIntersectionInfo" href="#test_cases.ExpectedIntersectionInfo">ExpectedIntersectionInfo</a>]</code></dt>
+<dt><strong><code>intersect_info</code></strong> :&ensp;<code>Optional[<a title="ballcollide.tests.test_cases.ExpectedIntersectionInfo" href="#ballcollide.tests.test_cases.ExpectedIntersectionInfo">ExpectedIntersectionInfo</a>]</code></dt>
 <dd>Expected intersection information.</dd>
 </dl></div>
 <details class="source">
@@ -275,35 +275,35 @@ class ExpectedResults:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="test_cases.ExpectedResults.collision_info"><code class="name">var <span class="ident">collision_info</span> : Optional[<a title="test_cases.ExpectedCollisionInfo" href="#test_cases.ExpectedCollisionInfo">ExpectedCollisionInfo</a>]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedResults.collision_info"><code class="name">var <span class="ident">collision_info</span> : Optional[<a title="ballcollide.tests.test_cases.ExpectedCollisionInfo" href="#ballcollide.tests.test_cases.ExpectedCollisionInfo">ExpectedCollisionInfo</a>]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedResults.final_balls"><code class="name">var <span class="ident">final_balls</span> : Optional[List[<a title="test_cases.ExpectedBallState" href="#test_cases.ExpectedBallState">ExpectedBallState</a>]]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedResults.final_balls"><code class="name">var <span class="ident">final_balls</span> : Optional[List[<a title="ballcollide.tests.test_cases.ExpectedBallState" href="#ballcollide.tests.test_cases.ExpectedBallState">ExpectedBallState</a>]]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedResults.final_sim"><code class="name">var <span class="ident">final_sim</span> : <a title="test_cases.ExpectedSimState" href="#test_cases.ExpectedSimState">ExpectedSimState</a></code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedResults.final_sim"><code class="name">var <span class="ident">final_sim</span> : <a title="ballcollide.tests.test_cases.ExpectedSimState" href="#ballcollide.tests.test_cases.ExpectedSimState">ExpectedSimState</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedResults.init_sim"><code class="name">var <span class="ident">init_sim</span> : <a title="test_cases.ExpectedSimState" href="#test_cases.ExpectedSimState">ExpectedSimState</a></code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedResults.init_sim"><code class="name">var <span class="ident">init_sim</span> : <a title="ballcollide.tests.test_cases.ExpectedSimState" href="#ballcollide.tests.test_cases.ExpectedSimState">ExpectedSimState</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedResults.intersect_info"><code class="name">var <span class="ident">intersect_info</span> : Optional[<a title="test_cases.ExpectedIntersectionInfo" href="#test_cases.ExpectedIntersectionInfo">ExpectedIntersectionInfo</a>]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedResults.intersect_info"><code class="name">var <span class="ident">intersect_info</span> : Optional[<a title="ballcollide.tests.test_cases.ExpectedIntersectionInfo" href="#ballcollide.tests.test_cases.ExpectedIntersectionInfo">ExpectedIntersectionInfo</a>]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedResults.merged_ball"><code class="name">var <span class="ident">merged_ball</span> : Optional[<a title="test_cases.ExpectedBallState" href="#test_cases.ExpectedBallState">ExpectedBallState</a>]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedResults.merged_ball"><code class="name">var <span class="ident">merged_ball</span> : Optional[<a title="ballcollide.tests.test_cases.ExpectedBallState" href="#ballcollide.tests.test_cases.ExpectedBallState">ExpectedBallState</a>]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
-<dt id="test_cases.ExpectedSimState"><code class="flex name class">
+<dt id="ballcollide.tests.test_cases.ExpectedSimState"><code class="flex name class">
 <span>class <span class="ident">ExpectedSimState</span></span>
-<span>(</span><span>momentum: Optional[Tuple[float, float]] = None, kinetic_energy: Optional[float] = None, relative_speed: Optional[float] = None, distance: Optional[float] = None, trajectories: Optional[ball_collision_sim.BallTrajectories] = None, ke_lost: Optional[float] = None)</span>
+<span>(</span><span>momentum: Optional[Tuple[float, float]] = None, kinetic_energy: Optional[float] = None, relative_speed: Optional[float] = None, distance: Optional[float] = None, trajectories: Optional[<a title="ballcollide.ball_sim_enums.BallTrajectories" href="../ball_sim_enums.html#ballcollide.ball_sim_enums.BallTrajectories">BallTrajectories</a>] = None, ke_lost: Optional[float] = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Dataclass to hold the expected state of the simulation.</p>
@@ -317,7 +317,7 @@ class ExpectedResults:
 <dd>The expected relative speed between the balls.</dd>
 <dt><strong><code>distance</code></strong> :&ensp;<code>Optional[float]</code></dt>
 <dd>The expected distance between the balls.</dd>
-<dt><strong><code>trajectories</code></strong> :&ensp;<code>Optional[BallTrajectories]</code></dt>
+<dt><strong><code>trajectories</code></strong> :&ensp;<code>Optional[<a title="ballcollide.ball_sim_enums.BallTrajectories" href="../ball_sim_enums.html#ballcollide.ball_sim_enums.BallTrajectories">BallTrajectories</a>]</code></dt>
 <dd>The expected trajectories of the balls.</dd>
 <dt><strong><code>ke_lost</code></strong> :&ensp;<code>Optional[float]</code></dt>
 <dd>The expected kinetic energy lost in an inelastic collision.</dd>
@@ -336,7 +336,7 @@ class ExpectedSimState:
         kinetic_energy (Optional[float]): The expected total kinetic energy of the system.
         relative_speed (Optional[float]): The expected relative speed between the balls.
         distance (Optional[float]): The expected distance between the balls.
-        trajectories (Optional[BallTrajectories]): The expected trajectories of the balls.
+        trajectories (Optional[ballcollide.ball_sim_enums.BallTrajectories]): The expected trajectories of the balls.
         ke_lost (Optional[float]): The expected kinetic energy lost in an inelastic collision.
     &#34;&#34;&#34;
     momentum: Optional[Tuple[float, float]] = None
@@ -348,27 +348,27 @@ class ExpectedSimState:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="test_cases.ExpectedSimState.distance"><code class="name">var <span class="ident">distance</span> : Optional[float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedSimState.distance"><code class="name">var <span class="ident">distance</span> : Optional[float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedSimState.ke_lost"><code class="name">var <span class="ident">ke_lost</span> : Optional[float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedSimState.ke_lost"><code class="name">var <span class="ident">ke_lost</span> : Optional[float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedSimState.kinetic_energy"><code class="name">var <span class="ident">kinetic_energy</span> : Optional[float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedSimState.kinetic_energy"><code class="name">var <span class="ident">kinetic_energy</span> : Optional[float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedSimState.momentum"><code class="name">var <span class="ident">momentum</span> : Optional[Tuple[float, float]]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedSimState.momentum"><code class="name">var <span class="ident">momentum</span> : Optional[Tuple[float, float]]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedSimState.relative_speed"><code class="name">var <span class="ident">relative_speed</span> : Optional[float]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedSimState.relative_speed"><code class="name">var <span class="ident">relative_speed</span> : Optional[float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="test_cases.ExpectedSimState.trajectories"><code class="name">var <span class="ident">trajectories</span> : Optional[ball_collision_sim.BallTrajectories]</code></dt>
+<dt id="ballcollide.tests.test_cases.ExpectedSimState.trajectories"><code class="name">var <span class="ident">trajectories</span> : Optional[<a title="ballcollide.ball_sim_enums.BallTrajectories" href="../ball_sim_enums.html#ballcollide.ball_sim_enums.BallTrajectories">BallTrajectories</a>]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -379,65 +379,72 @@ class ExpectedSimState:
 </article>
 <nav id="sidebar">
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#defines-the-test-cases-used-for-the-test_ball_collision-test">Defines the test cases used for the test_ball_collision() test.</a></li>
+</ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ballcollide.tests" href="index.html">ballcollide.tests</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-variables">Global variables</a></h3>
 <ul class="">
-<li><code><a title="test_cases.ACTIVE_TESTS" href="#test_cases.ACTIVE_TESTS">ACTIVE_TESTS</a></code></li>
-<li><code><a title="test_cases.TESTS" href="#test_cases.TESTS">TESTS</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ACTIVE_TESTS" href="#ballcollide.tests.test_cases.ACTIVE_TESTS">ACTIVE_TESTS</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.TESTS" href="#ballcollide.tests.test_cases.TESTS">TESTS</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="test_cases.ExpectedBallState" href="#test_cases.ExpectedBallState">ExpectedBallState</a></code></h4>
+<h4><code><a title="ballcollide.tests.test_cases.ExpectedBallState" href="#ballcollide.tests.test_cases.ExpectedBallState">ExpectedBallState</a></code></h4>
 <ul class="two-column">
-<li><code><a title="test_cases.ExpectedBallState.angle" href="#test_cases.ExpectedBallState.angle">angle</a></code></li>
-<li><code><a title="test_cases.ExpectedBallState.kinetic_energy" href="#test_cases.ExpectedBallState.kinetic_energy">kinetic_energy</a></code></li>
-<li><code><a title="test_cases.ExpectedBallState.momentum" href="#test_cases.ExpectedBallState.momentum">momentum</a></code></li>
-<li><code><a title="test_cases.ExpectedBallState.radius" href="#test_cases.ExpectedBallState.radius">radius</a></code></li>
-<li><code><a title="test_cases.ExpectedBallState.speed" href="#test_cases.ExpectedBallState.speed">speed</a></code></li>
-<li><code><a title="test_cases.ExpectedBallState.velocity" href="#test_cases.ExpectedBallState.velocity">velocity</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedBallState.angle" href="#ballcollide.tests.test_cases.ExpectedBallState.angle">angle</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedBallState.kinetic_energy" href="#ballcollide.tests.test_cases.ExpectedBallState.kinetic_energy">kinetic_energy</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedBallState.momentum" href="#ballcollide.tests.test_cases.ExpectedBallState.momentum">momentum</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedBallState.radius" href="#ballcollide.tests.test_cases.ExpectedBallState.radius">radius</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedBallState.speed" href="#ballcollide.tests.test_cases.ExpectedBallState.speed">speed</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedBallState.velocity" href="#ballcollide.tests.test_cases.ExpectedBallState.velocity">velocity</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="test_cases.ExpectedCollisionInfo" href="#test_cases.ExpectedCollisionInfo">ExpectedCollisionInfo</a></code></h4>
+<h4><code><a title="ballcollide.tests.test_cases.ExpectedCollisionInfo" href="#ballcollide.tests.test_cases.ExpectedCollisionInfo">ExpectedCollisionInfo</a></code></h4>
 <ul class="">
-<li><code><a title="test_cases.ExpectedCollisionInfo.ball1_position" href="#test_cases.ExpectedCollisionInfo.ball1_position">ball1_position</a></code></li>
-<li><code><a title="test_cases.ExpectedCollisionInfo.ball2_position" href="#test_cases.ExpectedCollisionInfo.ball2_position">ball2_position</a></code></li>
-<li><code><a title="test_cases.ExpectedCollisionInfo.merged_position" href="#test_cases.ExpectedCollisionInfo.merged_position">merged_position</a></code></li>
-<li><code><a title="test_cases.ExpectedCollisionInfo.time" href="#test_cases.ExpectedCollisionInfo.time">time</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedCollisionInfo.ball1_position" href="#ballcollide.tests.test_cases.ExpectedCollisionInfo.ball1_position">ball1_position</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedCollisionInfo.ball2_position" href="#ballcollide.tests.test_cases.ExpectedCollisionInfo.ball2_position">ball2_position</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedCollisionInfo.merged_position" href="#ballcollide.tests.test_cases.ExpectedCollisionInfo.merged_position">merged_position</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedCollisionInfo.time" href="#ballcollide.tests.test_cases.ExpectedCollisionInfo.time">time</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="test_cases.ExpectedIntersectionInfo" href="#test_cases.ExpectedIntersectionInfo">ExpectedIntersectionInfo</a></code></h4>
+<h4><code><a title="ballcollide.tests.test_cases.ExpectedIntersectionInfo" href="#ballcollide.tests.test_cases.ExpectedIntersectionInfo">ExpectedIntersectionInfo</a></code></h4>
 <ul class="">
-<li><code><a title="test_cases.ExpectedIntersectionInfo.ball1_time" href="#test_cases.ExpectedIntersectionInfo.ball1_time">ball1_time</a></code></li>
-<li><code><a title="test_cases.ExpectedIntersectionInfo.ball2_time" href="#test_cases.ExpectedIntersectionInfo.ball2_time">ball2_time</a></code></li>
-<li><code><a title="test_cases.ExpectedIntersectionInfo.position" href="#test_cases.ExpectedIntersectionInfo.position">position</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedIntersectionInfo.ball1_time" href="#ballcollide.tests.test_cases.ExpectedIntersectionInfo.ball1_time">ball1_time</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedIntersectionInfo.ball2_time" href="#ballcollide.tests.test_cases.ExpectedIntersectionInfo.ball2_time">ball2_time</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedIntersectionInfo.position" href="#ballcollide.tests.test_cases.ExpectedIntersectionInfo.position">position</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="test_cases.ExpectedResults" href="#test_cases.ExpectedResults">ExpectedResults</a></code></h4>
+<h4><code><a title="ballcollide.tests.test_cases.ExpectedResults" href="#ballcollide.tests.test_cases.ExpectedResults">ExpectedResults</a></code></h4>
 <ul class="two-column">
-<li><code><a title="test_cases.ExpectedResults.collision_info" href="#test_cases.ExpectedResults.collision_info">collision_info</a></code></li>
-<li><code><a title="test_cases.ExpectedResults.final_balls" href="#test_cases.ExpectedResults.final_balls">final_balls</a></code></li>
-<li><code><a title="test_cases.ExpectedResults.final_sim" href="#test_cases.ExpectedResults.final_sim">final_sim</a></code></li>
-<li><code><a title="test_cases.ExpectedResults.init_sim" href="#test_cases.ExpectedResults.init_sim">init_sim</a></code></li>
-<li><code><a title="test_cases.ExpectedResults.intersect_info" href="#test_cases.ExpectedResults.intersect_info">intersect_info</a></code></li>
-<li><code><a title="test_cases.ExpectedResults.merged_ball" href="#test_cases.ExpectedResults.merged_ball">merged_ball</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedResults.collision_info" href="#ballcollide.tests.test_cases.ExpectedResults.collision_info">collision_info</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedResults.final_balls" href="#ballcollide.tests.test_cases.ExpectedResults.final_balls">final_balls</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedResults.final_sim" href="#ballcollide.tests.test_cases.ExpectedResults.final_sim">final_sim</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedResults.init_sim" href="#ballcollide.tests.test_cases.ExpectedResults.init_sim">init_sim</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedResults.intersect_info" href="#ballcollide.tests.test_cases.ExpectedResults.intersect_info">intersect_info</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedResults.merged_ball" href="#ballcollide.tests.test_cases.ExpectedResults.merged_ball">merged_ball</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="test_cases.ExpectedSimState" href="#test_cases.ExpectedSimState">ExpectedSimState</a></code></h4>
+<h4><code><a title="ballcollide.tests.test_cases.ExpectedSimState" href="#ballcollide.tests.test_cases.ExpectedSimState">ExpectedSimState</a></code></h4>
 <ul class="two-column">
-<li><code><a title="test_cases.ExpectedSimState.distance" href="#test_cases.ExpectedSimState.distance">distance</a></code></li>
-<li><code><a title="test_cases.ExpectedSimState.ke_lost" href="#test_cases.ExpectedSimState.ke_lost">ke_lost</a></code></li>
-<li><code><a title="test_cases.ExpectedSimState.kinetic_energy" href="#test_cases.ExpectedSimState.kinetic_energy">kinetic_energy</a></code></li>
-<li><code><a title="test_cases.ExpectedSimState.momentum" href="#test_cases.ExpectedSimState.momentum">momentum</a></code></li>
-<li><code><a title="test_cases.ExpectedSimState.relative_speed" href="#test_cases.ExpectedSimState.relative_speed">relative_speed</a></code></li>
-<li><code><a title="test_cases.ExpectedSimState.trajectories" href="#test_cases.ExpectedSimState.trajectories">trajectories</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedSimState.distance" href="#ballcollide.tests.test_cases.ExpectedSimState.distance">distance</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedSimState.ke_lost" href="#ballcollide.tests.test_cases.ExpectedSimState.ke_lost">ke_lost</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedSimState.kinetic_energy" href="#ballcollide.tests.test_cases.ExpectedSimState.kinetic_energy">kinetic_energy</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedSimState.momentum" href="#ballcollide.tests.test_cases.ExpectedSimState.momentum">momentum</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedSimState.relative_speed" href="#ballcollide.tests.test_cases.ExpectedSimState.relative_speed">relative_speed</a></code></li>
+<li><code><a title="ballcollide.tests.test_cases.ExpectedSimState.trajectories" href="#ballcollide.tests.test_cases.ExpectedSimState.trajectories">trajectories</a></code></li>
 </ul>
 </li>
 </ul>

@@ -13,8 +13,10 @@ import math
 import re
 import pytest
 import vpython as vp
-from ball_collision_sim import PhysicsParameters, BallCollisionSimulator, CollisionType
-from test_cases import TESTS, ACTIVE_TESTS, ExpectedResults, ExpectedBallState
+from ballcollide.ball_sim_enums import CollisionType
+from ballcollide.ball_sim_parameters import PhysicsParameters
+from ballcollide.ball_collision_sim import BallCollisionSimulator
+from ballcollide.tests.test_cases import TESTS, ACTIVE_TESTS, ExpectedResults, ExpectedBallState
 
 __author__ = "Jim Tooker"
 
@@ -63,7 +65,8 @@ def get_characteristics(test_name: str) -> Dict[str, Union[bool, str]]:
     is_miss = miss_re.search(test_name) is not None
 
     # Check validity
-    is_valid = (sum([is_elastic, is_inelastic, is_partial]) == 1) and (sum([is_collision, is_intersection, is_miss]) == 1)
+    is_valid = (sum([is_elastic, is_inelastic, is_partial]) == 1) and \
+               (sum([is_collision, is_intersection, is_miss]) == 1)
 
     # Create a human-readable test description
     if is_elastic:
@@ -252,10 +255,11 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
     the results against expected values.
 
     Args:
-        ball_params (List[PhysicsParameters]): List of parameters for the balls.
+        ball_params (List[ballcollide.ball_sim_parameters.PhysicsParameters]): List of parameters for the balls.
         sim_time (float): Simulation time.
-        collision_type (CollisionType): Type of collision: (elastic, inelastic, or partially elastic).
-        expected (ExpectedResults): Expected results of the simulation.
+        collision_type (ballcollide.ball_sim_enums.CollisionType): Type of collision
+            (elastic, inelastic, or partially elastic).
+        expected (ballcollide.tests.test_cases.ExpectedResults): Expected results of the simulation.
         test_name (str): Name of the test case.
     """
     test_characteristics = get_characteristics(test_name)
@@ -395,6 +399,8 @@ def test_ball_collision(ball_params: List[PhysicsParameters],
             assert expected.collision_info.merged_position
             assert vector_approx(sim.collision_info.merged_ball.position, expected.collision_info.merged_position)
         else:
+            assert sim.collision_info.ball1
+            assert sim.collision_info.ball2
             assert expected.collision_info.ball1_position
             assert expected.collision_info.ball2_position
             assert vector_approx(sim.collision_info.ball1.position, expected.collision_info.ball1_position)
@@ -420,7 +426,7 @@ def test_ball_collision_sim_low_cor() -> None:
                                                 sim_time,
                                                 collision_type,
                                                 cor)
-        
+
     print(f'Exception string: "{e_info.value}"')
 
 def test_ball_collision_sim_high_cor() -> None:

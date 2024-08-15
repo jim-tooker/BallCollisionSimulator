@@ -1,28 +1,12 @@
 #!/usr/bin/env python
 """
-Ball Collision Simulator
+##The main module for the Ball Collision Simulator.
 
 This module simulates the elastic, inelastic, or partially elastic collisions between two balls
-using the VPython library. It contains classes to define the physical and visual properties of
-the balls, perform the simulation, and visualize the collision in a 2D space. The module also
-supports running the simulation without a graphical user interface (GUI).
-
-Enums:
-    - CollisionType: Indicates what type of collision to simulate: elastic, inelastic, or partially elastic.
-    - Balls: Used to index the correct ball from the list of active balls
-    - BallTrajectories: Indicates if the balls are converging, diverging, or at a constant
-                        distance.
-
-Classes:
-    - PhysicsParameters: Data class to store the physical parameters of a ball.
-    - BallParameters: Data class for storing the physical and visual properties of a ball.
-    - SimParameters: Data class for storing the parameters for the BallCollisionSimulator
-    - Ball: Represents a ball in the simulation, managing its state and visualization.
-    - CollisionInfo: Data class for storing collision information.
-    - IntersectionInfo: Data class for storing intersection information of ball paths.
-    - SimulatorState: Data class for storing the state of the simulator
-    - BallCollisionSimulator: Manages the entire simulation process, including initialization, 
-                              running the simulation, and handling collisions.
+using the VPython library. It defines the physical and visual properties of the balls,
+performs the simulation, and visualizes the collision in a 2D space. This simulator also
+supports running the simulation without a graphical user interface (GUI), for automated testing
+or other reasons.
 
 Functions:
     - main: The main entry point of the program, running the simulation with either predefined 
@@ -34,309 +18,18 @@ Usage:
     the `--test` argument. Additionally, the `--no_gui` argument can be used to run the simulation
     without the GUI.
 """
-from __future__ import annotations
 from typing import Tuple, List, Optional, Final
 import argparse
-from dataclasses import dataclass
 import math
 from copy import copy, deepcopy
-from enum import Enum, IntEnum, auto
 import vpython as vp
 import readchar
+from ballcollide.ball_sim_enums import CollisionType, Balls, BallTrajectories
+from ballcollide.ball_sim_parameters import PhysicsParameters, BallParameters, SimParameters
+from ballcollide.ball_sim import Ball
+from ballcollide.ball_sim_info import CollisionInfo, IntersectionInfo, SimulatorInfo
 
 __author__ = "Jim Tooker"
-
-
-class CollisionType(Enum):
-    """
-    Enum to indicate the type of Collision: elastic, inelastic, or partially elastic.
-    """
-    ELASTIC = auto()
-    INELASTIC = auto()
-    PARTIAL = auto()
-
-
-class Balls(IntEnum):
-    """
-    Enum to indicate which ball is being referenced.
-    """
-    BALL1 = 0
-    BALL2 = 1
-    MERGED = 2
-
-
-class BallTrajectories(Enum):
-    """
-    Enum to indicate the if the balls are converging, diverging, constant distance, or merged.
-    """
-    CONSTANT = auto()
-    CONVERGING = auto()
-    DIVERGING = auto()
-    MERGED = auto()
-
-
-class PhysicsParameters:
-    """
-    Class to store the physical parameters of a ball.
-    """
-    def __init__(self, mass: float, position: Tuple[float, float], velocity: Tuple[float, float]):
-        """
-        Initialize the PhysicsParameters object.
-
-        Args:
-            mass (float): Mass of the ball in kg.
-            position (Tuple[float, float]): Initial position of the ball (x, y) in meters.
-            velocity (Tuple[float, float]): Initial velocity of the ball (vx, vy) in m/s.
-        """
-        self.mass: float = mass
-        self.position: vp.vector = vp.vector(*position, 0)
-        self.velocity: vp.vector = vp.vector(*velocity, 0)
-
-
-@dataclass
-class BallParameters:
-    """
-    Data class to store all parameters of a ball, including physics and visual properties.
-
-    Attributes:
-        physics_params (PhysicsParameters): The physical parameters of the ball.
-        color (vp.vector): Color of the ball.
-        name (str): Name or identifier for the ball.
-    """
-
-    physics_params: PhysicsParameters
-    color: vp.vector
-    name: str
-
-
-@dataclass
-class SimParameters:
-    """
-    Data class to store all parameters for a Simulator instance.
-
-    Attributes:
-        ball_params (List[BallParameters]): List of parameters for each ball.
-        simulation_time (float): Total time to simulate.
-        collision_type (CollisionType): Type of collision to simulate:
-                                        (elastic, inelastic, or partially elastic).
-        cor (float): Coefficient of Restitution (used for partially elastic collisions)
-    """
-
-    ball_params: List[BallParameters]
-    simulation_time: float
-    collision_type: CollisionType
-    cor: float
-
-
-class Ball:
-    """
-    Class representing a ball in the simulation.
-
-    Attributes:
-        mass (float): Mass of the ball in kg.
-        position (Tuple[float, float]): Position of the ball (x, y) (m).
-        velocity (Tuple[float, float]): Velocity of the ball (vx, vy) (m/s).
-        radius (float): Radius of the ball (m).
-        name (str): Name of the Ball.
-        collision_point (Optional[vp.vector]): Point on the ball where the collision occurred
-        collision_point_offset (Optional[vp.vector]): Vector offset between the center of the ball
-                                                      and where the collision occurred
-        angle (float): Angle of ball travel (0° -> +x-axis,
-                                             90° -> +y-axis,
-                                             180° -> -x-axis,
-                                             -90° -> -y-axis).
-        speed (float): Speed of ball (m/s).
-        momentum (vp.vector): Momentum of ball (mvx, mvy) (N⋅s).
-        momentum_mag (float): Magnitude of the momentum (N⋅s).
-        kinetic_energy (float): Kinetic energy of the ball (J).
-    """
-
-    # Flag to indicate whether the GUI should be disabled (True = no GUI)
-    _no_gui = False
-
-    def __init__(self, params: BallParameters):
-        """
-        Args:
-            params (BallParameters): Parameters for the ball.
-        """
-        self.mass: float = params.physics_params.mass
-        self.position: vp.vector = params.physics_params.position
-        self.velocity: vp.vector = params.physics_params.velocity
-        self.name: str = params.name
-
-        self.collision_point: Optional[vp.vector] = None
-        self.collision_point_offset: Optional[vp.vector] = None
-
-        if Ball._no_gui is False:
-            self._sphere: vp.sphere = vp.sphere(pos=self.position,
-                                                radius=self.radius,
-                                                color=params.color,
-                                                make_trail=True)
-            self._label: vp.label = vp.label(pos=self.position,
-                                             text=params.name,
-                                             height=14,
-                                             color=vp.color.white,
-                                             box=False,
-                                             opacity=0)
-            self._collision_blob: Optional[vp.ellipsoid] = None
-
-
-    @property
-    def radius(self) -> float:
-        """
-        Calculate and return the radius of the ball.
-        In this sim, radius is proportional to the mass (0.5m for 1 kg)
-        """
-        return float(0.5 * (self.mass ** (1/3)))
-
-    @property
-    def angle(self) -> float:
-        """Calculate and return the angle of the ball's velocity vector."""
-        return float(math.degrees(math.atan2(self.velocity.y, self.velocity.x)))
-
-    @property
-    def speed(self) -> float:
-        """Calculate and return the speed of the ball."""
-        return float(vp.mag(self.velocity))
-
-    @property
-    def momentum(self) -> vp.vector:
-        """Calculate and return the momentum vector of the ball."""
-        return self.velocity * self.mass
-
-    @property
-    def momentum_mag(self) -> float:
-        """Calculate and return the magnitude of the ball's momentum."""
-        return float(vp.mag(self.momentum))
-
-    @property
-    def kinetic_energy(self) -> float:
-        """Calculate and return the kinetic energy of the ball."""
-        return 0.5 * self.mass * (self.speed**2)
-
-    @classmethod
-    def disable_gui(cls, no_gui: bool) -> None:
-        """
-        Enables or disables the GUI.
-
-        Args:
-            no_gui (bool): Flag to indicate where GUI should be disabled (True = disable GUI).
-        """
-        cls._no_gui = no_gui
-
-    def update_position(self, dt: float) -> None:
-        """
-        Update the position of the ball based on its velocity and time step.
-
-        Args:
-            dt (float): Time step for the update.
-        """
-        self.position += self.velocity * dt
-
-        if Ball._no_gui is False:
-            self._sphere.pos = self.position
-            self._label.pos = self.position
-            if self._collision_blob and self.collision_point_offset:
-                self._collision_blob.pos = self.position - self.collision_point_offset
-
-    def mark_collision_point(self, cor: float) -> None:
-        """
-        Mark the collision point with a visible blob
-
-        Args:
-            cor (float): The Coefficient of Restitution
-        """
-        if Ball._no_gui is False:
-            assert self.collision_point_offset
-
-            # The scaling factor is arbitrary to look okay with CORs between 0-1
-            scaling_factor: float = 1.5
-
-            self._collision_blob = vp.ellipsoid(color=vp.color.yellow,
-                                                axis=self.collision_point_offset,
-                                                size=vp.vector(self.radius/scaling_factor,
-                                                               self.radius*scaling_factor,
-                                                               self.radius*scaling_factor) * cor)
-
-    def set_visibility(self, is_visible: bool) -> None:
-        """
-        Sets the visibility of the Ball to visible or hidden
-
-        Args:
-            is_visible (bool): True=Ball is visible, False=Ball is hidden
-        """
-        if Ball._no_gui is False:
-            self._sphere.visible = is_visible
-            self._label.visible = is_visible
-            self._sphere.make_trail = is_visible
-            self._sphere.clear_trail()
-
-
-@dataclass
-class CollisionInfo:
-    """
-    Data class to store information about a collision.
-
-    Attributes:
-        time (float): Time of collision.
-        ball1 (Ball): Ball 1 object (for elastic or partially elastic collisions)
-        ball2 (Ball): Ball 2 object (for elastic or partially elastic  collisions)
-        merged_ball (Ball): Merged ball (for inelastic collision)
-    """
-    time: float
-    ball1: Ball
-    ball2: Ball
-    merged_ball: Optional[Ball]
-
-
-@dataclass
-class IntersectionInfo:
-    """
-    Data class to store information about an intersection of ball paths.
-
-    Attributes:
-        position (vp.vector): Position vector of intersection point.
-        ball1_time (float): Time when Ball 1 crossed intersection point.
-        ball2_time (float): Time when Ball 2 crossed intersection point.
-    """
-    position: vp.vector
-    ball1_time: float
-    ball2_time: float
-
-
-@dataclass
-class SimulatorState:
-    """
-    Data class to store the state of the Simulator.
-
-    Attributes:
-        balls (List[Ball]): List of Ball objects.  
-                            - Index 0 = Ball 1.  
-                            - Index 1 = Ball 2.  
-                            - Index 2 = Merged Ball (Optional).  
-        momentum (vp.vector): Total momentum of both balls (N⋅s).
-        kinetic_energy (float): Total kinetic energy of both balls (J).
-        relative_speed (float): Relative speed of the two balls with respect to each other (m/s).
-        distance (float): Distance of the two balls (m).
-        trajectories (BallTrajectories): What the balls current trajectories are:
-                                         (constant, diverging, or converging).
-    """
-    balls: List[Ball]
-    momentum: vp.vector
-    kinetic_energy: float
-    relative_speed: float
-    distance: float
-    trajectories: BallTrajectories
-
-    @property
-    def ball1(self) -> Ball:
-        """Alias for Ball 1 (self.balls[Balls.BALL1])"""
-        return self.balls[Balls.BALL1]
-
-    @property
-    def ball2(self) -> Ball:
-        """Alias for Ball 2 (self.balls[Balls.BALL2])"""
-        return self.balls[Balls.BALL2]
 
 
 class BallCollisionSimulator:
@@ -344,14 +37,14 @@ class BallCollisionSimulator:
     Class to simulate the collision between two balls.
 
     Attributes:
-        sim_params (SimParameters): Parameters given to the BallCollisionSimulator.
-        collision_info (CollisionInfo): Information about the collision.
-        intersect_info (IntersectionInfo): Information about the intersection.
-        balls (List[Ball]): List of Ball objects.  
+        sim_params (ballcollide.ball_sim_parameters.SimParameters): Parameters given to the BallCollisionSimulator.
+        collision_info (Optional[ballcollide.ball_sim_info.CollisionInfo]): Information about the collision.
+        intersect_info (Optional[ballcollide.ball_sim_info.IntersectionInfo]): Information about the intersection.
+        balls (List[ballcollide.ball_sim.Ball]): List of Ball objects.  
                             - Index 0 = Ball 1.  
                             - Index 1 = Ball 2.  
                             - Index 2 = Merged Ball (Optional).  
-        initial (SimulatorState): Initial state of simulator before simulation is run.
+        initial (ballcollide.ball_sim_info.SimulatorInfo): Initial info/state of simulator before simulation is run.
     """
 
     # Flag to indicate whether the GUI should be disabled (True = no GUI)
@@ -377,14 +70,12 @@ class BallCollisionSimulator:
                  cor: Optional[float] = None):
         """
         Args:
-            ball_params (List[BallParameters]): List of parameters for each ball.
+            ball_params (List[ballcollide.ball_sim_parameters.BallParameters]): List of parameters for each ball.
             simulation_time (float): Total time to simulate.
-            collision_type (CollisionType): Type of collision to simulate:
+            collision_type (ballcollide.ball_sim_enums.CollisionType): Type of collision to simulate
                                             (elastic, inelastic, or partially elastic).
             cor (Optional[float]): Coefficient of Restitution (used for partially elastic collisions)
         """
-        self._scene: Optional[vp.canvas] = None
-
         # Error check given COR
         if cor is None or collision_type != CollisionType.PARTIAL:
             cor = 1.0
@@ -400,11 +91,12 @@ class BallCollisionSimulator:
         self.intersect_info: Optional[IntersectionInfo] = None
 
         # Create scene and grid if GUI enabled
+        self._scene: Optional[vp.canvas] = None
         if BallCollisionSimulator._no_gui is False:
             self._scene = vp.canvas(
                 title=f'{self.sim_params.collision_type.name} Collision Simulator',
                 width=800, height=800)
-            
+
             if self.sim_params.collision_type == CollisionType.PARTIAL:
                 self._scene.append_to_title(f', COR: {self.sim_params.cor}')
 
@@ -416,13 +108,13 @@ class BallCollisionSimulator:
         for ball_param in ball_params:
             self.balls.append(Ball(ball_param))
 
-        # Store Simulator State for later
-        self.initial: SimulatorState = SimulatorState(deepcopy(self.balls),
-                                                      self.momentum,
-                                                      self.kinetic_energy,
-                                                      self.relative_speed,
-                                                      self.distance,
-                                                      self.trajectories)
+        # Store Simulator Info/State for later
+        self.initial: SimulatorInfo = SimulatorInfo(deepcopy(self.balls),
+                                                    self.momentum,
+                                                    self.kinetic_energy,
+                                                    self.relative_speed,
+                                                    self.distance,
+                                                    self.trajectories)
 
     def __del__(self) -> None:
         """
@@ -497,17 +189,32 @@ class BallCollisionSimulator:
 
     @property
     def ball1(self) -> Ball:
-        """Alias for Ball 1 (self.balls[Balls.BALL1])"""
+        """
+        Alias for Ball 1.
+
+        Returns:
+            ballcollide.ball_sim.Ball: An alias for Ball 1.
+        """
         return self.balls[Balls.BALL1]
 
     @property
     def ball2(self) -> Ball:
-        """Alias for Ball 2 (self.balls[Balls.BALL2])"""
+        """
+        Alias for Ball 2.
+
+        Returns:
+            ballcollide.ball_sim.Ball: An alias for Ball 2.
+        """
         return self.balls[Balls.BALL2]
 
     @property
     def merged_ball(self) -> Optional[Ball]:
-        """Alias for Merged Ball (self.balls[Balls.MERGED])"""
+        """
+        Alias for the Merged Ball.
+
+        Returns:
+            Optional[ballcollide.ball_sim.Ball]: An alias for the Merged Ball.
+        """
         if len(self.balls) > Balls.MERGED:
             return self.balls[Balls.MERGED]
         else:
@@ -530,14 +237,15 @@ class BallCollisionSimulator:
                          simulation_time: float,
                          collision_type: CollisionType = CollisionType.ELASTIC,
                          cor: Optional[float] = None) \
-            -> BallCollisionSimulator:
+            -> 'BallCollisionSimulator':
         """
         Create a BallCollisionSimulator instance with given parameters.
 
         Args:
-            phys_params (List[PhysicsParameters]): List of physics parameters for each ball.
+            phys_params (List[ballcollide.ball_sim_parameters.PhysicsParameters]): List of physics
+              parameters for each ball.
             simulation_time (float): Total time to simulate.
-            collision_type (CollisionType): Type of collision to simulate:
+            collision_type (ballcollide.ball_sim_enums.CollisionType): Type of collision to simulate:
                                             (elastic, inelastic, or partially elastic).
             cor (Optional[float]): Coefficient of Restitution (used for partially elastic collisions)
 
@@ -622,9 +330,6 @@ class BallCollisionSimulator:
 
            The method stores the intersection information in self.intersect_info
         if an intersection is found within the valid range of both paths.
-
-        Returns:
-            None
         """
         # Extract initial positions and velocities
         x1, y1 = self.initial.ball1.position.x, self.initial.ball1.position.y
@@ -699,7 +404,7 @@ class BallCollisionSimulator:
         self.ball1.mark_collision_point(self.sim_params.cor)
         self.ball2.mark_collision_point(self.sim_params.cor)
 
-    
+
     def _elastic_collision_physics(self) -> None:
         """
         Calculate and update ball velocities after an elastic or partially elastic collision.
@@ -858,7 +563,7 @@ class BallCollisionSimulator:
             vp.rate(self.LOOP_EXECUTION_RATE)
             print_current_trajectory()
 
-            # If a collision hasn't occured already and the ball's positions are within the
+            # If a collision hasn't occurred already and the ball's positions are within the
             # distance of both radiuses, we have a collision
             if not self.collision_info and \
                     vp.mag(self.ball1.position - self.ball2.position) <= \
@@ -868,7 +573,7 @@ class BallCollisionSimulator:
 
                 print_current_trajectory()
 
-                # Store collision state info for later
+                # Store collision info for later
                 self.collision_info = CollisionInfo(ball1=copy(self.ball1),
                                                     ball2=copy(self.ball2),
                                                     merged_ball=copy(self.merged_ball),
@@ -910,17 +615,19 @@ class BallCollisionSimulator:
 
         print()
 
-        # If collision occured
+        # If collision occurred
         if self.collision_info:
-            print(f'Collision occured at time: {self.collision_info.time:.3g} secs')
+            print(f'Collision occurred at time: {self.collision_info.time:.3g} secs')
             print('\nPost Collision Conditions:')
             if self.collision_info.merged_ball:
                 self._print_ball_state([self.collision_info.merged_ball])
             else:
+                assert self.collision_info.ball1
+                assert self.collision_info.ball2
                 self._print_ball_state([self.collision_info.ball1, self.collision_info.ball2])
         # Else no collision, see if the paths intersected
         else:
-            print(f'No collision occured during simulation time of {
+            print(f'No collision occurred during simulation time of {
                 self.sim_params.simulation_time} secs.')
 
             # Calculate path intersection (if any)
@@ -976,8 +683,8 @@ def main() -> None:
 
         Returns:
             Tuple[List[PhysicsParameters], float, CollisionType, Optional[float]]:
-            Parameters for both balls, simulation time, and collision type (elastic,
-            inelastic, or partially elastic), and optionally a Coefficient of Restitution (COR).
+              Parameters for both balls, simulation time, and collision type (elastic,
+              inelastic, or partially elastic), and optionally a Coefficient of Restitution (COR).
         """
         def get_float(prompt: str) -> float:
             while True:
