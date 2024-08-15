@@ -14,4 +14,4 @@ This package simulates the elastic, inelastic, or partially elastic collisions b
 
 ## Documentation
 For detailed API documentation, see:
-[Ball Collision Simulator API Documentation](https://jim-tooker.github.io/BallCollisionSimulator/docs/ballcollide/index.html)
+[Ball Collision Simulator API Documentation](https://jim-tooker.github.io/ballcollide/docs/ballcollide/index.html)
