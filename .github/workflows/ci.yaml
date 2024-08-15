@@ -31,9 +31,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install mypy pytest vpython readchar
-        export PYTHONPATH=$PYTHONPATH:.:/home/runner/work/ballcollide/ballcollide
-        echo $PYTHONPATH
-        pwd
 
     - name: Run mypy
       run: |
@@ -41,5 +38,8 @@ jobs:
 
     - name: Test
       run: |
+        export PYTHONPATH=$PYTHONPATH:.:/home/runner/work/ballcollide
+        echo $PYTHONPATH
+        pwd
         python tests/test_ball_collision_sim.py --no_gui
   
