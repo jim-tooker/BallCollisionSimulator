@@ -38,5 +38,5 @@ jobs:
 
     - name: Test
       run: |
-        python test_ball_collision_sim.py --no_gui
+        python tests/test_ball_collision_sim.py --no_gui
   

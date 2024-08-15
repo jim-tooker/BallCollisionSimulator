@@ -456,7 +456,7 @@ if __name__ == '__main__':
     if args.no_gui:
         BallCollisionSimulator.disable_gui(True)
 
-    result = pytest.main(["test_ball_collision_sim.py"])
+    result = pytest.main(["tests/test_ball_collision_sim.py"])
 
     if args.no_gui:
         sys.exit(result)
