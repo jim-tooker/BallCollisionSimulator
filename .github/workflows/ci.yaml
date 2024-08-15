@@ -38,5 +38,6 @@ jobs:
 
     - name: Test
       run: |
-        python test_ball_collision_sim.py --no_gui
+        export PYTHONPATH=$PYTHONPATH:.:/home/runner/work/ballcollide
+        python tests/test_ball_collision_sim.py --no_gui
   
