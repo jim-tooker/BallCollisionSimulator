@@ -4,8 +4,8 @@
 from typing import List, Optional
 from dataclasses import dataclass
 import vpython as vp
-from ballcollide.ball_sim_enums import Balls, BallTrajectories
-from ballcollide.ball_sim import Ball
+from ball_sim_enums import Balls, BallTrajectories
+from ball_sim import Ball
 
 __author__ = "Jim Tooker"
 

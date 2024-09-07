@@ -4,7 +4,7 @@
 from typing import Optional
 import math
 import vpython as vp
-from ballcollide.ball_sim_parameters import BallParameters
+from ball_sim_parameters import BallParameters
 
 __author__ = "Jim Tooker"
 

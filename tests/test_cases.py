@@ -4,8 +4,8 @@
 from typing import Tuple, Dict, List, Optional, Final
 from dataclasses import dataclass
 import math
-from ballcollide.ball_sim_enums import CollisionType, BallTrajectories
-from ballcollide.ball_sim_parameters import PhysicsParameters
+from ball_sim_enums import CollisionType, BallTrajectories
+from ball_sim_parameters import PhysicsParameters
 
 __author__ = "Jim Tooker"
 

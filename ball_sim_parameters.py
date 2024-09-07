@@ -4,7 +4,7 @@
 from typing import Tuple, List
 from dataclasses import dataclass
 import vpython as vp
-from ballcollide.ball_sim_enums import CollisionType
+from ball_sim_enums import CollisionType
 
 __author__ = "Jim Tooker"
 

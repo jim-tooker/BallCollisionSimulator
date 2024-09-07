@@ -17,7 +17,7 @@ For detailed API documentation, see:
 [Ball Collision Simulator API Documentation](https://jim-tooker.github.io/ballcollide/docs/ballcollide/index.html)
 
 ## Sample Screenshot
-<img width="593" alt="Screenshot 2024-08-21 at 8 59 51 AM" src="https://github.com/user-attachments/assets/a516d23f-0fe0-47d2-af4c-532d17358fd7">
+<img width="593" src="https://github.com/user-attachments/assets/a516d23f-0fe0-47d2-af4c-532d17358fd7">
 
 ```
 ***************************************************
