@@ -24,10 +24,10 @@ import math
 from copy import copy, deepcopy
 import vpython as vp
 import readchar
-from ballcollide.ball_sim_enums import CollisionType, Balls, BallTrajectories
-from ballcollide.ball_sim_parameters import PhysicsParameters, BallParameters, SimParameters
-from ballcollide.ball_sim import Ball
-from ballcollide.ball_sim_info import CollisionInfo, IntersectionInfo, SimulatorInfo
+from ball_sim_enums import CollisionType, Balls, BallTrajectories
+from ball_sim_parameters import PhysicsParameters, BallParameters, SimParameters
+from ball_sim import Ball
+from ball_sim_info import CollisionInfo, IntersectionInfo, SimulatorInfo
 
 __author__ = "Jim Tooker"
 

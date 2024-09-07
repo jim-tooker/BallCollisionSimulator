@@ -1,11 +1,9 @@
-#!/usr/bin/env python
 """
 This module contains unit tests for the BallCollisionSimulator class.
 
 It uses pytest to run various test scenarios for ball collisions, 
 including elastic, inelastic, and partially elastic collisions, intersections, and misses.
 """
-
 from typing import Tuple, List, Dict, Union, Optional
 import sys
 import argparse
@@ -13,10 +11,12 @@ import math
 import re
 import pytest
 import vpython as vp
-from ballcollide.ball_sim_enums import CollisionType
-from ballcollide.ball_sim_parameters import PhysicsParameters
-from ballcollide.ball_collision_sim import BallCollisionSimulator
-from ballcollide.tests.test_cases import TESTS, ACTIVE_TESTS, ExpectedResults, ExpectedBallState
+
+sys.path.append('.')
+from ball_sim_enums import CollisionType
+from ball_sim_parameters import PhysicsParameters
+from ball_collision_sim import BallCollisionSimulator
+from tests.test_cases import TESTS, ACTIVE_TESTS, ExpectedResults, ExpectedBallState
 
 __author__ = "Jim Tooker"
 
@@ -447,8 +447,8 @@ def test_ball_collision_sim_high_cor() -> None:
     print(f'Exception string: "{e_info.value}"')
 
 
-
-if __name__ == '__main__':
+def main() -> None:
+    """Main entry point for test."""
     parser = argparse.ArgumentParser(description='Ball Collision Simulator Tester')
     parser.add_argument('--no_gui', action='store_true', help='Run without GUI')
     args = parser.parse_args()
@@ -462,3 +462,6 @@ if __name__ == '__main__':
         sys.exit(result)
     else:
         BallCollisionSimulator.quit_simulation()
+
+if __name__ == '__main__':
+    main()
