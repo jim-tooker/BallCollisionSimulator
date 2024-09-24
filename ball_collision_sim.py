@@ -705,7 +705,7 @@ def main() -> None:
             collision_selection = None
             while collision_selection not in ['e', 'i', 'p']:
                 collision_selection = input(
-                    "Enter collision type ('e'=elastic, 'i'=inelastic), 'p'= partial: ").lower()
+                    "Enter collision type ('e'=elastic, 'i'=inelastic, 'p'= partial): ").lower()
 
             if collision_selection == 'i':
                 return CollisionType.INELASTIC

@@ -4,17 +4,34 @@
 
 This package simulates the elastic, inelastic, or partially elastic collisions between two balls using the VPython library. It contains modules to define the physical and visual properties of the balls, perform the simulation, and visualize the collision in a 2D space.
 
-- ## Modules:
-    * `ball_collision_sim`: The main module that runs the system. It manages the entire simulation process, including initialization, running the simulation, and handling collisions.
-    * `ball_sim_enums`: Contains enums used by the system.
-    * `ball_sim_parameters`: Contains classes to store parameter data needed by the system.
-    * `ball_sim`: Contains the `Ball` class which represents the balls in the system.
-    * `ball_sim_info`: Contains classes to hold info/state of the system.
-    * `tests`: Tests for the Ball Collision Simulator system.
+Here are the runtime options: `python ball_collision_sim.py -h`:
+```
+usage: ball_collision_sim.py [-h] [--test] [--no_gui]
+
+Ball Collision Simulator
+
+options:
+  -h, --help  show this help message and exit
+  --test      Run with pre-defined test case
+  --no_gui    Run without GUI
+```
+
+## Modules:
+* `ball_collision_sim`: The main module that runs the system. It manages the entire simulation process, including initialization, running the simulation, and handling collisions.
+* `ball_sim_enums`: Contains enums used by the system.
+* `ball_sim_parameters`: Contains classes to store parameter data needed by the system.
+* `ball_sim`: Contains the `Ball` class which represents the balls in the system.
+* `ball_sim_info`: Contains classes to hold info/state of the system.
+* `tests`: Tests for the Ball Collision Simulator system.
 
 ## Documentation
 For detailed API documentation, see:
 [Ball Collision Simulator API Documentation](https://jim-tooker.github.io/ballcollide/docs/ballcollide/index.html)
+
+## To Use
+1. Clone this repository.
+2. Run the setup script: `setup.sh`.  *(This will install needed dependencies)*
+3. Run `python ball_collision_sim.py`.  *(With or without command line options)*
 
 ## Sample Screenshot
 <img width="593" src="https://github.com/user-attachments/assets/a516d23f-0fe0-47d2-af4c-532d17358fd7">
